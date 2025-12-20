@@ -15,9 +15,9 @@ export default function BranchFormPage({ params }: { params: { branchId: string 
 
     const handleSubmit = async (values: any) => {
         if (isEdit) {
-            await api.put(`/branches/${params.branchId}`, values);
+            await api.put(`/branch/${params.branchId}`, values);
         } else {
-            await api.post("/branches", values);
+            await api.post("/branch", values);
         }
     };
 

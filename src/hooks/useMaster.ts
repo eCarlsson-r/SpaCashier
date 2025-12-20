@@ -1,40 +1,20 @@
+// src/hooks/use-master.ts
 import { useQuery } from "@tanstack/react-query";
 import { useBranch } from "@/hooks/useBranch";
 import api from "@/lib/api";
 
-export const useCustomers = () => {
+export function useMaster(endpoint: string, isBranchScoped: boolean = true) {
     const { selectedBranchId } = useBranch();
-    return useQuery({
-        queryKey: ["customer", selectedBranchId],
-        queryFn: () => api.get(`/customer?branch_id=${selectedBranchId}`).then(res => res.data),
-        staleTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
-    });
-};
 
-export const useTreatments = () => {
     return useQuery({
-        queryKey: ["treatment"],
-        queryFn: () => api.get("/treatment").then(res => res.data),
+        // The queryKey changes based on the endpoint (e.g., "banks" or "suppliers")
+        queryKey: [endpoint, isBranchScoped ? selectedBranchId : "global"],
+        queryFn: async () => {
+            const params = isBranchScoped ? { branch_id: selectedBranchId } : {};
+            const { data } = await api.get(`/${endpoint}`, { params });
+            return data;
+        },
+        enabled: isBranchScoped ? !!selectedBranchId : true,
+        staleTime: 1000 * 60 * 5, // 5 minutes default cache
     });
-};
-
-export const useDiscounts = () => {
-    return useQuery({
-        queryKey: ["discount"],
-        queryFn: () => api.get("/discount").then(res => res.data),
-    });
-};
-
-export const useWallets = () => {
-    return useQuery({
-        queryKey: ["wallet"],
-        queryFn: () => api.get("/wallet").then(res => res.data),
-    });
-};
-
-export const useBanks = () => {
-    return useQuery({
-        queryKey: ["bank"],
-        queryFn: () => api.get("/bank").then(res => res.data),
-    });
-};
+}

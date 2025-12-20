@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
                     <div className="container flex h-16 items-center justify-between">
                         <div className="flex items-center gap-10">
-                            <div className="font-bold text-teal-600 tracking-wider">SPA SYSTEM</div>
+                            <img className="mx-auto" src="/images/logo.png" alt="Logo" />
                             <Navbar />
                         </div>
                         <UserNav />

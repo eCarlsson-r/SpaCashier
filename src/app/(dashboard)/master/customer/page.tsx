@@ -1,4 +1,5 @@
 import { DataTable } from "@/components/shared/DataTable";
+import { useMaster } from "@/hooks/useMaster";
 
 const columns = [
     { accessorKey: "name", header: "Name" },
@@ -8,5 +9,5 @@ const columns = [
 ];
 
 export default function CustomerPage() {
-    return <DataTable columns={columns} data={useCustomer().data?.data || []} searchKey="name" />;
+    return <DataTable columns={columns} data={useMaster("customer").data || []} searchKey="name" />;
 }
