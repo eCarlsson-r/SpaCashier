@@ -1,5 +1,8 @@
+"use client";
 import { DataTable } from "@/components/shared/DataTable";
+import { Button } from "@/components/ui/button";
 import { useMaster } from "@/hooks/useMaster";
+import { useRouter } from "next/navigation";
 
 const columns = [
     { accessorKey: "name", header: "Name" },
@@ -9,5 +12,19 @@ const columns = [
 ];
 
 export default function CustomerPage() {
-    return <DataTable columns={columns} data={useMaster("customer").data || []} searchKey="name" />;
+    const router = useRouter();
+    return <DataTable
+        title="Customers"
+        columns={columns}
+        data={useMaster("customer", false).data || []}
+        searchKey="name"
+        actions={(item) => (
+            <div className="flex items-center gap-2">
+                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                    Delete
+                </Button>
+            </div>
+        )}
+        onRowClick={(item) => router.push(`/master/customer/${item.id}`)}
+    />;
 }

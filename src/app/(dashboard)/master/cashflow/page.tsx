@@ -1,3 +1,4 @@
+"use client";
 import { DataTable } from "@/components/shared/DataTable";
 import { useMaster } from "@/hooks/useMaster";
 
@@ -14,8 +15,8 @@ const walletColumns = [
 export default function CashflowPage() {
     return (
         <>
-            <DataTable columns={bankColumns} data={useMaster("bank").data || []} searchKey="name" />
-            <DataTable columns={walletColumns} data={useMaster("wallet").data || []} searchKey="name" />
+            <DataTable title="Banks" columns={bankColumns} data={useMaster("bank", false).data || []} searchKey="name" />
+            <DataTable title="Wallets" columns={walletColumns} data={useMaster("wallet", false).data || []} searchKey="name" />
         </>
     );
 }

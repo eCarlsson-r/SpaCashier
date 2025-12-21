@@ -1,3 +1,4 @@
+"use client"
 import { useContext } from "react";
 import { BranchContext } from "@/providers/branch-provider";
 

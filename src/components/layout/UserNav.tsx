@@ -28,34 +28,36 @@ export function UserNav() {
         router.push("/login");
     };
 
+    let avatar = "/images/avatars/demo-admin.png";
+    if (user?.type.toLowerCase() == "therapist" && user?.employee.gender == "F") {
+        avatar = "/images/avatars/demo-lady-therapist.png";
+    } else if (user?.type.toLowerCase() == "therapist" && user?.employee.gender == "M") {
+        avatar = "/images/avatars/demo-guy-therapist.png";
+    } else if (user?.type.toLowerCase() == "staff" && user?.employee.gender == "F") {
+        avatar = "/images/avatars/demo-lady-staff.png";
+    } else if (user?.type.toLowerCase() == "staff" && user?.employee.gender == "M") {
+        avatar = "/images/avatars/demo-guy-staff.png";
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.avatar_url} alt={user?.name} />
-                        <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={avatar} alt={user?.employee?.name} />
+                        <AvatarFallback>{user?.employee?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user?.name}</p>
+                        <p className="text-sm font-medium leading-none">{user?.employee?.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user?.type}
                         </p>
                     </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => router.push("/profile")}>
-                        Profile Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push("/accounting/activity")}>
-                        My Activity Log
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
                     Log out

@@ -15,15 +15,21 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 
 interface DataTableProps<TData, TValue> {
+    title?: string;
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     searchKey?: string; // e.g., "name" or "customer_code"
+    actions?: (item: TData) => React.ReactNode;
+    onRowClick?: (item: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
+    title,
     columns,
     data,
     searchKey,
+    actions,
+    onRowClick
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
@@ -34,24 +40,27 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
-        state: { columnFilters },
+        state: { columnFilters }
     });
 
     return (
         <div className="space-y-4">
-            {/* Dynamic Search Filter */}
-            {searchKey && (
-                <div className="flex items-center">
-                    <Input
-                        placeholder={`Search ${searchKey}...`}
-                        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm bg-white"
-                    />
-                </div>
-            )}
+            <div className="flex items-center gap-2">
+                {title && <h2 className="text-2xl font-bold">{title}</h2>}
+                {/* Dynamic Search Filter */}
+                {searchKey && (
+                    <div className="flex items-center">
+                        <Input
+                            placeholder={`Search ${searchKey}...`}
+                            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+                            onChange={(event) =>
+                                table.getColumn(searchKey)?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-sm bg-white"
+                        />
+                    </div>
+                )}
+            </div>
 
             {/* Main Table UI */}
             <div className="rounded-md border bg-white">
@@ -66,18 +75,24 @@ export function DataTable<TData, TValue>({
                                             : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
+                                {actions && <th className="py-2 px-3 font-medium text-black dark:text-white">Actions</th>}
                             </TableRow>
                         ))}
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
+                                <TableRow key={row.id} onClick={() => onRowClick && onRowClick(row.original)}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
+                                    {actions && (
+                                        <td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark">
+                                            {actions(row.original)}
+                                        </td>
+                                    )}
                                 </TableRow>
                             ))
                         ) : (

@@ -1,3 +1,4 @@
+"use client";
 import { DataTable } from "@/components/shared/DataTable";
 import { useMaster } from "@/hooks/useMaster";
 
@@ -11,5 +12,5 @@ const columns = [
 ];
 
 export default function DiscountPage() {
-    return <DataTable columns={columns} data={useMaster("discount").data || []} searchKey="name" />;
+    return <DataTable title="Discounts" columns={columns} data={useMaster("discount", false).data || []} searchKey="name" />;
 }

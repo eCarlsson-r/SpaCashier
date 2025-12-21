@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "@/components/shared/DataTable";
 import { useMaster } from "@/hooks/useMaster";
 
@@ -9,5 +11,5 @@ const columns = [
 ];
 
 export default function TreatmentPage() {
-    return <DataTable columns={columns} data={useMaster("treatments").data || []} searchKey="name" />;
+    return <DataTable title="Treatments" columns={columns} data={useMaster("treatment", false).data || []} searchKey="name" />;
 }

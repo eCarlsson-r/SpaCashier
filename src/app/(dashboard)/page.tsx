@@ -1,14 +1,34 @@
+"use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/ui/card";
 import { Users, Ticket, CheckCircle, Activity } from "lucide-react";
+import { DataTable } from "@/components/shared/DataTable";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function Dashboard({ data }) {
+export default function Dashboard() {
+    let params = {};
+    if (useAuth().user?.type === "STAFF") {
+        params = { branch_id: useAuth().user?.employee?.branch_id };
+    } else if (useAuth().user?.type === "THERAPIST") {
+        params = { employee_id: useAuth().user?.employee?.id ?? "" };
+    }
+    const { data } = useQuery({
+        queryKey: ["dashboard", params],
+        queryFn: async () => {
+            const { data } = await api.get(`/dashboard`, { params });
+            return data;
+        }
+    });
+
     const stats = [
-        { label: "Completed Sessions", value: data.completed_count, icon: CheckCircle, color: "text-emerald-600" },
-        { label: "Ongoing Sessions", value: data.ongoing_count, icon: Activity, color: "text-amber-600" },
-        { label: "Vouchers Sold", value: data.vouchers_sold, icon: Ticket, color: "text-blue-600" },
-        { label: "Total Sales", value: `Rp ${data.total_sales.toLocaleString()}`, icon: Users, color: "text-teal-600" },
-        { label: "Hot Treatment", value: data.hot_treatment.name, icon: Ticket, color: "text-blue-600" },
-        { label: "Hot Therapist", value: data.hot_therapist.name, icon: Users, color: "text-blue-600" },
+        { label: "Completed Sessions", value: data?.completed_count || 0, icon: CheckCircle, color: "text-emerald-600" },
+        { label: "Ongoing Sessions", value: data?.ongoing_count || 0, icon: Activity, color: "text-amber-600" },
+        { label: "Vouchers Sold", value: data?.vouchers_sold || 0, icon: Ticket, color: "text-blue-600" },
+        { label: "Total Sales", value: `Rp ${data?.total_sales?.toLocaleString()}`, icon: Users, color: "text-teal-600" },
+        { label: "Hot Treatment", value: data?.hot_treatment.name || "", icon: Ticket, color: "text-blue-600" },
+        { label: "Hot Therapist", value: data?.hot_therapist.name || "", icon: Users, color: "text-blue-600" },
     ];
 
     return (
@@ -43,8 +63,9 @@ export default function Dashboard({ data }) {
                                     header: "Sessions",
                                     cell: ({ row }) => <Badge variant="secondary">{row.original.completed_sessions}</Badge>
                                 },
+                                { accessorKey: "deduction", header: "Deduction" }
                             ]}
-                            data={data.employees}
+                            data={data?.today || []}
                         />
                     </CardContent>
                 </Card>

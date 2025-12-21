@@ -19,7 +19,7 @@ export function Navbar() {
     return (
         <NavigationMenu>
             <NavigationMenuList>
-                {menu.map((group) => (
+                {menu?.map((group) => (
                     <NavigationMenuItem key={group.category}>
                         <NavigationMenuTrigger className="bg-transparent">{group.category}</NavigationMenuTrigger>
                         <NavigationMenuContent>

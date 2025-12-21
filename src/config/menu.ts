@@ -1,3 +1,5 @@
+import { permission } from "process";
+
 export const adminMenuConfig = [
     {
         category: "Accounting",
@@ -5,11 +7,31 @@ export const adminMenuConfig = [
         items: [{ title: "Journal", href: "/accounting/journal", permission: "view_accounting" }],
     },
     {
+        category: "Cashflow",
+        permission: "view_cashflow",
+        items: [
+            { title: "Income", href: "/cashflow/income", permission: "view_cashflow" },
+            { title: "Expense", href: "/cashflow/expense", permission: "view_cashflow" },
+            { title: "Transfer", href: "/cashflow/transfer", permission: "view_cashflow" },
+        ]
+    },
+    {
         category: "Master",
         permission: "manage_master",
         items: [
-            { title: "Branch", href: "/master/branches", permission: "manage_master" },
-            { title: "Employee", href: "/master/employees", permission: "manage_master" },
+            { title: "Account", href: "/master/account", permission: "manage_master" },
+            { title: "Cashflow", href: "/master/cashflow", permission: "manage_master" },
+            { title: "Branch", href: "/master/branch", permission: "manage_master" },
+            { title: "Category", href: "/master/category", permission: "manage_master" },
+            { title: "Customer", href: "/master/customer", permission: "manage_master" },
+            { title: "Employee", href: "/master/employee", permission: "manage_master" },
+            { title: "Treatment", href: "/master/treatment", permission: "manage_master" },
+            { title: "Room", href: "/master/room", permission: "manage_master" },
+            { title: "Bonus", href: "/master/bonus", permission: "manage_master" },
+            { title: "Discount", href: "/master/discount", permission: "manage_master" },
+            { title: "Supplier", href: "/master/supplier", permission: "manage_master" },
+            { title: "Sales Agent", href: "/master/salesagent", permission: "manage_master" },
+            { title: "Banner", href: "/master/banner", permission: "manage_master" }
         ],
     },
     {

@@ -7,13 +7,17 @@ import { Branch } from "@/lib/types";
 
 interface User {
   id: number;
-  name: string;
-  email: string;
+  username: string;
   type: string;
-  branch_id: number;
+  employee: {
+    id: number;
+    name: string;
+    branch_id: number;
+    gender: string;
+  };
   branches: Branch[];
 }
-``
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;

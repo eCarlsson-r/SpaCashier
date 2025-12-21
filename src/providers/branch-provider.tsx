@@ -18,8 +18,8 @@ export function BranchProvider({ children }: { children: React.ReactNode }) {
 
     // Default to the user's assigned branch from Laravel
     useEffect(() => {
-        if (user && !selectedBranchId) {
-            setSelectedBranchId(user.branch_id);
+        if (user?.employee?.branch_id && !selectedBranchId) {
+            setSelectedBranchId(user.employee.branch_id);
         }
     }, [user, selectedBranchId]);
 

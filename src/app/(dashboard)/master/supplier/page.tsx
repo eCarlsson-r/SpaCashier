@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "@/components/shared/DataTable";
 import { useMaster } from "@/hooks/useMaster";
 
@@ -9,5 +11,5 @@ const columns = [
 ];
 
 export default function SupplierPage() {
-    return <DataTable columns={columns} data={useMaster("suppliers").data || []} searchKey="name" />;
+    return <DataTable title="Suppliers" columns={columns} data={useMaster("supplier", false).data || []} searchKey="name" />;
 }
