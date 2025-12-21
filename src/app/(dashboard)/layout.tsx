@@ -9,9 +9,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <BranchProvider>
                 <div className="flex min-h-screen flex-col items-center bg-slate-50/40">
                     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
-                        <div className="container flex h-16 items-center justify-between">
-                            <div className="flex items-center mx-auto gap-10">
-                                <img className="mx-auto" src="/images/logo.png" alt="Logo" />
+                        <div className="container flex h-16 mx-auto items-center justify-between">
+                            <div className="flex items-center gap-10">
+                                <img src="/images/logo.png" alt="Logo" />
                                 <Navbar />
                             </div>
                             <UserNav />

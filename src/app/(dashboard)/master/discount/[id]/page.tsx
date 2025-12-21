@@ -1,8 +1,8 @@
-import { AccountForm } from "@/components/master/account-form";
+import { DiscountForm } from "@/components/master/discount-form";
 
 type Params = Promise<{ id: string }>;
 
-export default async function UnifiedAccountPage({ params }: { params: Params }) {
+export default async function UnifiedDiscountPage({ params }: { params: Params }) {
     const { id } = await params;
     // If the URL is /master/branches/new, isEdit will be false
     const isEdit = id !== "new";
@@ -11,14 +11,14 @@ export default async function UnifiedAccountPage({ params }: { params: Params })
         <div className="h-16 mx-auto">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Account Details" : "Register New Account"}
+                    {isEdit ? "Update Discount Details" : "Register New Discount"}
                 </h1>
                 <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing account configuration" : "Setup a new account for your Spa"}
+                    {isEdit ? "Modify existing discount configuration" : "Setup a new discount for your Spa"}
                 </p>
             </header>
 
-            <AccountForm accountId={isEdit ? id : undefined} />
+            <DiscountForm discountId={isEdit ? id : undefined} />
         </div>
     );
 }

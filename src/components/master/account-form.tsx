@@ -4,8 +4,8 @@ import { EntityForm } from "../shared/EntityForm";
 import { AccountSchema } from "@/lib/schemas";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { ACCOUNT_TYPES } from "@/lib/validations/account";
+import { AppSelect } from "../shared/AppSelect";
 
 export function AccountForm({ accountId }: { accountId?: string }) {
     return (
@@ -19,7 +19,7 @@ export function AccountForm({ accountId }: { accountId?: string }) {
             }}
         >
             {(form) => (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -37,18 +37,7 @@ export function AccountForm({ accountId }: { accountId?: string }) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Account Type</FormLabel>
-                                <FormControl><Select onValueChange={field.onChange} defaultValue={field.value} >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select an account type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {ACCOUNT_TYPES.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select></FormControl>
+                                <FormControl><AppSelect options={ACCOUNT_TYPES.map((type) => ({ value: type, label: type }))} value={field.value} onValueChange={field.onChange} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}

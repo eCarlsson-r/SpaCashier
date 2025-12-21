@@ -1,24 +1,24 @@
 "use client";
 
 import { DataTable } from "@/components/shared/DataTable";
+import { Button } from "@/components/ui/button";
 import { useMaster } from "@/hooks/useMaster";
 import { useRouter } from "next/navigation";
-import { Button } from "@/ui/button";
 
 const columns = [
-    { accessorKey: "name", header: "Treatment Name" },
-    { accessorKey: "category.name", header: "Category" },
-    { accessorKey: "duration", header: "Duration" },
-    { accessorKey: "price", header: "Price" },
+    { accessorKey: "treatment.name", header: "Treatment" },
+    { accessorKey: "gross_bonus", header: "Bonus Kotor" },
+    { accessorKey: "trainer_deduction", header: "Pot/u Trainer" },
+    { accessorKey: "savings_deduction", header: "Pot/u Tabgn" }
 ];
 
-export default function TreatmentPage() {
+export default function BonusPage() {
     const router = useRouter();
     return <DataTable
-        title="Treatments"
+        title="Bonus"
         columns={columns}
-        data={useMaster("treatment", false).data || []}
-        searchKey="name"
+        data={useMaster("bonus", false).data || []}
+        searchKey="grade"
         actions={(item) => (
             <div className="flex items-center gap-2">
                 <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
@@ -26,6 +26,6 @@ export default function TreatmentPage() {
                 </Button>
             </div>
         )}
-        onRowClick={(item) => router.push(`/master/treatment/${item.id}`)}
+        onRowClick={(item) => console.info(item)}
     />;
 }

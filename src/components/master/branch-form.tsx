@@ -24,29 +24,31 @@ export function BranchForm({ branchId }: { branchId?: string }) {
             {(form) => (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* General Info */}
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Branch Name</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <div className="md:col-span-2">
+                    <div className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Branch Name</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Phone</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="address"
@@ -58,35 +60,47 @@ export function BranchForm({ branchId }: { branchId?: string }) {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>City</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
 
-                    <FormField
-                        control={form.control}
-                        name="country"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Country</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="city"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>City</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="country"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Country</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Description */}
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Notes</FormLabel>
+                                    <FormControl><Textarea {...field} value={field.value || ""} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
                     {/* Accounting Accounts - Use Selects here later */}
-                    <div className="md:col-span-2 border-t pt-4 mt-2">
-                        <h3 className="text-sm font-semibold mb-3">Accounting Mapping</h3>
-
+                    <div className="space-y-6">
                         <AccountSelect
                             form={form}
                             name="cash_account"
@@ -116,29 +130,14 @@ export function BranchForm({ branchId }: { branchId?: string }) {
                             label="Voucher Liability Account"
                             typeFilter="account-payable"
                         />
-                    </div>
 
-                    {/* Description */}
-                    <div className="md:col-span-2">
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Notes</FormLabel>
-                                    <FormControl><Textarea {...field} value={field.value || ""} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                        <ImagePreview
+                            label="Branch Image"
+                            name="branch_img"
+                            form={form}
+                            currentImageUrl={form.getValues("branch_img")}
                         />
                     </div>
-
-                    <ImagePreview
-                        label="Branch Image"
-                        name="branch_img"
-                        form={form}
-                        currentImageUrl={form.getValues("branch_img")}
-                    />
                 </div>
             )}
         </EntityForm >

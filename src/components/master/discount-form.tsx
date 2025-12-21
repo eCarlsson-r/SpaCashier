@@ -1,23 +1,22 @@
 "use client";
 
 import { EntityForm } from "../shared/EntityForm";
-import { CustomerSchema } from "@/lib/schemas";
+import { DiscountSchema } from "@/lib/schemas";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
+import { AppSelect } from "../shared/AppSelect";
 import { AccountSelect } from "../shared/AccountSelect";
 import { DatePicker } from "../shared/DatePicker";
-import { AppSelect } from "../shared/AppSelect";
 
-export function CustomerForm({ customerId }: { customerId?: string }) {
+export function DiscountForm({ discountId }: { discountId?: string }) {
     return (
         <EntityForm
-            title={customerId ? "Edit Customer" : "Add New Customer"}
-            schema={CustomerSchema}
-            id={customerId}
-            endpoint="/customer"
+            title={discountId ? "Edit Discount" : "Add New Discount"}
+            schema={DiscountSchema}
+            id={discountId}
+            endpoint="/discount"
             defaultValues={{
-                name: "", gender: "M", address: "", place_of_birth: "", date_of_birth: "", email: "", mobile: "", liability_account: ""
+                name: "", type: "POTONGAN", percent: 0, amount: 0, quantity: 0, expiry_date: new Date()
             }}
         >
             {(form) => (
@@ -25,10 +24,22 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
                     <div className="space-y-6">
                         <FormField
                             control={form.control}
+                            name="id"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>ID</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Discount Name</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -37,53 +48,16 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="gender"
+                            name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Gender</FormLabel>
-                                    <FormControl><AppSelect options={[
-                                        { value: "M", label: "Male" },
-                                        { value: "F", label: "Female" }
-                                    ]} value={field.value} onValueChange={field.onChange} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="place_of_birth"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Place of Birth</FormLabel>
-                                    <FormControl><Input {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <DatePicker form={form} name="date_of_birth" label="Date of Birth" />
-                    </div>
-
-                    <div className="space-y-6">
-                        <FormField
-                            control={form.control}
-                            name="mobile"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Mobile Number</FormLabel>
-                                    <FormControl><Input {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>E-mail address</FormLabel>
-                                    <FormControl><Input {...field} type="email" /></FormControl>
+                                    <FormLabel>Discount Type</FormLabel>
+                                    <FormControl>
+                                        <AppSelect options={[
+                                            { value: "POTONGAN", label: "Discount" },
+                                            { value: "CASHBACK", label: "Cashback" }
+                                        ]} value={field.value} onValueChange={field.onChange} />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -91,21 +65,53 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
 
                         <AccountSelect
                             form={form}
-                            name="liability_account"
-                            label="Liability Account"
-                            typeFilter="account-receivable"
+                            name="account_id"
+                            label="Cashback Account"
+                            typeFilter="income"
+                        />
+                    </div>
+
+                    <div className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="percent"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Discount Percent</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
                         <FormField
                             control={form.control}
-                            name="address"
+                            name="amount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl><Textarea {...field} value={field.value || ""} /></FormControl>
+                                    <FormLabel>Discount Amount</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="quantity"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Discount Quantity</FormLabel>
+                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <DatePicker
+                            form={form}
+                            name="expiry_date"
+                            label="Discount Expiry Date"
                         />
                     </div>
                 </div>
