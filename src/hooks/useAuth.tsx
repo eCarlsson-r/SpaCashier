@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Branch } from "@/lib/types";
+import Cookies from 'js-cookie';
 
 interface User {
   id: number;
@@ -38,14 +39,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data);
     } catch (err) {
       setUser(null);
-      localStorage.removeItem("auth_token");
+      Cookies.remove("auth_token");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
     if (token) {
       fetchUser();
     } else {
@@ -54,13 +55,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (token: string) => {
-    localStorage.setItem("auth_token", token);
+    Cookies.set('auth_token', token, { expires: 7, secure: true });
     await fetchUser();
-    router.push("/operational/sessions");
+    router.push("/dashboard");
   };
 
   const logout = () => {
-    localStorage.removeItem("auth_token");
+    Cookies.remove("auth_token");
     setUser(null);
     router.push("/login");
   };

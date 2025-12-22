@@ -8,7 +8,7 @@ import { Textarea } from "../ui/textarea";
 import { AccountSelect } from "../shared/AccountSelect";
 import { DatePicker } from "../shared/DatePicker";
 import { AppSelect } from "../shared/AppSelect";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 
 export function EmployeeForm({ employeeId }: { employeeId?: string }) {
     return (
@@ -87,7 +87,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Recruiter</FormLabel>
-                                    <FormControl><AppSelect options={useMaster("employee", false).data || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><AppSelect options={useModel("employee", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -101,7 +101,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Branch</FormLabel>
-                                    <FormControl><AppSelect options={useMaster("branch", false).data || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><AppSelect options={useModel("branch", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -131,7 +131,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Expertise</FormLabel>
-                                    <FormControl><AppSelect options={useMaster("treatment", false).data || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><AppSelect options={useModel("treatment", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -246,7 +246,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Bank</FormLabel>
-                                    <FormControl><AppSelect options={useMaster("bank", false).data || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><AppSelect options={useModel("bank", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

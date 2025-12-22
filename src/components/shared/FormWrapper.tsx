@@ -13,7 +13,7 @@ export function FormWrapper({ title, isLoading, onSubmit, children }: { title: s
             </CardContent>
             <CardFooter className="flex justify-end gap-2 border-t pt-4">
                 <Button variant="outline">Cancel</Button>
-                <Button onClick={onSubmit}>Save Record</Button>
+                <Button className="bg-sky-600 hover:bg-sky-700" onClick={onSubmit}>Save Record</Button>
             </CardFooter>
         </Card>
     );

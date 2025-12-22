@@ -1,7 +1,9 @@
 "use client";
 
 import { DataTable } from "@/components/shared/DataTable";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
+import { useRouter } from "next/navigation";
+import { Button } from "@/ui/button";
 
 const columns = [
     { accessorKey: "name", header: "Agent Name" },
@@ -12,5 +14,20 @@ const columns = [
 ];
 
 export default function SalesAgentPage() {
-    return <DataTable title="Sales Agents" columns={columns} data={useMaster("agent", false).data || []} searchKey="name" />;
+    const router = useRouter();
+    return <DataTable
+        title="Sales Agents"
+        columns={columns}
+        tableAction={() => router.push("/master/salesagent/new")}
+        data={useModel("agent", { mode: "table" }).data}
+        searchKey="name"
+        actions={(item) => (
+            <div className="flex items-center gap-2">
+                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                    Delete
+                </Button>
+            </div>
+        )}
+        onRowClick={(item) => router.push(`/master/salesagent/${item.id}`)}
+    />;
 }

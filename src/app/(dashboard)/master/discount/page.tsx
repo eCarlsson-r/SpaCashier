@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 import { Button } from "@/ui/button";
 
@@ -18,7 +18,8 @@ export default function DiscountPage() {
     return <DataTable
         title="Discounts"
         columns={columns}
-        data={useMaster("discount", false).data || []}
+        tableAction={() => router.push("/master/discount/new")}
+        data={useModel("discount", { mode: "table" }).data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">

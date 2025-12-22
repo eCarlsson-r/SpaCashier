@@ -8,17 +8,6 @@ export default async function UnifiedEmployeePage({ params }: { params: Params }
     const isEdit = id !== "new";
 
     return (
-        <div className="h-16 mx-auto">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Employee Details" : "Register New Employee"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing employee configuration" : "Setup a new employee for your Spa"}
-                </p>
-            </header>
-
-            <EmployeeForm employeeId={isEdit ? id : undefined} />
-        </div>
+        <EmployeeForm employeeId={isEdit ? id : undefined} />
     );
 }

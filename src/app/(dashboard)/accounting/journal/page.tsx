@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 
 const columns = [
     { accessorKey: "date", header: "Date" },
@@ -9,5 +9,5 @@ const columns = [
 ];
 
 export default function JournalPage() {
-    return <DataTable title="Journals" columns={columns} data={useMaster("journal", false).data || []} searchKey="description" />;
+    return <DataTable title="Journals" columns={columns} data={useModel("journal", false).data || []} searchKey="description" />;
 }

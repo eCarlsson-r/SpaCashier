@@ -260,6 +260,10 @@ export const RoomSchema = z.object({
   description: z.string().nullable(),
   image: z.string().nullable(),
   branch_id: z.number(),
+  bed: z.array(z.object({
+    name: z.string(),
+    description: z.string().nullable(),
+  })),
 });
 
 export const SalesRecordSchema = z.object({

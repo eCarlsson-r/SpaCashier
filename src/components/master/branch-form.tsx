@@ -99,36 +99,80 @@ export function BranchForm({ branchId }: { branchId?: string }) {
                         />
                     </div>
 
-                    {/* Accounting Accounts - Use Selects here later */}
                     <div className="space-y-6">
-                        <AccountSelect
-                            form={form}
+                        <FormField
+                            control={form.control}
                             name="cash_account"
-                            label="Default Cash Account"
-                            typeFilter="cash"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Default Cash Account</FormLabel>
+                                    <FormControl>
+                                        <AccountSelect
+                                            form={form}
+                                            name="cash_account"
+                                            typeFilter="cash"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
                         {/* Only shows accounts where type === 'income' (Services, Product Sales) */}
-                        <AccountSelect
-                            form={form}
+                        <FormField
+                            control={form.control}
                             name="walkin_account"
-                            label="Walk-in Sales Account"
-                            typeFilter="income"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Walk-in Sales Account</FormLabel>
+                                    <FormControl>
+                                        <AccountSelect
+                                            form={form}
+                                            name="walkin_account"
+                                            typeFilter="income"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
-                        <AccountSelect
-                            form={form}
+
+                        <FormField
+                            control={form.control}
                             name="voucher_purchase_account"
-                            label="Voucher Purchase Account"
-                            typeFilter="income"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Voucher Purchase Account</FormLabel>
+                                    <FormControl>
+                                        <AccountSelect
+                                            form={form}
+                                            name="voucher_purchase_account"
+                                            typeFilter="income"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
                         {/* Only shows accounts where type === 'account-payable' or 'other-current-liabilities' */}
-                        <AccountSelect
-                            form={form}
+                        <FormField
+                            control={form.control}
                             name="voucher_usage_account"
-                            label="Voucher Liability Account"
-                            typeFilter="account-payable"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Voucher Liability Account</FormLabel>
+                                    <FormControl>
+                                        <AccountSelect
+                                            form={form}
+                                            name="voucher_usage_account"
+                                            typeFilter="account-payable"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
                         <ImagePreview

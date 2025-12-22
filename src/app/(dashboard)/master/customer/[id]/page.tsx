@@ -8,17 +8,6 @@ export default async function UnifiedCustomerPage({ params }: { params: Params }
     const isEdit = id !== "new";
 
     return (
-        <div className="h-16 mx-auto">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Customer Details" : "Register New Customer"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing customer configuration" : "Setup a new customer for your Spa"}
-                </p>
-            </header>
-
-            <CustomerForm customerId={isEdit ? id : undefined} />
-        </div>
+        <CustomerForm customerId={isEdit ? id : undefined} />
     );
 }

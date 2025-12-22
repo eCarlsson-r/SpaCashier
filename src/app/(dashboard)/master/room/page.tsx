@@ -1,30 +1,32 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
-import { Card, CardContent } from "@/components/ui/card";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
+import { useRouter } from "next/navigation";
+import { Button } from "@/ui/button";
 
 const roomColumns = [
-    { accessorKey: "name", header: "Name" }
+    { accessorKey: "branch.name", header: "Branch Name" },
+    { accessorKey: "name", header: "Room Name" },
+    { accessorKey: "description", header: "Room Description" }
 ];
 
-const bedColumns = [
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "room_id", header: "Room" },
-];
-
-export default function CashflowPage() {
+export default function RoomPage() {
+    const router = useRouter();
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-                <CardContent>
-                    <DataTable title="Rooms" columns={roomColumns} data={useMaster("room", false).data || []} searchKey="name" />
-                </CardContent>
-            </Card>
-            <Card>
-                <CardContent>
-                    <DataTable title="Beds" columns={bedColumns} data={useMaster("bed", false).data || []} searchKey="name" />
-                </CardContent>
-            </Card>
-        </div>
+        <DataTable
+            title="Rooms"
+            columns={roomColumns}
+            tableAction={() => router.push("/master/room/new")}
+            data={useModel("room", { mode: "table" }).data}
+            searchKey="name"
+            actions={(item) => (
+                <div className="flex items-center gap-2">
+                    <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                        Delete
+                    </Button>
+                </div>
+            )}
+            onRowClick={(item) => router.push(`/master/room/${item.id}`)}
+        />
     );
 }

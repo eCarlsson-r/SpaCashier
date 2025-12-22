@@ -1,31 +1,81 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useMaster } from "@/hooks/useMaster";
-
-const bankColumns = [
-    { accessorKey: "name", header: "Name" }
-];
-
-const walletColumns = [
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "bank_id", header: "Bank" },
-    { accessorKey: "bank_account_number", header: "Bank Account Number" },
-];
+import { Card, CardContent } from "@/components/ui/card";
+import { useModel } from "@/hooks/useModel";
+import { useState } from "react";
+import { EntityModal } from "@/components/shared/EntityModal";
 
 export default function CashflowPage() {
+    const { data: bankData, refetch: refetchBanks } = useModel("bank", { mode: "table" });
+    const { data: walletData, refetch: refetchWallets } = useModel("wallet", { mode: "table" });
+
+    const [activeModal, setActiveModal] = useState<"bank" | "wallet" | null>(null);
+    const [selectedItem, setSelectedItem] = useState<any>(null);
+
+    const handleEdit = (type: "bank" | "wallet", item: any) => {
+        setSelectedItem(item);
+        setActiveModal(type);
+    };
+
+    const handleAddNew = (type: "bank" | "wallet") => {
+        setSelectedItem(null); // Ensure form is empty
+        setActiveModal(type);
+    };
+
+    const bankColumns = [
+        { accessorKey: "id", header: "Code" },
+        { accessorKey: "name", header: "Name" }
+    ];
+
+    const walletColumns = [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "bank_id", header: "Bank" },
+        { accessorKey: "bank_account_number", header: "Bank Account Number" },
+    ];
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+            {/* Bank Table */}
             <Card>
-                <CardContent>
-                    <DataTable title="Banks" columns={bankColumns} data={useMaster("bank", false).data || []} searchKey="name" />
+                <CardContent className="pt-6">
+                    <DataTable
+                        title="Banks"
+                        columns={bankColumns}
+                        data={bankData}
+                        searchKey="name"
+                        // Trigger the modal here
+                        tableAction={() => handleAddNew("bank")}
+                        onRowClick={(row) => handleEdit("bank", row)}
+                    />
                 </CardContent>
             </Card>
+
+            {/* Wallet Table */}
             <Card>
-                <CardContent>
-                    <DataTable title="Wallets" columns={walletColumns} data={useMaster("wallet", false).data || []} searchKey="name" />
+                <CardContent className="pt-6">
+                    <DataTable
+                        title="Wallets"
+                        columns={walletColumns}
+                        data={walletData}
+                        searchKey="name"
+                        // Trigger the modal here
+                        tableAction={() => handleAddNew("wallet")}
+                        onRowClick={(row) => handleEdit("wallet", row)}
+                    />
                 </CardContent>
             </Card>
+
+            {/* Render the Modal */}
+            <EntityModal
+                type={activeModal || "bank"} // fallback to bank
+                isOpen={activeModal !== null}
+                initialData={selectedItem}
+                onClose={() => setActiveModal(null)}
+                onSuccess={() => {
+                    if (activeModal === "bank") refetchBanks();
+                    else refetchWallets();
+                }}
+            />
         </div>
     );
 }

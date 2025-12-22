@@ -8,17 +8,6 @@ export default async function UnifiedTreatmentPage({ params }: { params: Params 
     const isEdit = id !== "new";
 
     return (
-        <div className="h-16 mx-auto">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Treatment Details" : "Register New Treatment"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing treatment configuration" : "Setup a new treatment for your Spa"}
-                </p>
-            </header>
-
-            <TreatmentForm treatmentId={isEdit ? id : undefined} />
-        </div>
+        <TreatmentForm treatmentId={isEdit ? id : undefined} />
     );
 }

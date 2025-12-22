@@ -8,17 +8,6 @@ export default async function UnifiedAccountPage({ params }: { params: Params })
     const isEdit = id !== "new";
 
     return (
-        <div className="h-16 mx-auto">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Account Details" : "Register New Account"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing account configuration" : "Setup a new account for your Spa"}
-                </p>
-            </header>
-
-            <AccountForm accountId={isEdit ? id : undefined} />
-        </div>
+        <AccountForm accountId={isEdit ? id : undefined} />
     );
 }

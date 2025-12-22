@@ -8,17 +8,6 @@ export default async function UnifiedBranchPage({ params }: { params: Params }) 
     const isEdit = id !== "new";
 
     return (
-        <div className="h-16 mx-auto">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">
-                    {isEdit ? "Update Branch Details" : "Register New Branch"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isEdit ? "Modify existing branch configuration" : "Setup a new location for your Spa"}
-                </p>
-            </header>
-
-            <BranchForm branchId={isEdit ? id : undefined} />
-        </div>
+        <BranchForm branchId={isEdit ? id : undefined} />
     );
 }

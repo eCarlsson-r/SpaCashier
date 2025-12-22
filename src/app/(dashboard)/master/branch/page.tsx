@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 
 const columns = [
@@ -17,7 +17,8 @@ export default function BranchPage() {
     return <DataTable
         title="Branch"
         columns={columns}
-        data={useMaster("branch", false).data || []}
+        tableAction={() => router.push("/master/branch/new")}
+        data={useModel("branch", { mode: "table" }).data || []}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">

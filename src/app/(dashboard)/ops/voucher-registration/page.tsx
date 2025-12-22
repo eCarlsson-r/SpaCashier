@@ -24,7 +24,7 @@ export default function VoucherRegistration() {
 
       {/* 2. Print Action (Hidden until data is available) */}
       {voucherData && (
-        <div className="flex flex-col items-center gap-4 bg-slate-50 p-6 rounded-lg border-2 border-dashed">
+        <div className="flex flex-col items-center gap-4 bg-sky-50 p-6 rounded-lg border-2 border-dashed">
           <p className="text-sm font-medium">Voucher Registered Successfully!</p>
           <Button onClick={() => reactToPrintFn()}>
             <Printer className="mr-2 h-4 w-4" /> Print Physical Voucher

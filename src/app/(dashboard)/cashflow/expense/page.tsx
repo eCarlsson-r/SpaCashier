@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 
 const columns = [
     { accessorKey: "date", header: "Date" },
@@ -10,5 +10,5 @@ const columns = [
 ];
 
 export default function ExpensePage() {
-    return <DataTable title="Expenses" columns={columns} data={useMaster("expense", false).data || []} searchKey="description" />;
+    return <DataTable title="Expenses" columns={columns} data={useModel("expense", false).data || []} searchKey="description" />;
 }

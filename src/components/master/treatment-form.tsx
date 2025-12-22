@@ -8,7 +8,7 @@ import { Textarea } from "../ui/textarea";
 import { AccountSelect } from "../shared/AccountSelect";
 import { DatePicker } from "../shared/DatePicker";
 import { AppSelect } from "../shared/AppSelect";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 import { ImagePreview } from "../shared/ImagePreview";
 
 export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
@@ -19,7 +19,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
             id={treatmentId}
             endpoint="/treatment"
             defaultValues={{
-                name: "", price: 0, duration: 0, description: ""
+                id: "", name: "", category_id: "", price: 0, duration: 0, description: "", applicable_days: [], voucher_normal_quantity: 0, voucher_purchase_quantity: 0
             }}
         >
             {(form) => (
@@ -56,7 +56,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 <FormItem>
                                     <FormLabel>Category</FormLabel>
                                     <FormControl>
-                                        <AppSelect options={useMaster("category", false).data || []}
+                                        <AppSelect options={useModel("category", { mode: 'select' }).options ?? []}
                                             value={field.value} onValueChange={field.onChange}
                                         />
                                     </FormControl>
@@ -72,7 +72,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Price</FormLabel>
-                                        <FormControl><Input {...field} type="number" /></FormControl>
+                                        <FormControl><Input {...field} type="number" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -84,7 +84,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Duration</FormLabel>
-                                        <FormControl><Input {...field} type="number" /></FormControl>
+                                        <FormControl><Input {...field} type="number" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -96,7 +96,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Voucher Normal Quantity</FormLabel>
-                                        <FormControl><Input {...field} type="number" /></FormControl>
+                                        <FormControl><Input {...field} type="number" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -108,7 +108,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Voucher Purchase Quantity</FormLabel>
-                                        <FormControl><Input {...field} type="number" /></FormControl>
+                                        <FormControl><Input {...field} type="number" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -121,14 +121,14 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Applicable Days</FormLabel>
-                                    <FormControl><AppSelect options={[
-                                        { value: 1, label: "Monday" },
-                                        { value: 2, label: "Tuesday" },
-                                        { value: 3, label: "Wednesday" },
-                                        { value: 4, label: "Thursday" },
-                                        { value: 5, label: "Friday" },
-                                        { value: 6, label: "Saturday" },
-                                        { value: 0, label: "Sunday" }
+                                    <FormControl><AppSelect multiple={true} options={[
+                                        { value: "1", label: "Monday" },
+                                        { value: "2", label: "Tuesday" },
+                                        { value: "3", label: "Wednesday" },
+                                        { value: "4", label: "Thursday" },
+                                        { value: "5", label: "Friday" },
+                                        { value: "6", label: "Saturday" },
+                                        { value: "0", label: "Sunday" }
                                     ]} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -142,7 +142,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Available from time</FormLabel>
-                                        <FormControl><Input {...field} /></FormControl>
+                                        <FormControl><Input {...field} type="time" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -154,7 +154,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Available until time</FormLabel>
-                                        <FormControl><Input {...field} /></FormControl>
+                                        <FormControl><Input {...field} type="time" value={field.value || ""} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -167,7 +167,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Minimum Quantity</FormLabel>
-                                    <FormControl><Input {...field} /></FormControl>
+                                    <FormControl><Input {...field} type="number" value={field.value || 1} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

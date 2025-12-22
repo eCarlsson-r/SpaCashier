@@ -3,7 +3,7 @@ import { UserNav } from "./UserNav";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen bg-slate-50/50">
+        <div className="min-h-screen bg-sky-50/50">
             {/* Top Header */}
             <header className="sticky top-0 flex-1 z-50 w-full border-b bg-white/95 backdrop-blur">
                 <div className="container flex h-16 mx-auto items-center justify-between">

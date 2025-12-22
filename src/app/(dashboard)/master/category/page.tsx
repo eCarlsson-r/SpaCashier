@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 
 const columns = [
@@ -16,7 +16,8 @@ export default function CategoryPage() {
     return <DataTable
         title="Categories"
         columns={columns}
-        data={useMaster("category", false).data || []}
+        tableAction={() => router.push("/master/category/new")}
+        data={useModel("category", { mode: "table" }).data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">

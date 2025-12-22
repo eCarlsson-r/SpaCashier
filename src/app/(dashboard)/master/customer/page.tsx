@@ -1,7 +1,7 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 
 const columns = [
@@ -16,7 +16,8 @@ export default function CustomerPage() {
     return <DataTable
         title="Customers"
         columns={columns}
-        data={useMaster("customer", false).data || []}
+        tableAction={() => router.push("/master/customer/new")}
+        data={useModel("customer", { mode: "table" }).data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">

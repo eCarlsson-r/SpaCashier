@@ -1,7 +1,9 @@
 "use client";
 
 import { DataTable } from "@/components/shared/DataTable";
-import { useMaster } from "@/hooks/useMaster";
+import { useModel } from "@/hooks/useModel";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const columns = [
     { header: "Intro Key", accessorKey: "intro_key" },
@@ -14,5 +16,20 @@ const columns = [
 ];
 
 export default function BannerPage() {
-    return <DataTable title="Banners" columns={columns} data={useMaster("banner", false).data || []} searchKey="title_key" />;
+    const router = useRouter();
+    return <DataTable
+        title="Banners"
+        columns={columns}
+        tableAction={() => router.push("/master/banner/new")}
+        data={useModel("banner", { mode: "table" }).data}
+        searchKey="title_key"
+        actions={(item) => (
+            <div className="flex items-center gap-2">
+                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                    Delete
+                </Button>
+            </div>
+        )}
+        onRowClick={(item) => router.push(`/master/banner/${item.id}`)}
+    />;
 }

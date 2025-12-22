@@ -1,60 +1,115 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils"; // Ensure this path matches your project structure
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { PopoverContent } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
-
-interface Option {
-    value: string | number;
-    label: string;
-}
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface AppSelectProps {
-    options: Option[];
-    placeholder?: string;
-    value?: string;
+    value: string;
     onValueChange: (value: string) => void;
-    isLoading?: boolean;
+    options: { label: string; value: string | number }[];
+    placeholder?: string;
+    multiple?: boolean;
 }
 
-export function AppSelect({ options, placeholder, value, onValueChange, isLoading }: AppSelectProps) {
-    const [open, setOpen] = useState(false);
+export function AppSelect({
+    value,
+    onValueChange,
+    options,
+    placeholder = "Select option...",
+    multiple = false
+}: AppSelectProps) {
+    const [open, setOpen] = React.useState(false);
+
+    // 1. Pre-parse values for the entire list to avoid repetitive parsing in the loop
+    const selectedValues = React.useMemo(() => {
+        if (!multiple) return [];
+        try {
+            return JSON.parse(value || "[]");
+        } catch {
+            return [];
+        }
+    }, [value, multiple]);
+
     return (
-        <div className="space-y-2 flex flex-col">
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button variant="outline" role="combobox" className="justify-between font-normal">
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> :
-                            value ? options.find((option) => option.value === value)?.label : placeholder}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
-                    <Command>
-                        <CommandInput placeholder="Search..." />
-                        <CommandEmpty>No option found.</CommandEmpty>
-                        <CommandGroup>
-                            {options.map((option) => (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                >
+                    {multiple ? (
+                        selectedValues.length > 0
+                            ? `${selectedValues.length} selected`
+                            : placeholder
+                    ) : (
+                        options?.find((opt) => opt.value?.toString() === value)?.label || placeholder
+                    )}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0">
+                <Command>
+                    <CommandInput placeholder="Search..." />
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup>
+                        {options?.map((option) => {
+                            const optionValue = option?.value?.toString() ?? "";
+                            const currentValue = value?.toString() ?? "";
+
+                            const isSelected = multiple
+                                ? selectedValues.includes(optionValue)
+                                : currentValue === optionValue;
+
+                            return (
                                 <CommandItem
-                                    key={option.value}
+                                    key={optionValue}
+                                    value={optionValue}
                                     onSelect={() => {
-                                        onValueChange(option.value.toString());
+                                        if (multiple) {
+                                            try {
+                                                const values = JSON.parse(value || "[]");
+                                                const nextValues = values.includes(optionValue)
+                                                    ? values.filter((v: string) => v !== optionValue)
+                                                    : [...values, optionValue];
+
+                                                onValueChange(JSON.stringify(nextValues));
+                                            } catch (error) {
+                                                onValueChange(JSON.stringify([optionValue]));
+                                            }
+                                        } else {
+                                            onValueChange(optionValue);
+                                            setOpen(false);
+                                        }
                                     }}
                                 >
-                                    <div className="flex items-center w-full gap-3">
-                                        <span className="text-sm font-medium truncate">
-                                            {option.label}
-                                        </span>
-                                    </div>
+                                    {/* 3. The Check icon uses 'cn' and 'isSelected' */}
+                                    <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            isSelected ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                    {option.label}
                                 </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </Command>
-                </PopoverContent>
-            </Popover>
-        </div>
+                            );
+                        })}
+                    </CommandGroup>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
 }

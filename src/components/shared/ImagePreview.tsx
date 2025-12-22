@@ -31,7 +31,7 @@ export function ImagePreview({ label, name, form, currentImageUrl }: ImagePrevie
     const displayImage = preview || (currentImageUrl ? `http://localhost:8000${currentImageUrl}` : null);
 
     return (
-        <div className="space-y-2 border p-4 rounded-lg bg-slate-50/50">
+        <div className="space-y-2 border p-4 rounded-lg bg-sky-50/50">
             <Label className="text-xs font-semibold uppercase text-muted-foreground">{label}</Label>
 
             <div className="relative h-32 w-full border-2 border-dashed rounded-md overflow-hidden bg-white flex items-center justify-center">
