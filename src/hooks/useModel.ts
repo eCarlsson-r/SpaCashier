@@ -4,6 +4,7 @@ import api from "@/lib/api";
 
 export function useModel(entity: string, options: {
     grade?: string,
+    status?: string,
     branchId?: string,
     mode?: 'table' | 'select'
 } = { mode: 'table' }) {
@@ -11,8 +12,11 @@ export function useModel(entity: string, options: {
     const { data: response, ...rest } = useQuery({
         queryKey: ['master', entity, options.branchId, options.grade],
         queryFn: async () => {
+            let params: any = { branch_id: options.branchId };
+            if (options.grade) params.grade = options.grade;
+            if (options.status) params.status = options.status;
             const res = await api.get(`${entity}`, {
-                params: { branch_id: options.branchId, grade: options.grade }
+                params: params
             });
             // If using Axios, the data is inside res.data
             // If using a custom wrapper, ensure you return the array here

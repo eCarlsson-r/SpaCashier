@@ -38,10 +38,11 @@ export const adminMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
+            { title: "Sessions", href: "/ops/session", permission: "view_sessions" },
+            { title: "Register Voucher", href: "/ops/voucher/register", permission: "manage_vouchers" },
+            { title: "Voucher History", href: "/ops/voucher/history", permission: "manage_vouchers" },
             { title: "Sales", href: "/ops/sales", permission: "manage_sales" },
-            { title: "Register Voucher", href: "/ops/vouchers", permission: "manage_vouchers" },
-            { title: "Sessions", href: "/ops/sessions", permission: "view_sessions" },
-            { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" },
+            { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" }
         ],
     },
 ];
@@ -52,8 +53,7 @@ export const staffMenuConfig = [
         permission: "view_operational",
         items: [
             { title: "Sales", href: "/ops/sales", permission: "manage_sales" },
-            { title: "Register Voucher", href: "/ops/vouchers", permission: "manage_vouchers" },
-            { title: "Sessions", href: "/ops/sessions", permission: "view_sessions" },
+            { title: "Sessions", href: "/ops/session", permission: "view_sessions" },
             { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" },
         ],
     },
@@ -64,10 +64,7 @@ export const therapistMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
-            { title: "Sales", href: "/ops/sales", permission: "manage_sales" },
-            { title: "Register Voucher", href: "/ops/vouchers", permission: "manage_vouchers" },
-            { title: "Sessions", href: "/ops/sessions", permission: "view_sessions" },
-            { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" },
+            { title: "Sessions", href: "/ops/session", permission: "view_sessions" }
         ],
     },
 ];

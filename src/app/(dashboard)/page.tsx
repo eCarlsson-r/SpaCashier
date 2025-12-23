@@ -26,9 +26,9 @@ export default function Dashboard() {
         { label: "Completed Sessions", value: data?.completed_count || 0, icon: CheckCircle, color: "text-emerald-600" },
         { label: "Ongoing Sessions", value: data?.ongoing_count || 0, icon: Activity, color: "text-amber-600" },
         { label: "Vouchers Sold", value: data?.vouchers_sold || 0, icon: Ticket, color: "text-blue-600" },
-        { label: "Total Sales", value: `Rp ${data?.total_sales?.toLocaleString()}`, icon: Users, color: "text-teal-600" },
-        { label: "Hot Treatment", value: data?.hot_treatment.name || "", icon: Ticket, color: "text-blue-600" },
-        { label: "Hot Therapist", value: data?.hot_therapist.name || "", icon: Users, color: "text-blue-600" },
+        { label: "Total Sales", value: `Rp ${data?.total_sales?.toLocaleString("id-ID") || 0}`, icon: Users, color: "text-teal-600" },
+        { label: "Hot Treatment", value: data?.hot_treatment?.name || "", icon: Ticket, color: "text-blue-600" },
+        { label: "Hot Therapist", value: data?.hot_therapist?.name || "", icon: Users, color: "text-blue-600" },
     ];
 
     return (

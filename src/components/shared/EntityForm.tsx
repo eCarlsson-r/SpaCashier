@@ -79,7 +79,6 @@ export function EntityForm({ id, endpoint, schema, defaultValues, children, titl
                 <FormWrapper
                     title={title}
                     isLoading={isEdit && isLoading}
-                    onSubmit={form.handleSubmit((v) => mutation.mutate(v))}
                 >
                     {children(form)}
                 </FormWrapper>

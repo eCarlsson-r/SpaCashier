@@ -1,6 +1,7 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
 import { useModel } from "@/hooks/useModel";
+import { useRouter } from "next/navigation";
 
 const columns = [
     { accessorKey: "date", header: "Date" },
@@ -10,5 +11,13 @@ const columns = [
 ];
 
 export default function ExpensePage() {
-    return <DataTable title="Expenses" columns={columns} data={useModel("expense", false).data || []} searchKey="description" />;
+    const router = useRouter();
+    return <DataTable
+        title="Expenses"
+        columns={columns}
+        data={useModel("expense", { mode: "table" }).data || []}
+        searchKey="description"
+        tableAction={() => router.push("/cashflow/expense/new")}
+        onRowClick={(item) => router.push(`/cashflow/expense/${item.id}`)}
+    />;
 }

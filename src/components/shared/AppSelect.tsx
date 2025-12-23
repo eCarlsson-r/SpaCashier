@@ -21,6 +21,7 @@ interface AppSelectProps {
     options: { label: string; value: string | number }[];
     placeholder?: string;
     multiple?: boolean;
+    disabled?: boolean;
 }
 
 export function AppSelect({
@@ -28,7 +29,8 @@ export function AppSelect({
     onValueChange,
     options,
     placeholder = "Select option...",
-    multiple = false
+    multiple = false,
+    disabled = false
 }: AppSelectProps) {
     const [open, setOpen] = React.useState(false);
 
@@ -77,7 +79,7 @@ export function AppSelect({
                             return (
                                 <CommandItem
                                     key={optionValue}
-                                    value={optionValue}
+                                    value={option.label}
                                     onSelect={() => {
                                         if (multiple) {
                                             try {

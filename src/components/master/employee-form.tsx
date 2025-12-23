@@ -5,7 +5,6 @@ import { EmployeeSchema } from "@/lib/schemas";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { AccountSelect } from "../shared/AccountSelect";
 import { DatePicker } from "../shared/DatePicker";
 import { AppSelect } from "../shared/AppSelect";
 import { useModel } from "@/hooks/useModel";
@@ -97,7 +96,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                     <div className="space-y-6 grid grid-cols-3 gap-5">
                         <FormField
                             control={form.control}
-                            name="branch"
+                            name="branch_id"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Branch</FormLabel>
@@ -109,7 +108,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="grade"
+                            name="grade.grade"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Grade</FormLabel>
@@ -131,7 +130,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Expertise</FormLabel>
-                                    <FormControl><AppSelect options={useModel("treatment", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><AppSelect multiple={true} options={useModel("treatment", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -151,7 +150,17 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             )}
                         />
 
-                        <DatePicker form={form} name="date_of_birth" label="Date of Birth" />
+                        <FormField
+                            control={form.control}
+                            name="date_of_birth"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date of Birth</FormLabel>
+                                    <FormControl><DatePicker form={form} {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}
@@ -246,7 +255,7 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Bank</FormLabel>
-                                    <FormControl><AppSelect options={useModel("bank", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

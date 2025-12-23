@@ -16,7 +16,9 @@ interface BonusData {
     gross_bonus: number;
     trainer_deduction: number;
     savings_deduction: number;
-    pendingValue?: string; // Temporary storage for edits
+    pendingGross?: string;
+    pendingTrainer?: string;
+    pendingSaving?: string;
 }
 
 export const getBonusColumns = (
@@ -46,7 +48,7 @@ export const getBonusColumns = (
                         defaultValue={row.original.gross_bonus}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingValue = e.target.value)}
+                        onChange={(e) => (row.original.pendingGross = e.target.value)}
                     />
                 </div>
             ),
@@ -58,10 +60,10 @@ export const getBonusColumns = (
                 <div className="flex items-center gap-2">
                     <span className="text-muted-foreground text-sm">Rp.</span>
                     <Input
-                        defaultValue={row.original.gross_bonus}
+                        defaultValue={row.original.trainer_deduction}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingValue = e.target.value)}
+                        onChange={(e) => (row.original.pendingTrainer = e.target.value)}
                     />
                 </div>
             ),
@@ -73,10 +75,10 @@ export const getBonusColumns = (
                 <div className="flex items-center gap-2">
                     <span className="text-muted-foreground text-sm">Rp.</span>
                     <Input
-                        defaultValue={row.original.gross_bonus}
+                        defaultValue={row.original.savings_deduction}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingValue = e.target.value)}
+                        onChange={(e) => (row.original.pendingSaving = e.target.value)}
                     />
                 </div>
             ),
@@ -91,7 +93,9 @@ export const getBonusColumns = (
                     className="text-sky-600"
                     disabled={syncingId === row.original.id}
                     onClick={() => onUpdate(row.original.id, {
-                        gross_bonus: row.original.pendingValue || row.original.gross_bonus
+                        gross_bonus: row.original.pendingGross || row.original.gross_bonus,
+                        trainer_deduction: row.original.pendingTrainer || row.original.trainer_deduction,
+                        savings_deduction: row.original.pendingSaving || row.original.savings_deduction,
                     })}
                 >
                     {syncingId === row.original.id ? (

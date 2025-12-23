@@ -49,6 +49,20 @@ export const BedSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   room_id: z.number(),
+  session: z.object({
+    id: z.string(),
+    status: z.string(),
+    start: z.string(),
+    end: z.string(),
+    employee_id: z.number(),
+    employee: z.object({
+      name: z.string(),
+    }),
+    treatment: z.object({
+      name: z.string(),
+      duration: z.number()
+    })
+  })
 });
 
 export const BonuSchema = z.object({
@@ -246,6 +260,12 @@ export const JournalSchema = z.object({
   reference: z.string(),
   date: z.string(),
   description: z.string(),
+  records: z.array(z.object({
+    account_id: z.string(),
+    debit: z.number().default(0),
+    credit: z.number().default(0),
+    description: z.string().nullable(),
+  }))
 });
 
 export const PeriodSchema = z.object({
@@ -259,7 +279,7 @@ export const RoomSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   image: z.string().nullable(),
-  branch_id: z.number(),
+  branch_id: z.string(),
   bed: z.array(z.object({
     name: z.string(),
     description: z.string().nullable(),

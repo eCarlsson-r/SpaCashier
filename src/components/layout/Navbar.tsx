@@ -21,7 +21,7 @@ export function Navbar() {
             <NavigationMenuList>
                 {menu?.map((group) => (
                     <NavigationMenuItem key={group.category}>
-                        <NavigationMenuTrigger className="bg-transparent">{group.category}</NavigationMenuTrigger>
+                        <NavigationMenuTrigger className="bg-transparent text-white">{group.category}</NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                                 {group.items.map((item) => (

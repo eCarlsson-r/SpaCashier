@@ -2,7 +2,7 @@ import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-export function FormWrapper({ title, isLoading, onSubmit, children }: { title: string; isLoading: boolean; onSubmit: () => void; children: React.ReactNode }) {
+export function FormWrapper({ title, isLoading, children }: { title: string; isLoading: boolean; children: React.ReactNode }) {
     return (
         <Card>
             <CardHeader>
@@ -13,7 +13,9 @@ export function FormWrapper({ title, isLoading, onSubmit, children }: { title: s
             </CardContent>
             <CardFooter className="flex justify-end gap-2 border-t pt-4">
                 <Button variant="outline">Cancel</Button>
-                <Button className="bg-sky-600 hover:bg-sky-700" onClick={onSubmit}>Save Record</Button>
+                <Button className="bg-sky-600 hover:bg-sky-700" type="submit" disabled={isLoading}>
+                    {isLoading ? "Saving..." : "Save Changes"}
+                </Button>
             </CardFooter>
         </Card>
     );
