@@ -8,6 +8,7 @@ import {
     CommandGroup,
     CommandInput,
     CommandItem,
+    CommandList,
 } from "@/components/ui/command";
 import {
     Popover,
@@ -63,53 +64,34 @@ export function AppSelect({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
+            <PopoverContent className="p-0 w-[--radix-popover-trigger-width] overflow-hidden">
                 <Command>
                     <CommandInput placeholder="Search..." />
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup>
-                        {options?.map((option) => {
-                            const optionValue = option?.value?.toString() ?? "";
-                            const currentValue = value?.toString() ?? "";
 
-                            const isSelected = multiple
-                                ? selectedValues.includes(optionValue)
-                                : currentValue === optionValue;
-
-                            return (
+                    <CommandList className="max-h-[300px]">
+                        <CommandEmpty>No results found.</CommandEmpty>
+                        <CommandGroup>
+                            {options.map((option: any) => (
                                 <CommandItem
-                                    key={optionValue}
-                                    value={option.label}
+                                    key={option.value}
+                                    value={option.label} // CommandItem searches by this value
                                     onSelect={() => {
-                                        if (multiple) {
-                                            try {
-                                                const values = JSON.parse(value || "[]");
-                                                const nextValues = values.includes(optionValue)
-                                                    ? values.filter((v: string) => v !== optionValue)
-                                                    : [...values, optionValue];
-
-                                                onValueChange(JSON.stringify(nextValues));
-                                            } catch (error) {
-                                                onValueChange(JSON.stringify([optionValue]));
-                                            }
-                                        } else {
-                                            onValueChange(optionValue);
-                                            setOpen(false);
-                                        }
+                                        onValueChange(option.value)
+                                        setOpen(false)
                                     }}
+                                    className="flex items-center justify-between py-3 px-3 cursor-pointer"
                                 >
-                                    {/* 3. The Check icon uses 'cn' and 'isSelected' */}
+                                    <span className="truncate">{option.label}</span>
                                     <Check
                                         className={cn(
-                                            "mr-2 h-4 w-4",
-                                            isSelected ? "opacity-100" : "opacity-0"
+                                            "ml-auto h-4 w-4",
+                                            value === option.value ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {option.label}
                                 </CommandItem>
-                            );
-                        })}
-                    </CommandGroup>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
                 </Command>
             </PopoverContent>
         </Popover>

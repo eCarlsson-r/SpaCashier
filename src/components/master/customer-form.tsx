@@ -61,7 +61,18 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
                                 </FormItem>
                             )}
                         />
-                        <DatePicker form={form} name="date_of_birth" label="Date of Birth" />
+
+                        <FormField
+                            control={form.control}
+                            name="date_of_birth"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date of Birth</FormLabel>
+                                    <FormControl><DatePicker {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
                     <div className="space-y-6">

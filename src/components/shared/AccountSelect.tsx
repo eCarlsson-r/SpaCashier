@@ -2,11 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState } from "react";
 import { AppSelect } from "./AppSelect";
 
-export function AccountSelect({ form, name, typeFilter = "all", placeholder = "Select account..." }: { form: any; name: string; label?: string; typeFilter?: string; placeholder?: string }) {
+export function AccountSelect({ form, name, label, typeFilter = "all", placeholder = "Select account..." }: { form: any; name: string; label?: string; typeFilter?: string; placeholder?: string }) {
     const [open, setOpen] = useState(false);
 
     const { data: accounts = [], isLoading } = useQuery({
@@ -23,13 +23,12 @@ export function AccountSelect({ form, name, typeFilter = "all", placeholder = "S
             name={name}
             render={({ field }) => (
                 <FormItem className="flex flex-col">
+                    <FormLabel>{label}</FormLabel>
                     <FormControl>
                         <AppSelect
-                            {...field} // This spreads value, onChange, onBlur
-                            // Force a re-render by ensuring the value is strictly a string
+                            {...field}
                             value={String(field.value || "")}
                             onValueChange={(val) => {
-                                // Ensure we send the value exactly as the form expects it
                                 field.onChange(val);
                             }}
                             options={accounts.map((acc: any) => ({

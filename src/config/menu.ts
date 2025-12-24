@@ -38,11 +38,11 @@ export const adminMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
-            { title: "Sessions", href: "/ops/session", permission: "view_sessions" },
-            { title: "Register Voucher", href: "/ops/voucher/register", permission: "manage_vouchers" },
-            { title: "Voucher History", href: "/ops/voucher/history", permission: "manage_vouchers" },
-            { title: "Sales", href: "/ops/sales", permission: "manage_sales" },
-            { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" }
+            { title: "Sessions", href: "/operational/session", permission: "view_sessions" },
+            { title: "Register Voucher", href: "/operational/register", permission: "manage_vouchers" },
+            { title: "Voucher", href: "/operational/voucher", permission: "manage_vouchers" },
+            { title: "Sales", href: "/operational/sales", permission: "manage_sales" },
+            { title: "Active Bed List", href: "/operational/beds", permission: "view_beds" }
         ],
     },
 ];
@@ -52,9 +52,9 @@ export const staffMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
-            { title: "Sales", href: "/ops/sales", permission: "manage_sales" },
-            { title: "Sessions", href: "/ops/session", permission: "view_sessions" },
-            { title: "Active Bed List", href: "/ops/beds", permission: "view_beds" },
+            { title: "Sales", href: "/operational/sales", permission: "manage_sales" },
+            { title: "Sessions", href: "/operational/session", permission: "view_sessions" },
+            { title: "Active Bed List", href: "/operational/beds", permission: "view_beds" },
         ],
     },
 ];
@@ -64,7 +64,7 @@ export const therapistMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
-            { title: "Sessions", href: "/ops/session", permission: "view_sessions" }
+            { title: "Sessions", href: "/operational/session", permission: "view_sessions" }
         ],
     },
 ];

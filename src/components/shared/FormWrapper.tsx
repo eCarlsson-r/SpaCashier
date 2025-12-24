@@ -6,7 +6,7 @@ export function FormWrapper({ title, isLoading, children }: { title: string; isL
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{title}</CardTitle>
+                <CardTitle className="text-2xl font-semibold text-gray-700">{title}</CardTitle>
             </CardHeader>
             <CardContent>
                 {isLoading ? <Skeleton className="h-[20px] w-[100px] rounded-full" /> : children}

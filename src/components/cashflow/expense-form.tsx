@@ -15,6 +15,8 @@ import api from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export function ExpenseForm({ expenseId }: { expenseId?: string }) {
+    const { options: walletOptions } = useModel("wallet", { mode: "select" });
+
     const { data: expenseData, isLoading } = useQuery({
         queryKey: ['expense', expenseId],
         queryFn: () => api.get(`/expense/${expenseId}`).then(res => res.data),
@@ -27,8 +29,8 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
             date: new Date(),
             partner_type: "",
             partner: "",
-            items: [{ item_type: "biaya", account_id: "", description: "", amount: 0 }],
-            payments: [{ payment_type: "cash", wallet_id: "", amount: 0, description: "" }],
+            items: [{ type: "biaya", account_id: "", description: "", amount: 0 }],
+            payments: [{ type: "cash", wallet_id: "", amount: 0, description: "" }],
             description: ""
         }
     });
@@ -40,6 +42,14 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                 ...expenseData,
                 // Ensure dates are actual Date objects, not strings
                 date: new Date(expenseData.date),
+                items: expenseData.items?.map((p: any) => ({
+                    ...p,
+                    account_id: p.account_id?.toString()
+                })),
+                payments: expenseData.payments?.map((p: any) => ({
+                    ...p,
+                    wallet_id: p.wallet_id?.toString()
+                }))
             });
         }
     }, [expenseData, methods]);
@@ -162,8 +172,8 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                                                 { label: "Biaya", value: "biaya" },
                                                 { label: "Umum", value: "umum" }
                                             ]}
-                                            value={watch(`items.${index}.item_type`)}
-                                            onValueChange={(val) => setValue(`items.${index}.item_type`, val)}
+                                            value={watch(`items.${index}.type`)}
+                                            onValueChange={(val) => setValue(`items.${index}.type`, val)}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -184,7 +194,7 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem({ item_type: "biaya", account_id: "", amount: 0, description: "" })} className="mt-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem({ type: "biaya", account_id: "", amount: 0, description: "" })} className="mt-2">
                         <Plus className="h-4 w-4 mr-2" /> Add Item
                     </Button>
                 </div>
@@ -210,8 +220,8 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                                                 { label: "Setoran Bank/Transfer", value: "transfer" },
                                                 { label: "Warkat Bank", value: "clearing" }
                                             ]}
-                                            value={watch(`payments.${index}.payment_type`)}
-                                            onValueChange={(val) => setValue(`payments.${index}.payment_type`, val)}
+                                            value={watch(`payments.${index}.type`)}
+                                            onValueChange={(val) => setValue(`payments.${index}.type`, val)}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -219,7 +229,7 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                                             <AppSelect
                                                 value={watch(`payments.${index}.wallet_id`)}
                                                 onValueChange={(val) => setValue(`payments.${index}.wallet_id`, val)}
-                                                options={useModel("wallet", { mode: "select" }).options}
+                                                options={walletOptions}
                                             />
 
                                             <Input type="number" {...register(`payments.${index}.amount`)} placeholder="Nominal" />
@@ -235,7 +245,7 @@ export function ExpenseForm({ expenseId }: { expenseId?: string }) {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendPayment({ payment_type: "cash", wallet_id: "", amount: 0, description: "" })} className="mt-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendPayment({ type: "cash", wallet_id: "", amount: 0, description: "" })} className="mt-2">
                         <Plus className="h-4 w-4 mr-2" /> Add Payment
                     </Button>
                 </div>

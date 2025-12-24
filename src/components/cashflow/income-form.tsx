@@ -15,6 +15,7 @@ import api from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export function IncomeForm({ incomeId }: { incomeId?: string }) {
+    const { options: walletOptions } = useModel("wallet", { mode: "select" });
     const { data: incomeData, isLoading } = useQuery({
         queryKey: ['income', incomeId],
         queryFn: () => api.get(`/income/${incomeId}`).then(res => res.data),
@@ -27,8 +28,8 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
             date: new Date(),
             partner_type: "",
             partner: "",
-            items: [{ item_type: "umum", account_id: "", description: "", amount: 0 }],
-            payments: [{ payment_type: "cash", wallet_id: "", amount: 0, description: "" }],
+            items: [{ type: "umum", account_id: "", description: "", amount: 0 }],
+            payments: [{ type: "cash", wallet_id: "", amount: 0, description: "" }],
             description: ""
         }
     });
@@ -40,6 +41,10 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                 ...incomeData,
                 // Ensure dates are actual Date objects, not strings
                 date: new Date(incomeData.date),
+                payments: incomeData.payments?.map((p: any) => ({
+                    ...p,
+                    wallet_id: p.wallet_id?.toString()
+                }))
             });
         }
     }, [incomeData, methods]);
@@ -163,8 +168,8 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                                                 { label: "Titipan", value: "titipan" },
                                                 { label: "Umum", value: "umum" }
                                             ]}
-                                            value={watch(`items.${index}.item_type`)}
-                                            onValueChange={(val) => setValue(`items.${index}.item_type`, val)}
+                                            value={watch(`items.${index}.type`)}
+                                            onValueChange={(val) => setValue(`items.${index}.type`, val)}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -185,7 +190,7 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem({ item_type: "biaya", account_id: "", amount: 0, description: "" })} className="mt-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendItem({ type: "biaya", account_id: "", amount: 0, description: "" })} className="mt-2">
                         <Plus className="h-4 w-4 mr-2" /> Add Item
                     </Button>
                 </div>
@@ -208,11 +213,12 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                                         <AppSelect
                                             options={[
                                                 { label: "Tunai", value: "cash" },
+                                                { label: "Non Tunai EDC", value: "card" },
                                                 { label: "Setoran Bank/Transfer", value: "transfer" },
                                                 { label: "Warkat Bank", value: "clearing" }
                                             ]}
-                                            value={watch(`payments.${index}.payment_type`)}
-                                            onValueChange={(val) => setValue(`payments.${index}.payment_type`, val)}
+                                            value={watch(`payments.${index}.type`)}
+                                            onValueChange={(val) => setValue(`payments.${index}.type`, val)}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -220,7 +226,7 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                                             <AppSelect
                                                 value={watch(`payments.${index}.wallet_id`)}
                                                 onValueChange={(val) => setValue(`payments.${index}.wallet_id`, val)}
-                                                options={useModel("wallet", { mode: "select" }).options}
+                                                options={walletOptions}
                                             />
 
                                             <Input type="number" {...register(`payments.${index}.amount`)} placeholder="Nominal" />
@@ -236,7 +242,7 @@ export function IncomeForm({ incomeId }: { incomeId?: string }) {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendPayment({ payment_type: "cash", wallet_id: "", amount: 0, description: "" })} className="mt-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendPayment({ type: "cash", wallet_id: "", amount: 0, description: "" })} className="mt-2">
                         <Plus className="h-4 w-4 mr-2" /> Add Payment
                     </Button>
                 </div>

@@ -161,10 +161,21 @@ export function EntityModal({ type, isOpen, onClose, onSuccess, initialData }: E
                             )}
 
                             {type === "wallet" && (
-                                <AccountSelect
-                                    form={form}
+                                <FormField
+                                    control={form.control}
                                     name="account_id"
-                                    label="Account"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Account</FormLabel>
+                                            <FormControl>
+                                                <AccountSelect
+                                                    form={form}
+                                                    name="account_id"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
                             )}
 

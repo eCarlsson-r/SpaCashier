@@ -5,16 +5,22 @@ import api from "@/lib/api";
 export function useModel(entity: string, options: {
     grade?: string,
     status?: string,
+    show?: string,
     branchId?: string,
     mode?: 'table' | 'select'
 } = { mode: 'table' }) {
-
+    let queryKey = [entity];
+    if (options.grade) queryKey.push(options.grade);
+    if (options.status) queryKey.push(options.status);
+    if (options.show) queryKey.push(options.show);
+    if (options.branchId) queryKey.push(options.branchId);
     const { data: response, ...rest } = useQuery({
-        queryKey: ['master', entity, options.branchId, options.grade],
+        queryKey: queryKey,
         queryFn: async () => {
             let params: any = { branch_id: options.branchId };
             if (options.grade) params.grade = options.grade;
             if (options.status) params.status = options.status;
+            if (options.show) params.show = options.show;
             const res = await api.get(`${entity}`, {
                 params: params
             });
