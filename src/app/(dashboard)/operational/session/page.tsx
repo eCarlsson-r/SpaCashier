@@ -103,10 +103,10 @@ export default function SessionPage() {
                 if (original.status === "waiting") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button type="button" variant="ghost" size="sm" onClick={() => startSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => startSession.mutate(original.id)}>
                                 <Play className="h-4 w-4 text-green-500" />
                             </Button>
-                            <Button type="button" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>
@@ -114,10 +114,10 @@ export default function SessionPage() {
                 } else if (original.status === "ongoing") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button type="button" variant="ghost" size="sm" onClick={() => finishSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => finishSession.mutate(original.id)}>
                                 <FlagTriangleRight className="h-4 w-4 text-purple-500" />
                             </Button>
-                            <Button type="button" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>

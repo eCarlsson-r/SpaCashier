@@ -1,60 +1,66 @@
-import { permission } from "process";
-
 export const adminMenuConfig = [
     {
         category: "Accounting",
-        permission: "view_accounting",
-        items: [{ title: "Journal", href: "/accounting/journal", permission: "view_accounting" }],
+        items: [{ title: "Journal", href: "/accounting/journal", description: "Manage journal data" }],
     },
     {
         category: "Cashflow",
-        permission: "view_cashflow",
         items: [
-            { title: "Income", href: "/cashflow/income", permission: "view_cashflow" },
-            { title: "Expense", href: "/cashflow/expense", permission: "view_cashflow" },
-            { title: "Transfer", href: "/cashflow/transfer", permission: "view_cashflow" },
+            { title: "Income", href: "/cashflow/income", description: "Manage income data" },
+            { title: "Expense", href: "/cashflow/expense", description: "Manage expense data" },
+            { title: "Transfer", href: "/cashflow/transfer", description: "Manage transfer data" },
+        ]
+    },
+    {
+        category: "HRD",
+        items: [
+            { title: "Schedule", href: "/hrd/schedule", description: "Manage schedule data" },
+            { title: "Compensation", href: "/hrd/compensation", description: "Manage compensation data" }
         ]
     },
     {
         category: "Master",
-        permission: "manage_master",
         items: [
-            { title: "Account", href: "/master/account", permission: "manage_master" },
-            { title: "Cashflow", href: "/master/cashflow", permission: "manage_master" },
-            { title: "Branch", href: "/master/branch", permission: "manage_master" },
-            { title: "Category", href: "/master/category", permission: "manage_master" },
-            { title: "Customer", href: "/master/customer", permission: "manage_master" },
-            { title: "Employee", href: "/master/employee", permission: "manage_master" },
-            { title: "Treatment", href: "/master/treatment", permission: "manage_master" },
-            { title: "Room", href: "/master/room", permission: "manage_master" },
-            { title: "Bonus", href: "/master/bonus", permission: "manage_master" },
-            { title: "Discount", href: "/master/discount", permission: "manage_master" },
-            { title: "Supplier", href: "/master/supplier", permission: "manage_master" },
-            { title: "Sales Agent", href: "/master/salesagent", permission: "manage_master" },
-            { title: "Banner", href: "/master/banner", permission: "manage_master" }
+            { title: "Account", href: "/master/account", description: "Manage account data" },
+            { title: "Cashflow", href: "/master/cashflow", description: "Manage cashflow data" },
+            { title: "Branch", href: "/master/branch", description: "Manage branch data" },
+            { title: "Category", href: "/master/category", description: "Manage category data" },
+            { title: "Customer", href: "/master/customer", description: "Manage customer data" },
+            { title: "Employee", href: "/master/employee", description: "Manage employee data" },
+            { title: "Treatment", href: "/master/treatment", description: "Manage treatment data" },
+            { title: "Room", href: "/master/room", description: "Manage room data" },
+            { title: "Bonus", href: "/master/bonus", description: "Manage bonus data" },
+            { title: "Discount", href: "/master/discount", description: "Manage discount data" },
+            { title: "Supplier", href: "/master/supplier", description: "Manage supplier data" },
+            { title: "Sales Agent", href: "/master/salesagent", description: "Manage sales agent data" },
+            { title: "Banner", href: "/master/banner", description: "Manage banner data" }
         ],
     },
     {
         category: "Operational",
-        permission: "view_operational",
         items: [
-            { title: "Sessions", href: "/operational/session", permission: "view_sessions" },
-            { title: "Register Voucher", href: "/operational/register", permission: "manage_vouchers" },
-            { title: "Voucher", href: "/operational/voucher", permission: "manage_vouchers" },
-            { title: "Sales", href: "/operational/sales", permission: "manage_sales" },
-            { title: "Active Bed List", href: "/operational/beds", permission: "view_beds" }
+            { title: "Sessions", href: "/operational/session", description: "Manage sessions here" },
+            { title: "Register Voucher", href: "/operational/register", description: "Generate new voucher for sale" },
+            { title: "Voucher", href: "/operational/voucher", description: "Check the status of the voucher" },
+            { title: "Sales", href: "/operational/sales", description: "The sales process starts here" },
+            { title: "Active Bed List", href: "/operational/beds", description: "View empty beds in every room" }
         ],
     },
 ];
 
 export const staffMenuConfig = [
     {
-        category: "Operational",
-        permission: "view_operational",
+        category: "HRD",
         items: [
-            { title: "Sales", href: "/operational/sales", permission: "manage_sales" },
-            { title: "Sessions", href: "/operational/session", permission: "view_sessions" },
-            { title: "Active Bed List", href: "/operational/beds", permission: "view_beds" },
+            { title: "Schedule", href: "/hrd/schedule", description: "Manage schedule data" }
+        ]
+    },
+    {
+        category: "Operational",
+        items: [
+            { title: "Sales", href: "/operational/sales", description: "Manage sales data" },
+            { title: "Sessions", href: "/operational/session", description: "Manage session data" },
+            { title: "Active Bed List", href: "/operational/beds", description: "Manage active bed list data" },
         ],
     },
 ];
@@ -64,7 +70,7 @@ export const therapistMenuConfig = [
         category: "Operational",
         permission: "view_operational",
         items: [
-            { title: "Sessions", href: "/operational/session", permission: "view_sessions" }
+            { title: "Sessions", href: "/operational/session", description: "Manage session data" }
         ],
     },
 ];

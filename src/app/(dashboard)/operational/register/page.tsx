@@ -9,7 +9,7 @@ import { useModel } from "@/hooks/useModel";
 import api from "@/lib/api";
 import { useEffect } from "react";
 import React from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
 

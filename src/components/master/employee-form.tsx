@@ -156,7 +156,13 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Date of Birth</FormLabel>
-                                    <FormControl><DatePicker form={form} {...field} /></FormControl>
+                                    <FormControl>
+                                        <DatePicker
+                                            form={form} name={field.name}
+                                            value={new Date(field.value)}
+                                            onChange={(e) => field.onChange(e)}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

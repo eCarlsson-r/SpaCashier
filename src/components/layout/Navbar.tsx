@@ -33,7 +33,7 @@ export function Navbar() {
                                             >
                                                 <div className="text-sm font-medium leading-none">{item.title}</div>
                                                 <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-                                                    Manage {item.title.toLowerCase()} data
+                                                    {item.description}
                                                 </p>
                                             </Link>
                                         </NavigationMenuLink>

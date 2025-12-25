@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { UserNav } from "@/components/layout/UserNav";
 import { AuthProvider } from "@/hooks/useAuth"; // Your auth context provider
 import { BranchProvider } from "@/providers/branch-provider";
+import { Toaster } from '@/components/ui/sonner';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -19,6 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </header>
                     <main className="container flex-1 py-8">
                         {children}
+                        <Toaster /> {/* Place it here */}
                     </main>
                 </div>
             </BranchProvider>

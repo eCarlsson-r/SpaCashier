@@ -7,6 +7,7 @@ export function useModel(entity: string, options: {
     status?: string,
     show?: string,
     branchId?: string,
+    week?: string,
     mode?: 'table' | 'select'
 } = { mode: 'table' }) {
     let queryKey = [entity];
@@ -14,6 +15,7 @@ export function useModel(entity: string, options: {
     if (options.status) queryKey.push(options.status);
     if (options.show) queryKey.push(options.show);
     if (options.branchId) queryKey.push(options.branchId);
+    if (options.week) queryKey.push(options.week);
     const { data: response, ...rest } = useQuery({
         queryKey: queryKey,
         queryFn: async () => {
@@ -21,6 +23,7 @@ export function useModel(entity: string, options: {
             if (options.grade) params.grade = options.grade;
             if (options.status) params.status = options.status;
             if (options.show) params.show = options.show;
+            if (options.week) params.week = options.week;
             const res = await api.get(`${entity}`, {
                 params: params
             });

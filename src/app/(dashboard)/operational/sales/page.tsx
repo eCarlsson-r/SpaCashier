@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/ui/button";
 import { FilePlus, Banknote, Trash2 } from "lucide-react";
 import { AppSelect } from "@/components/shared/AppSelect";
@@ -8,6 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { useModel } from "@/hooks/useModel";
 import { toast } from "sonner";
+import api from "@/lib/api";
+import { PaymentModal } from "@/components/operational/payment-modal";
+import { SalesCart } from "@/components/operational/sales-cart";
+import { ThermalReceipt } from "@/components/operational/thermal-receipt";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 
 interface SalesItem {
     treatment_id: number | string;
@@ -30,63 +36,171 @@ const TotalRow = ({ label, value, highlight = false }: { label: string, value: n
 export default function SalesForm() {
     const form = useForm();
     const [items, setItems] = useState<SalesItem[]>([]); // The treatment list table
+    const [selectedBranch, setSelectedBranch] = useState<any>(null); // This holds logo, address, etc.
 
+    const banks = useModel("bank", { mode: "select" }).options;
     const branches = useModel("branch", { mode: "select" }).options;
     const customers = useModel("customer", { mode: "select" }).options;
     const employees = useModel("employee", { mode: "select" }).options;
-    const treatments = useModel("treatment", { mode: "table" }).data;
     const treatmentOptions = useModel("treatment", { mode: "select" }).options;
 
-    // Helper to format currency
-    const formatCurr = (val: number) => new Intl.NumberFormat('id-ID').format(val);
+    const [isPayModalOpen, setIsPayModalOpen] = useState(false);
 
     const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const deduction = form.watch("deduction_amount") || 0;
-    const grandTotal = subtotal - deduction;
-    const rounding = Math.ceil(grandTotal / 100) * 100 - grandTotal;
 
-    const handleAddToList = () => {
-        const values = form.getValues();
-        const treatment = treatments.find(t => t.id === values.treatment_id);
+    // Step 1: Subtotal - Discount
+    const netTotal = subtotal - deduction;
 
-        if (!treatment) return toast.error("Please select a treatment first");
+    // Step 2: Apply Rounding (to nearest 100)
+    const grandTotal = Math.ceil(netTotal / 100) * 100;
+    const rounding = grandTotal - netTotal;
 
-        const isVoucher = values.redeemer === "voucher";
-        let dynamicDescription = "";
+    const handleApplyDiscount = async () => {
+        const code = form.getValues("discount_code");
+        const currentBranchId = form.getValues("branch");
 
-        if (isVoucher) {
-            if (!values.voucher_start_code) return toast.error("Voucher Code is required");
+        if (!code) return toast.error("Please enter a discount code");
+        if (!currentBranchId) return toast.error("Please select a branch first");
 
-            // Calculate the range of voucher numbers
-            const qty = parseInt(values.quantity) || 1;
-            const startNum = parseInt(values.voucher_start_code.split(treatment.id)[1]);
+        try {
+            // Replace with your actual Laravel API route
+            const response = await api.get(`/discount/${code}`);
 
-            if (isNaN(startNum)) return toast.error("Starting code must be a number");
+            const { percent, amount, name, expiry_date } = response.data;
+            // type: 'percentage' or 'fixed'
 
-            // Format: "Nomor Voucher 1001 - 1012"
-            const endNum = startNum + qty - 1;
-            dynamicDescription = qty > 1
-                ? `Nomor Voucher ${treatment.id + (("0000000000" + (startNum)).slice(-6))} - ${treatment.id + (("0000000000" + (endNum)).slice(-6))}`
-                : `Nomor Voucher ${treatment.id + (("0000000000" + (startNum)).slice(-6))}`;
-        } else {
-            // Format: "Walk In Aromatherapy Massage 1.5 Jam"
-            dynamicDescription = `Walk In ${treatment.treatment_name}`;
+            if (expiry_date && (new Date() > new Date(expiry_date))) {
+                return toast.error("Discount code expired");
+            }
+            let calculatedDeduction = 0;
+            if (percent > 0 && amount > 0) {
+                calculatedDeduction = (subtotal * percent) / 100 + amount;
+            } else if (percent > 0 && amount == 0) {
+                calculatedDeduction = (subtotal * percent) / 100;
+            } else if (amount > 0 && percent == 0) {
+                calculatedDeduction = amount;
+            }
+
+            form.setValue("deduction_amount", calculatedDeduction);
+            toast.success(`Discount "${name}" applied!`);
+        } catch (error: any) {
+            const message = error.response?.data?.message || "Invalid discount code";
+            toast.error(message);
+            form.setValue("deduction_amount", 0);
         }
+    };
 
-        setItems(prev => [...prev, {
-            treatment_id: treatment.id,
-            treatment_name: treatment.name,
-            description: dynamicDescription,
-            price: Number(treatment.price),
-            quantity: parseInt(values.quantity) || 1,
-            discount: 0,
-            isVoucher: isVoucher,
-            start_code: values.voucher_start_code
-        }]);
+    // Using a useEffect to watch subtotal changes
+    useEffect(() => {
+        const deductionAmount = form.getValues("deduction_amount");
+        const code = form.getValues("discount_code");
 
-        // Clear specific fields after adding
-        form.setValue("treatment_id", "");
-        form.setValue("voucher_start_code", "");
+        // If a discount is already active, you may want to re-run the logic
+        // to update the deduction if the subtotal has grown.
+        if (code && deductionAmount > 0) {
+            handleApplyDiscount();
+        }
+    }, [subtotal]);
+
+    const handleNewSale = () => {
+        // 1. Reset the react-hook-form state to initial values
+        form.reset({
+            branch: "",
+            customer: "",
+            employee: "",
+            treatment_id: "",
+            quantity: 1,
+            redeem_type: "walkin",
+            discount_code: "",
+            deduction_amount: 0, // Crucial: clear the discount value
+            voucher_start_code: ""
+        });
+
+        // 2. Clear the table items
+        setItems([]);
+
+        toast.info("Form cleared for new transaction");
+    };
+
+    const [currentSaleId, setCurrentSaleId] = useState<number | null>(null);
+
+    const handleProcessSale = async (formData: any) => {
+        try {
+            const payload = {
+                branch_id: formData.branch, // Make sure this is a plain object/value
+                customer_id: formData.customer,
+                employee_id: formData.employee,
+                subtotal: subtotal,
+                discount: deduction,
+                rounding: rounding,
+                total: netTotal,
+                records: items
+            };
+
+            // Step 1: Create the Sale and SalesRecords
+            const response = await api.post('/sales', payload);
+
+            const newSaleId = response.data.id;
+            setCurrentSaleId(newSaleId);
+
+            // Step 2: Now that the records exist, open the payment modal
+            setIsPayModalOpen(true);
+
+        } catch (error) {
+            toast.error("Failed to create sales record");
+        }
+    };
+
+    const [paymentsAdded, setPaymentsAdded] = useState<any[]>([]);
+
+    // Calculate these inside your component
+    const totalPaidSoFar = paymentsAdded.reduce((acc, p) => acc + Number(p.amount), 0);
+    // Change is only relevant if the total paid exceeds the grand total
+    const changeAmount = totalPaidSoFar > grandTotal ? totalPaidSoFar - grandTotal : 0;
+
+    const receiptRef = useRef<HTMLDivElement>(null);
+    const handlePrint = useReactToPrint({
+        contentRef: receiptRef,
+        documentTitle: `Receipt_${Date.now()}`,
+    });
+
+    const [isReadyToPrint, setIsReadyToPrint] = useState(false);
+
+    // This waits until the component has actually updated the UI
+    useEffect(() => {
+        if (isReadyToPrint && selectedBranch && currentSaleId) {
+            handlePrint();
+            setIsReadyToPrint(false); // Reset
+            resetEntirePage();
+        }
+    }, [isReadyToPrint, selectedBranch, currentSaleId]);
+
+    const resetEntirePage = () => {
+        setItems([]);
+        setPaymentsAdded([]);
+        // Reset everything
+        setIsPayModalOpen(false);
+        handleNewSale();
+    };
+
+    const handleFinalize = async () => {
+        try {
+            let res = await api.put(`/sales/${currentSaleId}`, {
+                id: currentSaleId,
+                payments: paymentsAdded,
+                change_amount: changeAmount, // Send this for accounting
+                total_paid: totalPaidSoFar
+            });
+
+            if (res.status === 200) {
+                setSelectedBranch(res.data.branch);
+                setCurrentSaleId(res.data.income.journal_reference);
+                setIsReadyToPrint(true); // This triggers the useEffect above
+            }
+        } catch (error) {
+            toast.error("Finalization failed");
+        }
     };
 
     return (
@@ -94,8 +208,8 @@ export default function SalesForm() {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-gray-700">Sales</h1>
                 <div className="flex gap-2">
-                    <Button variant="outline"><FilePlus size={16} /> New</Button>
-                    <Button className="bg-green-600 text-white"><Banknote size={16} /> Pay</Button>
+                    <Button variant="outline" onClick={handleNewSale}><FilePlus size={16} /> New</Button>
+                    <Button className="bg-green-600 text-white" onClick={() => handleProcessSale(form.getValues())}><Banknote size={16} /> Pay</Button>
                 </div>
             </div>
 
@@ -117,15 +231,15 @@ export default function SalesForm() {
                     />
                     <FormField
                         control={form.control}
-                        name="customer_id"
+                        name="customer"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Customer</FormLabel>
+                                <div className="flex gap-2">
+                                    <FormLabel>Customer</FormLabel>
+                                    <Button size="icon" variant="outline">+</Button>
+                                </div>
                                 <FormControl>
-                                    <div className="flex gap-2">
-                                        <AppSelect options={customers} {...field} onValueChange={field.onChange} />
-                                        <Button size="icon" variant="outline">+</Button>
-                                    </div>
+                                    <AppSelect options={customers} {...field} onValueChange={field.onChange} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -137,7 +251,7 @@ export default function SalesForm() {
                 <div className="col-span-4 space-y-4">
                     <FormField
                         control={form.control}
-                        name="employee_id"
+                        name="employee"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Employee</FormLabel>
@@ -156,8 +270,8 @@ export default function SalesForm() {
                                 <FormLabel>Discount Code</FormLabel>
                                 <FormControl>
                                     <div className="flex gap-2">
-                                        <Input placeholder="Enter code" />
-                                        <Button variant="outline">Apply</Button>
+                                        <Input {...form.register("discount_code")} placeholder="Enter code" />
+                                        <Button type="button" variant="outline" onClick={handleApplyDiscount}>Apply</Button>
                                     </div>
                                 </FormControl>
                                 <FormMessage />
@@ -169,137 +283,37 @@ export default function SalesForm() {
                 {/* Right Column: Totals (Read Only) */}
                 <div className="col-span-4 space-y-2 bg-gray-50 p-4 rounded border">
                     <TotalRow label="Subtotal" value={subtotal} />
-                    <TotalRow label="Deduction" value={0} />
-                    <TotalRow label="Rounding" value={0} />
+                    <TotalRow label="Deduction" value={deduction} />
+                    <TotalRow label="Rounding" value={rounding} />
                     <TotalRow label="Grand Total" value={grandTotal} highlight />
                 </div>
             </div>
 
-            {/* Item Adder Row */}
-            <div className="grid grid-cols-12 gap-4 items-end bg-blue-50/50 p-4 rounded border-blue-100">
-                <div className="col-span-4">
-                    <FormField
-                        control={form.control}
-                        name="treatment_id"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-sm font-bold">Treatment</FormLabel>
-                                <FormControl>
-                                    <AppSelect options={treatmentOptions} {...field} onValueChange={field.onChange} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
+            <SalesCart
+                items={items} setItems={setItems}
+                treatmentOptions={treatmentOptions}
+            />
 
-                <div className="col-span-1">
-                    <label className="text-sm font-bold">Quantity</label>
-                    <Input type="number" {...form.register("quantity")} defaultValue={1} />
-                </div>
+            <PaymentModal
+                isOpen={isPayModalOpen}
+                grandTotal={grandTotal}
+                bankOptions={banks}
+                paymentsAdded={paymentsAdded}
+                setPaymentsAdded={setPaymentsAdded}
+                onClose={() => setIsPayModalOpen(false)}
+                onFinalize={handleFinalize}
+            />
 
-                <div className="col-span-2">
-                    <FormField
-                        control={form.control}
-                        name="redeemer"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-sm font-bold">Redeemer</FormLabel>
-                                <FormControl>
-                                    <AppSelect
-                                        options={[
-                                            { label: "Pengunjung Walk-In", value: "walk-in" },
-                                            { label: "Voucher", value: "voucher" }
-                                        ]}
-                                        {...field}
-                                        onValueChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                {/* Conditional Field: Only shows if Redeemer is 'voucher' */}
-                {form.watch("redeemer") === "voucher" && (
-                    <div className="col-span-3">
-                        <FormField
-                            control={form.control}
-                            name="voucher_start_code"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-bold">Voucher Code starts from</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter start code..." {...field} />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                )}
-
-                <div className="col-span-2">
-                    <Button type="button" onClick={handleAddToList} className="w-full">Add to List</Button>
-                </div>
-            </div>
-
-            {/* The Data Table */}
-            <div className="border rounded overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead className="bg-gray-100 border-b">
-                        <tr>
-                            <th className="p-2 text-left">Treatment</th>
-                            <th className="p-2 text-left">Quantity</th>
-                            <th className="p-2 text-left">Price</th>
-                            <th className="p-2 text-left">Discount</th>
-                            <th className="p-2 text-left">Total</th>
-                            <th className="p-2 text-left">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
-                        {items.map((item, index) => (
-                            <tr key={index} className="text-[13px]">
-                                {/* Treatment Code & Name Column */}
-                                <td className="p-2 border border-gray-300 w-1/4">
-                                    <div className="font-semibold uppercase">{item.treatment_id}</div>
-                                    <div>{item.treatment_name}</div>
-                                </td>
-
-                                <td className="p-2 border border-gray-300 text-center w-20">
-                                    {item.quantity}
-                                </td>
-
-                                <td className="p-2 border border-gray-300 text-right">
-                                    Rp. {formatCurr(item.price)},-
-                                </td>
-
-                                <td className="p-2 border border-gray-300 text-right">
-                                    Rp. {formatCurr(item.discount)},-
-                                </td>
-
-                                {/* Total per Line Column */}
-                                <td className="p-2 border border-gray-300 text-right">
-                                    Rp. {formatCurr(item.price * item.quantity)},-
-                                </td>
-
-                                {/* Dynamic Description Column */}
-                                <td className="p-2 border border-gray-300 italic text-gray-600">
-                                    {item.description}
-                                </td>
-
-                                {/* Delete Action */}
-                                <td className="p-2 border border-gray-300 text-center w-12">
-                                    <button
-                                        type="button"
-                                        onClick={() => setItems(items.filter((_, i) => i !== index))}
-                                        className="text-blue-600 hover:text-blue-800 transition-colors"
-                                    >
-                                        <Trash2 size={18} strokeWidth={3} /> {/* Blue X-style icon */}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            {/* The Hidden Receipt Component */}
+            <div className="hidden">
+                <ThermalReceipt
+                    ref={receiptRef}
+                    receiptNumber={currentSaleId}
+                    branch={selectedBranch} // Passes the object with Base64 logo
+                    items={items}
+                    payments={paymentsAdded}
+                    changeAmount={changeAmount}
+                />
             </div>
         </Form >
     );

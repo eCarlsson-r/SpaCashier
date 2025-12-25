@@ -135,7 +135,13 @@ export default function SessionForm({ sessionId }: { sessionId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Register Date</FormLabel>
-                                    <FormControl><DatePicker {...field} /></FormControl>
+                                    <FormControl>
+                                        <DatePicker
+                                            form={methods} name={field.name}
+                                            value={new Date(field.value)}
+                                            onChange={(e) => field.onChange(e)}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

@@ -87,17 +87,17 @@ export default function BedsPage() {
             cell: ({ row: { original } }: { row: { original: BedData } }) => {
                 if (original.session === null || original.session === undefined) {
                     return (
-                        <Button variant="ghost" size="sm" onClick={() => handleAdd(original)}>
+                        <Button className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => handleAdd(original)}>
                             <Plus className="h-4 w-4 text-blue-500" />
                         </Button>
                     );
                 } else if (original.session.status === "waiting") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => startSession.mutate(original.session.id)}>
+                            <Button className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => startSession.mutate(original.session.id)}>
                                 <Play className="h-4 w-4 text-green-500" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => removeSession.mutate(original.session.id)}>
+                            <Button className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.session.id)}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>
@@ -105,10 +105,10 @@ export default function BedsPage() {
                 } else if (original.session.status === "ongoing") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => finishSession.mutate(original.session.id)}>
+                            <Button className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => finishSession.mutate(original.session.id)}>
                                 <FlagTriangleRight className="h-4 w-4 text-purple-500" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => removeSession.mutate(original.session.id)}>
+                            <Button className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.session.id)}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>
