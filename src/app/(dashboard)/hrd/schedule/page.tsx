@@ -2,9 +2,22 @@
 
 import { DataTable } from "@/components/shared/DataTable";
 import { useModel } from "@/hooks/useModel";
-import { useState } from "react";
-import { DatePicker, Modal } from 'antd';
+import { useEffect, useState } from "react";
+import { DatePicker as WeekPicker } from 'antd';
+import { DatePicker } from "@/components/shared/DatePicker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { AppSelect } from "@/components/shared/AppSelect";
+import { Button } from "@/components/ui/button";
+import api from "@/lib/api";
+import { cn } from "@/lib/utils";
+import dayjs from "dayjs";
+import isoWeek from 'dayjs/plugin/isoWeek';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
+dayjs.extend(isoWeek);
 
 const formatShift = (info: any) => {
     if (info.getValue() === "M") return "Morning";
@@ -31,16 +44,59 @@ export default function SchedulePage() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const [activeModal, setActiveModal] = useState("");
-    const [selectedItem, setSelectedItem] = useState(null);
+
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [syncInfo, setSyncInfo] = useState({ last_sync: null, is_online: false });
+
+    const fetchStatus = async () => {
+        const res = await api.get('/attendance/sync-status');
+        setSyncInfo(res.data);
+    };
+
+    useEffect(() => {
+        fetchStatus();
+        // Optional: Refresh status every 60 seconds
+        const interval = setInterval(fetchStatus, 60000);
+        return () => clearInterval(interval);
+    }, []);
+
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        try {
+            await api.post('/attendance/sync');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    const { data: scheduleData, create: createSchedule } = useModel(`attendance/${selectedWeek}`, {
+        mode: "table"
+    });
+
+    const form = useForm({
+        defaultValues: {
+            employee_id: "",
+            start_date: "",
+            end_date: "",
+            shift_id: ""
+        }
+    });
 
     const handleAddNew = () => {
-        setSelectedItem(null); // Ensure form is empty
+        form.reset();
         setActiveModal("schedule");
     };
 
-    const { data: scheduleData } = useModel(`attendance/${selectedWeek}`, {
-        mode: "table"
-    });
+    const onSubmit = async (data: any) => {
+        try {
+            await createSchedule(data);
+            setActiveModal("");
+            form.reset();
+        } catch (error) {
+            // Error is handled globally by api.ts and toast
+        }
+    };
 
     return (
         <div>
@@ -49,26 +105,45 @@ export default function SchedulePage() {
                 columns={columns}
                 data={scheduleData}
                 customFilter={
-                    <div className="flex items-center gap-2" >
-                        <span className="text-sm font-medium">Week</span>
-                        <div className="w-[200px]">
-                            <DatePicker
-                                value={selectedDate}
-                                onChange={(date, dateString) => {
-                                    setSelectedDate(date);
-                                    if (dateString) {
-                                        let weekString = dateString.split("-");
-                                        let year = weekString[0];
-                                        let week = weekString[1].slice(0, -2);
-                                        if (parseInt(week) < 10) {
-                                            week = "0" + week;
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-slate-500">Week</span>
+                            <div className="w-[200px]">
+                                <WeekPicker
+                                    value={selectedDate}
+                                    onChange={(date) => {
+                                        setSelectedDate(date);
+                                        if (date) {
+                                            // Using dayjs format to get Year-WNumber (e.g., 2025-W52)
+                                            const weekStr = dayjs(date).format("YYYY-[W]WW");
+                                            setSelectedWeek(weekStr);
                                         }
-                                        setSelectedWeek(year + "-W" + week || "");
-                                    }
-                                }}
-                                picker="week"
-                            />
+                                    }}
+                                    picker="week"
+                                />
+                            </div>
                         </div>
+
+                        {/* The New Sync Button */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-sky-600 text-sky-600 hover:bg-sky-50 h-8"
+                            onClick={handleSync}
+                            disabled={isSyncing || !selectedWeek}
+                        >
+                            {isSyncing ? "Syncing..." : "Sync Device"}
+                        </Button>
+
+                        {/* The Last Sync Time */}
+                        {/* Visual cue: Green if synced recently, Amber if old */}
+                        <span className={cn(
+                            "w-2 h-2 rounded-full",
+                            syncInfo.is_online ? "bg-green-500" : "bg-amber-500"
+                        )} />
+                        <span className="text-[10px] text-slate-400">
+                            {syncInfo.last_sync ? `Synced ${dayjs(syncInfo.last_sync).fromNow()}` : "Never Synced"}
+                        </span>
                     </div>
                 }
                 tableAction={() => handleAddNew()}
@@ -82,6 +157,88 @@ export default function SchedulePage() {
                     <DialogHeader>
                         <DialogTitle>{activeModal === "schedule" ? "Add New Schedule" : "Edit Schedule"}</DialogTitle>
                     </DialogHeader>
+
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="employee_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Employee ID</FormLabel>
+                                        <FormControl>
+                                            <AppSelect
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                options={useModel("employee", { mode: "select" }).options}
+                                                placeholder="Select Employee"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="start_date"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>From Date</FormLabel>
+                                        <FormControl>
+                                            <DatePicker
+                                                form={form} name={field.name}
+                                                value={new Date(field.value)}
+                                                onChange={(date) => field.onChange(date)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="end_date"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>To Date</FormLabel>
+                                        <FormControl>
+                                            <DatePicker
+                                                form={form} name={field.name}
+                                                value={new Date(field.value)}
+                                                onChange={(date) => field.onChange(date)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="shift_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Shift ID</FormLabel>
+                                        <FormControl>
+                                            <AppSelect
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                options={useModel("shift", { mode: "select" }).options}
+                                                placeholder="Select Shift"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700">
+                                Add Schedule
+                            </Button>
+                        </form>
+                    </Form>
                 </DialogContent>
             </Dialog>
         </div>

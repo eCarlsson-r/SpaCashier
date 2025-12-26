@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
@@ -25,8 +26,11 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             // Session expired: Clear local data and redirect
-            localStorage.removeItem("auth_token");
+            Cookies.remove("auth_token");
             window.location.href = "/login";
+        } else {
+            const message = error.response?.data?.message || error.message || "An unexpected error occurred";
+            toast.error(message);
         }
         return Promise.reject(error);
     }

@@ -1,8 +1,8 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { UserNav } from "@/components/layout/UserNav";
-import { AuthProvider } from "@/hooks/useAuth"; // Your auth context provider
+import { AuthProvider } from "@/hooks/useAuth";
 import { BranchProvider } from "@/providers/branch-provider";
-import { Toaster } from '@/components/ui/sonner';
+import Link from "next/link";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -12,7 +12,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <header className="sticky top-0 z-50 w-full border-b bg-sky-600 shadow-sm">
                         <div className="container flex h-16 mx-auto items-center justify-between">
                             <div className="flex items-center gap-10">
-                                <img src="/images/logo.png" alt="Logo" />
+                                <Link href="/dashboard">
+                                    <img src="/images/logo.png" alt="Logo" />
+                                </Link>
                                 <Navbar />
                             </div>
                             <UserNav />
@@ -20,7 +22,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </header>
                     <main className="container flex-1 py-8">
                         {children}
-                        <Toaster /> {/* Place it here */}
                     </main>
                 </div>
             </BranchProvider>

@@ -272,6 +272,7 @@ export const PeriodSchema = z.object({
   id: z.number(),
   start: z.string(),
   end: z.string(),
+  expense_id: z.number().nullable(),
 });
 
 export const RoomSchema = z.object({

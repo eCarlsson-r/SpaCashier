@@ -28,7 +28,7 @@ export function DatePicker({ form, name, value, onChange }: { form?: any; name?:
                 <Calendar
                     mode="single"
                     selected={dateValue ? new Date(dateValue) : undefined}
-                    onSelect={(date) => (form && name) ? form.setValue(name, date?.toISOString().split('T')[0]) : onChange(date?.toISOString().split('T')[0])}
+                    onSelect={(date) => (form && name) ? form.setValue(name, date?.toDateString()) : onChange(date?.toDateString())}
                     initialFocus
                     // For Birthdays: allow users to navigate years easily
                     captionLayout="dropdown-years"

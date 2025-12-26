@@ -38,6 +38,22 @@ export default function SalesForm() {
     const [items, setItems] = useState<SalesItem[]>([]); // The treatment list table
     const [selectedBranch, setSelectedBranch] = useState<any>(null); // This holds logo, address, etc.
 
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (items.length > 0) {
+                const message = "You have items in the cart. Are you sure you want to leave?";
+                e.preventDefault();
+                e.returnValue = message; // Standard for most browsers
+                return message;
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        // Cleanup the event listener when the component unmounts
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [items]);
+
     const banks = useModel("bank", { mode: "select" }).options;
     const branches = useModel("branch", { mode: "select" }).options;
     const customers = useModel("customer", { mode: "select" }).options;

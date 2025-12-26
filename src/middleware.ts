@@ -1,9 +1,8 @@
-// src/middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function proxy(request: NextRequest) {
-    const token = request.cookies.get('auth_token'); // Or however you store your Laravel Sanctum token
+export function middleware(request: NextRequest) {
+    const token = request.cookies.get('auth_token');
     const isAuthPage = request.nextUrl.pathname.startsWith('/login');
 
     if (!token && !isAuthPage) {
@@ -18,6 +17,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-    // Protect all routes except static files and login
-    matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)'],
+    matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico|manifest.webmanifest|sw.js).*)'],
 };
