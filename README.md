@@ -1,75 +1,76 @@
-# SpaCashier Frontend
+# Carlsson Spa Cashier
 
-A modern, responsive web application for spa and wellness center management. Built with Next.js 15, React, and Tailwind CSS, this frontend serves as the management dashboard and point-of-sale interface for the SpaSystem.
+A modern, responsive management dashboard and Point-of-Sale (POS) interface for Carlsson Spa & Wellness Center. Built with Next.js 15, this application serves as the primary tool for staff and administration.
 
 ## Features
 
-- **Dynamic Dashboard** - Real-time business metrics and sales charts
-- **Operation Management** - Handle spa sessions, room occupancy, and treatment assignments
-- **HR & Attendance** - Manage employee schedules, attendance records, and performance
-- **Financial Tracking** - View income, expenses, and journal records
-- **Master Data Management** - Manage customers, employees, branches, and treatments
-- **Modern UI** - Premium design with dark mode support, glassmorphism, and responsive layouts
+- **Dynamic Dashboard** - Real-time business metrics and sales visualizations.
+- **PWA & Push Notifications** - Fully persistent Progressive Web App with desktop/mobile notifications for attendance and session updates.
+- **Unified CRUD Pattern** - Type-safe data management using the enhanced `useModel` hook and Zod schemas.
+- **Operation Management** - Real-time tracking of spa sessions, room occupancy, and treatment assignments.
+- **HR & Attendance** - Manage employee schedules, attendance records, and performance (integrated with ZKTeco devices).
+- **Financial Tracking** - Comprehensive view of income, expenses, and automated journal records.
+- **Global Search & Master Data** - Centralized management of customers, employees, branches, and treatments.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
+- **State Management**: [TanStack Query v5](https://tanstack.com/query) (React Query)
 - **Styling**: Tailwind CSS
-- **Components**: Radix UI / Shadcn UI
-- **State Management**: React Hooks & Context API
-- **Data Fetching**: Axios / SWR
+- **Components**: [Shadcn UI](https://ui.shadcn.com/) / Radix UI
+- **Notifications**: [Sonner](https://react-hot-toast.com/sonner) (Global rich toasts)
+- **Form Management**: React Hook Form + Zod
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- npm or yarn
-- Running [SpaSystem-API](https://github.com/eCarlsson-r/SpaCashier-API) backend
+- Running [SpaSystem-API](file:///Users/lbert/Herd/SpaSystem-API) backend
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
+1. Install dependencies:
+
    ```bash
    npm install
    ```
-3. Configure environment variables (copy `.env.local.example` to `.env.local`)
-4. Start the development server:
+
+2. Configure environment variables (copy `.env.local.example` to `.env.local`):
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000/api
+   NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_vapid_key
+   ```
+
+3. Start the development server:
    ```bash
    npm run dev
    ```
 
-### Connecting to the API
+## Development Features
 
-The frontend expects the backend API to be running at the URL specified in your `.env.local` file:
+### `useModel` Hook
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
+We use a standardized `useModel` hook for all API interactions. It provides:
+
+- Automatic cache invalidation on mutations.
+- Global error handling with toasts.
+- Full CRUD support (`items`, `create`, `update`, `remove`).
+
+Example:
+
+```tsx
+const { items, create } = useModel("treatment");
 ```
 
-## Project Structure
+## System Integration
 
-```
-spacashier/
-├── src/
-│   ├── app/             # Next.js App Router pages
-│   ├── components/      # Reusable UI components
-│   ├── hooks/           # Custom React hooks
-│   ├── lib/             # Utility functions and shared logic
-│   └── types/           # TypeScript definitions
-├── public/              # Static assets
-└── ...
-```
+This dashboard is part of the **Carlsson Spa Information System**:
 
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- **[SpaSystem-API](file:///Users/lbert/Herd/SpaSystem-API)**: The central business logic and data store.
+- **[SpaBooking](file:///Users/lbert/Herd/SpaBooking)**: The customer-facing booking portal.
 
 ## License
 

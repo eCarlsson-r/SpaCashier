@@ -4,12 +4,13 @@
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon } from "lucide-react";
+import { UseFormReturn } from "react-hook-form";
 
 interface ImagePreviewProps {
     label: string;
     name: string;
-    form: any;
+    form: UseFormReturn;
     currentImageUrl?: string;
 }
 

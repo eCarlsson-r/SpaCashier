@@ -1,13 +1,11 @@
 import { z } from 'zod';
 
 export const AccountSchema = z.object({
-  id: z.number(),
   name: z.string(),
   type: z.string(),
 });
 
 export const AgentSchema = z.object({
-  id: z.number(),
   name: z.string(),
   address: z.string().nullable(),
   city: z.string().nullable(),
@@ -20,7 +18,6 @@ export const AgentSchema = z.object({
 });
 
 export const AttendanceSchema = z.object({
-  id: z.number(),
   employee_id: z.number(),
   date: z.string(),
   shift_id: z.string().default(''),
@@ -34,18 +31,17 @@ export const BankSchema = z.object({
 });
 
 export const BannerSchema = z.object({
-  id: z.number(),
-  image: z.string(),
-  intro_key: z.string(),
-  title_key: z.string(),
-  subtitle_key: z.string(),
-  description_key: z.string(),
-  action_key: z.string(),
+  // Accept FileList (from register), File (from manual change), or String (URL)
+  image: z.any().optional(),
+  introduction: z.string(),
+  title: z.string(),
+  subtitle: z.string(),
+  description: z.string(),
+  action: z.string(),
   action_page: z.string(),
 });
 
 export const BedSchema = z.object({
-  id: z.number(),
   name: z.string(),
   description: z.string().nullable(),
   room_id: z.number(),
@@ -66,7 +62,6 @@ export const BedSchema = z.object({
 });
 
 export const BonuSchema = z.object({
-  id: z.number(),
   treatment_id: z.string(),
   grade: z.string(),
   gross_bonus: z.number(),
@@ -75,7 +70,6 @@ export const BonuSchema = z.object({
 });
 
 export const BranchSchema = z.object({
-  id: z.number(),
   name: z.string(),
   address: z.string(),
   city: z.string(),
@@ -132,7 +126,6 @@ export const CompensationSchema = z.object({
 });
 
 export const CustomerSchema = z.object({
-  id: z.number(),
   name: z.string(),
   gender: z.string(),
   address: z.string().nullable(),
@@ -157,7 +150,6 @@ export const DiscountSchema = z.object({
 });
 
 export const EmployeeSchema = z.object({
-  id: z.number(),
   user_id: z.number().default(0),
   complete_name: z.string(),
   name: z.string(),
@@ -186,7 +178,6 @@ export const EmployeeSchema = z.object({
 });
 
 export const ExpenseItemSchema = z.object({
-  id: z.number(),
   expense_id: z.number(),
   account_id: z.number(),
   amount: z.number(),
@@ -194,7 +185,6 @@ export const ExpenseItemSchema = z.object({
 });
 
 export const ExpensePaymentSchema = z.object({
-  id: z.number(),
   expense_id: z.number(),
   type: z.string(),
   wallet_id: z.number(),
@@ -203,7 +193,6 @@ export const ExpensePaymentSchema = z.object({
 });
 
 export const ExpenseSchema = z.object({
-  id: z.number(),
   journal_reference: z.string(),
   date: z.string(),
   partner_type: z.string(),
@@ -212,7 +201,6 @@ export const ExpenseSchema = z.object({
 });
 
 export const GradeSchema = z.object({
-  id: z.number(),
   employee_id: z.number(),
   grade: z.string(),
   start_date: z.string(),
@@ -220,7 +208,6 @@ export const GradeSchema = z.object({
 });
 
 export const IncomeItemSchema = z.object({
-  id: z.number(),
   income_id: z.number(),
   type: z.string(),
   transaction: z.string(),
@@ -229,7 +216,6 @@ export const IncomeItemSchema = z.object({
 });
 
 export const IncomePaymentSchema = z.object({
-  id: z.number(),
   income_id: z.number(),
   type: z.string(),
   wallet_id: z.number(),
@@ -238,7 +224,6 @@ export const IncomePaymentSchema = z.object({
 });
 
 export const IncomeSchema = z.object({
-  id: z.number(),
   journal_reference: z.string(),
   date: z.string(),
   partner_type: z.string(),
@@ -247,7 +232,6 @@ export const IncomeSchema = z.object({
 });
 
 export const JournalRecordSchema = z.object({
-  id: z.number(),
   journal_id: z.number(),
   account_id: z.string().nullable(),
   debit: z.number().default(0),
@@ -256,7 +240,6 @@ export const JournalRecordSchema = z.object({
 });
 
 export const JournalSchema = z.object({
-  id: z.number(),
   reference: z.string(),
   date: z.string(),
   description: z.string(),
@@ -276,7 +259,6 @@ export const PeriodSchema = z.object({
 });
 
 export const RoomSchema = z.object({
-  id: z.number(),
   name: z.string(),
   description: z.string().nullable(),
   image: z.string().nullable(),
@@ -288,7 +270,6 @@ export const RoomSchema = z.object({
 });
 
 export const SalesRecordSchema = z.object({
-  id: z.number(),
   sales_id: z.number(),
   treatment_id: z.string(),
   quantity: z.number(),
@@ -302,7 +283,6 @@ export const SalesRecordSchema = z.object({
 });
 
 export const SaleSchema = z.object({
-  id: z.number(),
   branch_id: z.string(),
   customer_id: z.number(),
   date: z.string(),
@@ -316,7 +296,6 @@ export const SaleSchema = z.object({
 });
 
 export const SessionSchema = z.object({
-  id: z.number(),
   order_time: z.string().nullable(),
   reserved_time: z.any().nullable(),
   bed_id: z.number(),
@@ -338,7 +317,6 @@ export const ShiftSchema = z.object({
 });
 
 export const SupplierSchema = z.object({
-  id: z.number(),
   name: z.string(),
   contact: z.string(),
   bank: z.string().nullable(),
@@ -349,7 +327,6 @@ export const SupplierSchema = z.object({
 });
 
 export const TransferSchema = z.object({
-  id: z.number(),
   journal_reference: z.string(),
   date: z.string(),
   from_wallet_id: z.string(),
@@ -377,7 +354,6 @@ export const TreatmentSchema = z.object({
 });
 
 export const UserSchema = z.object({
-  id: z.number(),
   username: z.string(),
   password: z.string(),
   type: z.string(),
@@ -396,7 +372,6 @@ export const VoucherSchema = z.object({
 });
 
 export const WalkinSchema = z.object({
-  id: z.number(),
   treatment_id: z.string(),
   customer_id: z.number(),
   sales_id: z.number(),
@@ -404,22 +379,9 @@ export const WalkinSchema = z.object({
 });
 
 export const WalletSchema = z.object({
-  id: z.number(),
   name: z.string(),
   bank_account_number: z.string().nullable(),
   bank_id: z.string().nullable(),
   account_id: z.number(),
   edc_machine: z.boolean().default(false),
-});
-
-export const PersonalAccessTokenSchema = z.object({
-  id: z.number(),
-  tokenable: z.any(),
-  name: z.string(),
-  token: z.string(),
-  abilities: z.string().nullable(),
-  last_used_at: z.string().nullable(),
-  expires_at: z.string().nullable(),
-  created_at: z.string().nullable(),
-  updated_at: z.string().nullable(),
 });

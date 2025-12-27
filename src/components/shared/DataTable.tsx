@@ -8,11 +8,14 @@ import {
     useReactTable,
     getPaginationRowModel,
     getFilteredRowModel,
+    TableOptions,
+    RowSelectionState,
+    OnChangeFn,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
@@ -25,6 +28,9 @@ interface DataTableProps<TData, TValue> {
     onRowClick?: (item: TData) => void;
     highlightId?: string;
     customFilter?: React.ReactNode;
+    rowSelection?: RowSelectionState,
+    setRowSelection?: OnChangeFn<RowSelectionState>;
+    getRowId?: (row: TData) => string;
 }
 
 export function DataTable<TData, TValue>({
@@ -36,18 +42,25 @@ export function DataTable<TData, TValue>({
     actions,
     onRowClick,
     highlightId,
-    customFilter
+    customFilter,
+    rowSelection,
+    setRowSelection,
+    getRowId
 }: DataTableProps<TData, TValue>) {
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
     const table = useReactTable({
         data,
         columns,
+        state: {
+            rowSelection, columnFilters
+        },
+        onRowSelectionChange: setRowSelection, // Bind the setter
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
-        state: { columnFilters }
+        getRowId: getRowId
     });
 
     return (

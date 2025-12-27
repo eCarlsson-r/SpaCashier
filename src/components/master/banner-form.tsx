@@ -14,9 +14,9 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
             id={bannerId}
             endpoint="/banner"
             defaultValues={{
-                intro_key: "", title_key: "",
-                subtitle_key: "", description_key: "",
-                action_key: "", action_page: "", image: ""
+                introduction: "", title: "",
+                subtitle: "", description: "",
+                action: "", action_page: "", image: ""
             }}
         >
             {(form) => (
@@ -25,10 +25,10 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
                     <div className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="intro_key"
+                            name="introduction"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Introduction Translation Key</FormLabel>
+                                    <FormLabel>Introduction</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -37,10 +37,10 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="title_key"
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Title Translation Key</FormLabel>
+                                    <FormLabel>Title</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -49,10 +49,10 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="subtitle_key"
+                            name="subtitle"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Subtitle Translation Key</FormLabel>
+                                    <FormLabel>Subtitle</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -61,10 +61,10 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="description_key"
+                            name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Description Translation Key</FormLabel>
+                                    <FormLabel>Description</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -75,10 +75,10 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
                     <div className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="action_key"
+                            name="action"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Action Translation Key</FormLabel>
+                                    <FormLabel>Action</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>

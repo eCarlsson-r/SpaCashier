@@ -20,40 +20,60 @@ export const BulkSlipTemplate = React.forwardRef(({ selectedRecords, period }: {
                         <p><strong>Periode:</strong> {period.label}</p>
                     </div>
 
-                    {/* ... Table of Additions/Deductions ... */}
                     <table className="w-full mt-4">
                         <thead>
                             <tr>
-                                <th className="py-3 px-2 text-left text-sm font-semibold">Addition</th>
-                                <th className="py-3 px-2 text-right text-sm font-semibold">Amount</th>
+                                {record.summaryHeader.map((header: string, index: number) => (
+                                    <th key={'summaryHeader' + index} className="py-3 px-2 text-left text-sm font-semibold">{header}</th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {record.addition_description.split("<br/>").map((addition: any) => (
-                                <tr key={addition.id} className="border-b border-slate-100 italic text-sm">
-                                    <td className="py-3 px-2">{addition.split(" sebesar ")[0]}</td>
-                                    <td className="py-3 px-2 text-right">{addition.split(" sebesar ")[1]}</td>
-                                </tr>
-                            ))}
+                            <tr className="border-b border-slate-100 italic text-sm">
+                                {record.summaryBody.map((body: string, index: number) => (
+                                    <td key={'summaryBody' + index} className="py-3 px-2">{body}</td>
+                                ))}
+                            </tr>
                         </tbody>
                     </table>
 
                     <table className="w-full mt-4">
                         <thead>
                             <tr>
-                                <th className="py-3 px-2 text-left text-sm font-semibold">Deduction</th>
-                                <th className="py-3 px-2 text-right text-sm font-semibold">Amount</th>
+                                {record.detailHeader.map((header: string, index: number) => (
+                                    <th key={'detailHeader' + index} className="py-3 px-2 text-left text-sm font-semibold">{header}</th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {record.deduction_description.split("<br/>").map((deduction: any) => (
-                                <tr key={deduction.id} className="border-b border-slate-100 italic text-sm">
-                                    <td className="py-3 px-2">{deduction.split(" sebesar ")[0]}</td>
-                                    <td className="py-3 px-2 text-right">{deduction.split(" sebesar ")[1]}</td>
+                            {record.detailBody.map((body: string[], index: number) => (
+                                <tr key={'detailBody' + index} className="border-b border-slate-100 italic text-sm">
+                                    {body.map((item: string, index: number) => (
+                                        <td key={'detailBody' + index} className="py-3 px-2">{item}</td>
+                                    ))}
                                 </tr>
                             ))}
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                {record.detailFooter.map((footer: string, index: number) => (
+                                    <td key={'detailFooter' + index} className="py-3 px-2 text-left text-sm font-semibold">{footer}</td>
+                                ))}
+                            </tr>
+                        </tfoot>
                     </table>
+
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-bold">Nett Payable</h2>
+                        <span className="text-xl font-bold">{record.total}</span>
+                    </div>
+
+                    {record.expenseId && (<div className="flex justify-between items-center mb-6">
+                        <span className="text-sm">Gaji sudah ditransfer ke rekening :</span>
+                        <span className="text-sm">Bank : {record.employee.bank}</span>
+                        <span className="text-sm">Nomor Rekening : {record.employee.bank_account}</span>
+                        <span className="text-sm">Atas nama : {record.employee.complete_name}</span>
+                    </div>)}
                 </div>
             ))}
         </div>
