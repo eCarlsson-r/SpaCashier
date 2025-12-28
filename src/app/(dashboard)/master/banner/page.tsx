@@ -17,15 +17,17 @@ const columns = [
 
 export default function BannerPage() {
     const router = useRouter();
+    const { data, remove } = useModel('banner');
+
     return <DataTable
         title="Banners"
         columns={columns}
         tableAction={() => router.push("/master/banner/new")}
-        data={useModel("banner", { mode: "table" }).data}
+        data={data}
         searchKey="title"
         actions={(item) => (
             <div className="flex items-center gap-2">
-                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                     Delete
                 </Button>
             </div>

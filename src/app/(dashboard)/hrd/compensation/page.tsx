@@ -92,7 +92,7 @@ export default function CompensationPage() {
     const salaryColumns = [
         {
             accessorKey: "employee_id",
-            header: ({ table }: any) => (
+            header: ({ table }) => (
                 <Checkbox
                     checked={
                         table.getIsAllPageRowsSelected() ||
@@ -102,7 +102,7 @@ export default function CompensationPage() {
                     aria-label="Select all"
                 />
             ),
-            cell: ({ row }: any) => (
+            cell: ({ row }) => (
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -113,13 +113,13 @@ export default function CompensationPage() {
             enableHiding: false,
         },
         { accessorKey: "employee.complete_name", header: "Nama Pegawai" },
-        { accessorKey: "base_salary", header: "Gaji Pokok", cell: ({ row }: any) => `Rp. ${formatCurr(row.original.base_salary)},-` },
-        { accessorKey: "therapist_bonus", header: "Bonus Therapist", cell: ({ row }: any) => `Rp. ${formatCurr(row.original.therapist_bonus)},-` },
-        { accessorKey: "addition", header: "Tambahan", cell: ({ row }: any) => `Rp. ${formatCurr(row.original.addition)},-` },
-        { accessorKey: "addition_description", header: "Keterangan", cell: ({ row }: any) => (<div dangerouslySetInnerHTML={{ __html: row.original.addition_description }} />) },
-        { accessorKey: "deduction", header: "Potongan", cell: ({ row }: any) => `Rp. ${formatCurr(row.original.deduction)},-` },
-        { accessorKey: "deduction_description", header: "Keterangan", cell: ({ row }: any) => (<div dangerouslySetInnerHTML={{ __html: row.original.deduction_description }} />) },
-        { accessorKey: "total", header: "Gaji Bersih", cell: ({ row }: any) => `Rp. ${formatCurr(row.original.total)},-` }
+        { accessorKey: "base_salary", header: "Gaji Pokok", cell: ({ row }) => `Rp. ${formatCurr(row.original.base_salary)},-` },
+        { accessorKey: "therapist_bonus", header: "Bonus Therapist", cell: ({ row }) => `Rp. ${formatCurr(row.original.therapist_bonus)},-` },
+        { accessorKey: "addition", header: "Tambahan", cell: ({ row }) => `Rp. ${formatCurr(row.original.addition)},-` },
+        { accessorKey: "addition_description", header: "Keterangan", cell: ({ row }) => (<div dangerouslySetInnerHTML={{ __html: row.original.addition_description }} />) },
+        { accessorKey: "deduction", header: "Potongan", cell: ({ row }) => `Rp. ${formatCurr(row.original.deduction)},-` },
+        { accessorKey: "deduction_description", header: "Keterangan", cell: ({ row }) => (<div dangerouslySetInnerHTML={{ __html: row.original.deduction_description }} />) },
+        { accessorKey: "total", header: "Gaji Bersih", cell: ({ row }) => `Rp. ${formatCurr(row.original.total)},-` }
     ];
 
 
@@ -187,7 +187,7 @@ export default function CompensationPage() {
 
         setIsLoading(true);
         // You MUST include the period ID in your API call
-        api.get(`/compensation?period_id=${selectedPeriod?.id}`)
+        api.get(`/compensation/${selectedPeriod?.id}`)
             .then(res => {
                 setTableData(res.data);
                 setIsLocked(res.data.length > 0 || !!selectedPeriod?.expense_id);
@@ -222,7 +222,7 @@ export default function CompensationPage() {
     const [rowSelection, setRowSelection] = useState({});
     const [isPreparingPDF, setIsPreparingPDF] = useState(false);
 
-    const [printData, setPrintData] = useState<any>([]);
+    const [printData, setPrintData] = useState([]);
     const [printType, setPrintType] = useState<'slip' | 'report'>('slip');
     const printRef = useRef<HTMLDivElement>(null);
 
@@ -247,7 +247,7 @@ export default function CompensationPage() {
         setRowSelection({});
     };
 
-    const onPreparePrintSlips = async (records: any[]) => {
+    const onPreparePrintSlips = async (records: CompensationRecord[]) => {
         setIsPreparingPDF(true);
 
         try {
@@ -260,7 +260,7 @@ export default function CompensationPage() {
                     "employees": JSON.stringify(ids)
                 }
             });
-            const reportDetail: any[] = [];
+            const reportDetail = [];
             tableData.forEach((row) => {
                 if (ids.includes(row.employee_id)) {
                     let addition = [];
@@ -368,7 +368,7 @@ export default function CompensationPage() {
                             let grandBonus = 0;
                             let grandRecruit = 0;
                             let grandTotal = 0;
-                            bonus.forEach(function (treatment: any) {
+                            bonus.forEach(function (treatment) {
                                 detailBody.push([
                                     treatment["treatment_name"],
                                     `Rp. ${formatCurr(parseInt(treatment["treatment_price"]))},-`,
@@ -396,7 +396,7 @@ export default function CompensationPage() {
                             let grandVoucher = 0;
                             let grandRecruit = 0;
                             let grandTotal = 0;
-                            bonus["employee-bonus"].forEach(function (voucher: any) {
+                            bonus["employee-bonus"].forEach(function(voucher) {
                                 detailBody.push([
                                     voucher["treatment-name"],
                                     `Rp. ${formatCurr(parseInt(voucher["voucher-bonus"]))},-`,
@@ -440,7 +440,7 @@ export default function CompensationPage() {
                 handlePrint();
                 setIsPreparingPDF(false);
             }, 300);
-        } catch (error: any) {
+        } catch (error) {
             toast.error(error.message);
             setIsPreparingPDF(false);
         }
@@ -475,7 +475,7 @@ export default function CompensationPage() {
                     </div>
 
                     {/* Period Management (Only for Last Period) */}
-                    {isLastPeriod && !isLocked && (
+                    {isLastPeriod && (
                         <div className="flex gap-2">
                             <Button onClick={() => setActiveModal("period")} variant="outline" size="sm">
                                 <Plus className="w-4 h-4 mr-1" /> Add Period
@@ -534,7 +534,7 @@ export default function CompensationPage() {
                 data={tableData}
                 rowSelection={rowSelection}
                 setRowSelection={setRowSelection}
-                getRowId={(row: any) => row.employee_id?.toString()}
+                getRowId={(row) => row.employee_id?.toString()}
             />
 
             {/* The real-time summary footer */}

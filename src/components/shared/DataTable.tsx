@@ -8,7 +8,6 @@ import {
     useReactTable,
     getPaginationRowModel,
     getFilteredRowModel,
-    TableOptions,
     RowSelectionState,
     OnChangeFn,
 } from "@tanstack/react-table";
@@ -23,6 +22,7 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     tableAction?: () => void;
+    tableActionText?: string;
     searchKey?: string; // e.g., "name" or "customer_code"
     actions?: (item: TData) => React.ReactNode;
     onRowClick?: (item: TData) => void;
@@ -38,6 +38,7 @@ export function DataTable<TData, TValue>({
     columns,
     data,
     tableAction,
+    tableActionText="Add New",
     searchKey,
     actions,
     onRowClick,
@@ -90,7 +91,7 @@ export function DataTable<TData, TValue>({
                     )}
                     {(tableAction && (
                         <Button className="justify-end bg-sky-600 hover:bg-sky-700" onClick={tableAction}>
-                            Add New
+                            {tableActionText}
                         </Button>
                     ))}
                 </div>

@@ -46,6 +46,15 @@ export const adminMenuConfig = [
             { title: "Active Bed List", href: "/operational/beds", description: "View empty beds in every room" }
         ],
     },
+    {
+        category: "Report",
+        items: [
+            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
+            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
+            { title: "Session", href: "/report/session", description: "View session data" },
+            { title: "Sales", href: "/report/sales", description: "View sales data" }
+        ],
+    }
 ];
 
 export const staffMenuConfig = [
@@ -63,6 +72,15 @@ export const staffMenuConfig = [
             { title: "Active Bed List", href: "/operational/beds", description: "Manage active bed list data" },
         ],
     },
+    {
+        category: "Report",
+        items: [
+            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
+            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
+            { title: "Session", href: "/report/session", description: "View session data" },
+            { title: "Sales", href: "/report/sales", description: "View sales data" }
+        ],
+    }
 ];
 
 export const therapistMenuConfig = [
@@ -73,4 +91,12 @@ export const therapistMenuConfig = [
             { title: "Sessions", href: "/operational/session", description: "Manage session data" }
         ],
     },
+    {
+        category: "Report",
+        items: [
+            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
+            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
+            { title: "Session", href: "/report/session", description: "View session data" }
+        ],
+    }
 ];

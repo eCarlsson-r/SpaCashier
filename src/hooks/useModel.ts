@@ -41,23 +41,6 @@ export function useModel<T extends ApiResourceType>(entity: T | string, options:
 
     const tableData = Array.isArray(response) ? response : (response?.data && Array.isArray(response.data) ? response.data : []);
 
-    // Mutation helpers
-    const createMutation = useMutation({
-        mutationFn: (newData: any) => api.post(`${baseEntity}`, newData),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [entity] });
-            toast.success(`${baseEntity} created successfully`);
-        },
-    });
-
-    const updateMutation = useMutation({
-        mutationFn: ({ id, ...data }: { id: string | number } & any) => api.put(`${baseEntity}/${id}`, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [entity] });
-            toast.success(`${baseEntity} updated successfully`);
-        },
-    });
-
     const deleteMutation = useMutation({
         mutationFn: (id: string | number) => api.delete(`${baseEntity}/${id}`),
         onSuccess: () => {
@@ -77,11 +60,7 @@ export function useModel<T extends ApiResourceType>(entity: T | string, options:
     return {
         data: tableData as ApiResourceData<T>[],
         options: selectOptions,
-        create: createMutation.mutateAsync,
-        update: updateMutation.mutateAsync,
         remove: deleteMutation.mutateAsync,
-        isCreating: createMutation.isPending,
-        isUpdating: updateMutation.isPending,
         isDeleting: deleteMutation.isPending,
         ...queryRest
     };

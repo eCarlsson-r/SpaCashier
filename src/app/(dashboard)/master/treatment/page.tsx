@@ -14,15 +14,16 @@ const columns = [
 
 export default function TreatmentPage() {
     const router = useRouter();
+    const { data, remove } = useModel('treatment');
     return <DataTable
         title="Treatments"
         columns={columns}
         tableAction={() => router.push("/master/treatment/new")}
-        data={useModel("treatment", { mode: "table" }).data}
+        data={data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">
-                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                     Delete
                 </Button>
             </div>

@@ -15,15 +15,17 @@ const columns = [
 
 export default function DiscountPage() {
     const router = useRouter();
+    const { data, remove } = useModel('discount');
+
     return <DataTable
         title="Discounts"
         columns={columns}
         tableAction={() => router.push("/master/discount/new")}
-        data={useModel("discount", { mode: "table" }).data}
+        data={data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">
-                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                     Delete
                 </Button>
             </div>

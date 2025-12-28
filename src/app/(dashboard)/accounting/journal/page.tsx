@@ -12,15 +12,16 @@ const columns = [
 
 export default function JournalPage() {
     const router = useRouter();
+    const { data, remove } = useModel('journal');
     return <DataTable
         title="Journals"
         columns={columns}
         tableAction={() => router.push("/accounting/journal/new")}
-        data={useModel("journal", { mode: "table" }).data}
+        data={data}
         searchKey="description"
         actions={(item) => (
             <div className="flex items-center gap-2">
-                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                     Delete
                 </Button>
             </div>

@@ -12,16 +12,17 @@ const roomColumns = [
 
 export default function RoomPage() {
     const router = useRouter();
+    const { data, remove } = useModel('room');
     return (
         <DataTable
             title="Rooms"
             columns={roomColumns}
             tableAction={() => router.push("/master/room/new")}
-            data={useModel("room", { mode: "table" }).data}
+            data={data}
             searchKey="name"
             actions={(item) => (
                 <div className="flex items-center gap-2">
-                    <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                    <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                         Delete
                     </Button>
                 </div>

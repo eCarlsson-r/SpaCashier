@@ -2,6 +2,7 @@
 import { DataTable } from "@/components/shared/DataTable";
 import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const columns = [
     { accessorKey: "date", header: "Date" },
@@ -13,12 +14,20 @@ const columns = [
 
 export default function TransferPage() {
     const router = useRouter();
+    const { data, remove } = useModel('transfer');
     return <DataTable
         title="Transfers"
         columns={columns}
-        data={useModel("transfer", { mode: "table" }).data || []}
+        data={data}
         searchKey="description"
         tableAction={() => router.push("/cashflow/transfer/new")}
+        actions={(item) => (
+            <div className="flex items-center gap-2">
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
+                    Delete
+                </Button>
+            </div>
+        )}
         onRowClick={(item) => router.push(`/cashflow/transfer/${item.id}`)}
     />;
 }

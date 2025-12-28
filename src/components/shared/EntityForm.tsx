@@ -13,8 +13,8 @@ interface EntityFormProps {
     id?: string;
     endpoint: string;
     schema: any;
-    defaultValues: any;
-    children: (form: UseFormReturn<any>) => React.ReactNode;
+    defaultValues: object;
+    children: (form: UseFormReturn<object, unknown, unknown>) => React.ReactNode;
     title: string;
 }
 
@@ -55,18 +55,29 @@ export function EntityForm({ id, endpoint, schema, defaultValues, children, titl
             const formData = new FormData();
 
             Object.entries(values).forEach(([key, value]) => {
-                if (value instanceof FileList && value.length > 0) {
-                    formData.append(key, value[0]); // Append the actual file
-                } else if (value !== null && value !== undefined) {
-                    formData.append(key, value as string);
+                // Handle standard React Hook Form file registration
+                if (value instanceof FileList) {
+                    if (value.length > 0) {
+                    formData.append(key, value[0]); // Extract the actual file
                 }
-            });
+            } 
+            // Handle manual file sets (from ImagePreview)
+            else if (value instanceof File) {
+                formData.append(key, value);
+            }
+            // Handle all other fields
+            else if (value !== null && value !== undefined) {
+                formData.append(key, value as string);
+            }
+        });
 
-            if (isEdit) formData.append("_method", "PUT");
-            return isEdit
-                ? api.put(`${endpoint}/${id}`, formData)
-                : api.post(endpoint, formData);
-        },
+        // Laravel Method Spoofing
+        if (isEdit) formData.append("_method", "PUT");
+
+        return api.post(isEdit ? `${endpoint}/${id}` : endpoint, formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+    },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [endpoint] });
             // Redirect or show success toast

@@ -2,6 +2,7 @@
 import { DataTable } from "@/components/shared/DataTable";
 import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button"; 
 
 const columns = [
     { accessorKey: "date", header: "Date" },
@@ -12,12 +13,20 @@ const columns = [
 
 export default function IncomePage() {
     const router = useRouter();
+    const { data, remove } = useModel('income');
     return <DataTable
         title="Income"
         columns={columns}
-        data={useModel("income", { mode: "table" }).data || []}
+        data={data}
         searchKey="description"
         tableAction={() => router.push("/cashflow/income/new")}
+        actions={(item) => (
+            <div className="flex items-center gap-2">
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
+                    Delete
+                </Button>
+            </div>
+        )}
         onRowClick={(item) => router.push(`/cashflow/income/${item.id}`)}
     />;
 }

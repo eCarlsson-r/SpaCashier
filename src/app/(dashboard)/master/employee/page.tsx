@@ -14,15 +14,17 @@ const columns = [
 
 export default function EmployeesPage() {
     const router = useRouter();
+    const { data, remove } = useModel('employee');
+
     return <DataTable
         title="Employees"
         columns={columns}
         tableAction={() => router.push("/master/employee/new")}
-        data={useModel("employee", { mode: "table" }).data}
+        data={data}
         searchKey="name"
         actions={(item) => (
             <div className="flex items-center gap-2">
-                <Button variant="destructive" size="sm" onClick={() => console.log(item)}>
+                <Button variant="destructive" size="sm" onClick={() => remove(item.id?.toString() || '')}>
                     Delete
                 </Button>
             </div>
