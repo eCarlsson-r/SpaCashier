@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import api from "@/lib/api";
 import { PaymentModal } from "@/components/operational/payment-modal";
 import { SalesCart } from "@/components/operational/sales-cart";
-import { ThermalReceipt } from "@/components/operational/thermal-receipt";
+import { ThermalReceipt } from "@/components/print/thermal-receipt";
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
 

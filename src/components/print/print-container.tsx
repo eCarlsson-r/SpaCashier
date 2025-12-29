@@ -1,5 +1,5 @@
 import React from "react";
-import { PayrollReportTemplate } from "./report-template";
+import { PayrollReportTemplate } from "./payroll-report-template";
 import { BulkSlipTemplate } from "./slip-template";
 
 interface PrintContainerProps {
@@ -21,3 +21,4 @@ export const PrintContainer = React.forwardRef(({ data, period, type }: PrintCon
         </div>
     );
 });
+PrintContainer.displayName = "Print Container";

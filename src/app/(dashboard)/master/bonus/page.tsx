@@ -112,7 +112,9 @@ export default function BonusPage() {
     const [selectedGrade, setSelectedGrade] = useState("A");
 
     const { data: bonusData } = useModel("bonus", {
-        grade: selectedGrade,
+        params: {
+            grade: selectedGrade
+        },
         mode: "table"
     });
 

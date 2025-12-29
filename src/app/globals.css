@@ -133,4 +133,12 @@
   .hidden-print {
     display: block !important;
   }
+
+  /* Default Page */
+  @page { size: portrait; margin: 10mm; }
+
+  /* Class to force landscape when the detailed variant is selected */
+  .landscape-print {
+    @page { size: landscape; }
+  }
 }

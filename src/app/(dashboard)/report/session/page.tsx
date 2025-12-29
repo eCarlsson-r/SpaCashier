@@ -50,6 +50,16 @@ export default function SessionReport() {
         }
     }   
 
+    const clear = () => {
+        setSelectedStartDate(new Date().toDateString());
+        setSelectedEndDate(new Date().toDateString());
+        setSelectedStatus(["completed"]);
+        setSelectedOrder("");
+        setSelectedFromEmployee("");
+        setSelectedToEmployee("");
+        setReportData([]);
+    }
+
     return (
         <div>
             <DataTable

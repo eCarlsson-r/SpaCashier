@@ -71,7 +71,7 @@ export default function SessionForm({ sessionId }: { sessionId?: string }) {
     };
 
     // 1. Fetch Rooms (which include their nested beds)
-    const { data: rooms } = useModel("room", { mode: 'select', show: 'empty' });
+    const { data: rooms } = useModel("room", { mode: 'select', params: {show: 'empty'} });
 
     // 2. Watch which Room ID is currently selected
     const selectedRoomId = watch("room_id");

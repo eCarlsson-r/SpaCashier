@@ -25,7 +25,9 @@ export default function SessionPage() {
     const [selectedStatus, setSelectedStatus] = useState(["waiting", "ongoing"]);
 
     const { data: sessionData } = useModel("session", {
-        status: JSON.stringify(selectedStatus),
+        params: {
+            status: JSON.stringify(selectedStatus)
+        },
         mode: "table"
     });
 

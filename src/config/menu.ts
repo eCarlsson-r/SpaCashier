@@ -52,7 +52,9 @@ export const adminMenuConfig = [
             { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
             { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
             { title: "Session", href: "/report/session", description: "View session data" },
-            { title: "Sales", href: "/report/sales", description: "View sales data" }
+            { title: "Sales", href: "/report/sales", description: "View sales data" },
+            { title: "Income", href: "/report/income", description: "View income data" },
+            { title: "Expense", href: "/report/expense", description: "View expense data" },
         ],
     }
 ];

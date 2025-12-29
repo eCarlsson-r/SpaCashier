@@ -86,7 +86,13 @@ export function EmployeeForm({ employeeId }: { employeeId?: string }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Recruiter</FormLabel>
-                                    <FormControl><AppSelect options={useModel("employee", { mode: 'select' }).options || []} value={field.value} onValueChange={field.onChange} /></FormControl>
+                                    <FormControl>
+                                        <AppSelect 
+                                            options={useModel("employee", { mode: 'select' }).options || []} 
+                                            value={field.value} 
+                                            onValueChange={field.onChange} 
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
