@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 
 const columns = [
     { accessorKey: "employee.name", header: "Employee Name" },
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "shift_id", header: "Shift" },
     { accessorKey: "clock_in", header: "Clock In" },
     { accessorKey: "clock_out", header: "Clock Out" },

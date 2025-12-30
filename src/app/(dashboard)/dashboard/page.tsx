@@ -11,10 +11,12 @@ import { AppSelect } from "@/components/shared/AppSelect";
 import { useState } from "react";
 import { DatePicker } from "@/components/shared/DatePicker";
 import colors from 'tailwindcss/colors';
+import { useModel } from "@/hooks/useModel";
 
 export default function Dashboard() {
     const [profitYear, setProfitYear] = useState("2022");
     const [jobDate, setJobDate] = useState(new Date());
+    const [payrollPeriod, setPayrollPeriod] = useState("");
     const profitYears = [
         { value: "2019", label: "2019" },
         { value: "2020", label: "2020" },
@@ -38,8 +40,16 @@ export default function Dashboard() {
     });
     // Helper to format currency
     const formatCurr = (val: number) => new Intl.NumberFormat('id-ID').format(val);
+    const periods = useModel("period", {"mode":"select"}).options
 
-    const stats = [
+    const stats = (user?.type == "THERAPIST") ? [
+        { label: "Completed Sessions", value: data?.completed_sessions || 0, icon: CheckCircle, color: "text-emerald-600" },
+        { label: "Ongoing Sessions", value: data?.active_sessions || 0, icon: Activity, color: "text-amber-600" },
+        { label: "Today Commision", value: `Rp. ${formatCurr(data?.today_commision) || 0},-`, icon: Ticket, color: "text-blue-600" },
+        { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Ticket, color: "text-blue-600" },
+        { label: "Current Commision", value: `Rp. ${formatCurr(data?.current_commision) || 0},-`, icon: Users, color: "text-teal-600" },
+        { label: "Current Deduction", value: `Rp. ${formatCurr(data?.current_deduction) || 0},-`, icon: Users, color: "text-teal-600" }
+    ] : [
         { label: "Completed Sessions", value: data?.completed_sessions || 0, icon: CheckCircle, color: "text-emerald-600" },
         { label: "Ongoing Sessions", value: data?.active_sessions || 0, icon: Activity, color: "text-amber-600" },
         { label: "Vouchers Sold", value: data?.vouchers_sold || 0, icon: Ticket, color: "text-blue-600" },
@@ -47,7 +57,7 @@ export default function Dashboard() {
         { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Ticket, color: "text-blue-600" },
         { label: "Hot Therapist", value: data?.hot_therapist || "", icon: Users, color: "text-blue-600" },
     ];
-
+    
     let chartData: any[] = [];
     if (data?.monthly_income && data?.monthly_expense) {
         const hashmap: Record<string, any> = {};
@@ -67,7 +77,26 @@ export default function Dashboard() {
                 hashmap[item.month] = item;
             }
         }
+        // Convert the hashmap values back to an array and sort by id
+        chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
+    } else if (data?.monthly_commision && data?.monthly_attendance) {
+        const hashmap: Record<string, any> = {};
 
+        // Process the first array: add each object to the hashmap using its id as the key
+        for (const item of data.monthly_commision) {
+            hashmap[item.month] = item;
+        }
+
+        // Process the second array: check if the id exists, then merge or add the new item
+        for (const item of data.monthly_attendance) {
+            if (hashmap[item.month]) {
+                // If the id exists, merge the properties, giving precedence to arr2 properties
+                hashmap[item.month] = { ...hashmap[item.month], ...item };
+            } else {
+                // If the id doesn't exist, add it as a new entry
+                hashmap[item.month] = item;
+            }
+        }
         // Convert the hashmap values back to an array and sort by id
         chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
     }
@@ -89,7 +118,7 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <Card className="mt-6">
+                <Card>
                     <CardHeader>
                         <div className="grid grid-cols-2">
                             <CardTitle>Monthly Revenue Trend</CardTitle>
@@ -101,7 +130,7 @@ export default function Dashboard() {
                         </div>
                     </CardHeader>
                     <CardContent className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" minWidth="0" minHeight="0" height="100%">
                             <BarChart barGap={0} data={chartData}>
                                 <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rp${value/1000}k`} />
@@ -113,7 +142,24 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
                 {/* Today's Attendance & Performance */}
-                <Card>
+                {user?.type == "THERAPIST" ? (
+                    <Card>
+                        <CardHeader>
+                            <div className="grid grid-cols-2">
+                                <CardTitle>Payroll Slip</CardTitle>
+                                <AppSelect 
+                                    value={payrollPeriod}
+                                    options={periods}
+                                    onValueChange={(e) => setPayrollPeriod(e)}
+                                />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            To be implemented...
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <Card>
                     <CardHeader>
                         <div className="grid grid-cols-2">
                             <CardTitle>Staff Attendance & Performance</CardTitle>
@@ -139,6 +185,7 @@ export default function Dashboard() {
                         />
                     </CardContent>
                 </Card>
+                )}
             </div>
         </>
     );

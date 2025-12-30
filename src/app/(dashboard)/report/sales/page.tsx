@@ -13,13 +13,13 @@ import { SalesReportTemplate } from "@/components/print/sales-report-template";
 import { useReactToPrint } from "react-to-print";
 
 const columns = [
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "income.journal_reference", header: "Reference" },
     { accessorKey: "customer.name", header: "Customer Name" },
     { accessorKey: "subtotal", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.subtotal)},-` },
     { accessorKey: "discount", header: "Discount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.discount)},-` },
     { accessorKey: "total", header: "Total", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.total)},-` },
-    { accessorKey: "records[0].description", header: "Description" },
+    { accessorKey: "description", header: "Description", cell: ({row}) => row.original.records[0].description },
 ];
 
 export default function SalesReport() {
@@ -85,6 +85,7 @@ export default function SalesReport() {
         setSelectedEndDate(new Date().toDateString());
         setSelectedBranch((activeUser?.employee)?activeUser.employee.branch_id.toString():"");
         setReportData([]);
+        setPrintData([]);
     }
 
     return (

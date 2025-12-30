@@ -1,7 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/shared/DataTable";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { DatePicker } from "@/components/shared/DatePicker";
 import { AppSelect } from "@/components/shared/AppSelect";
 import api from "@/lib/api";
@@ -9,57 +9,37 @@ import { Label } from "@/components/ui/label";
 import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
-import { CashflowReportTemplate } from "@/components/print/cashflow-report-template";
+import { LedgerTemplate } from "@/components/print/ledger-template";
 
-export default function IncomeReport() {
-    const wallets = useModel(`wallet`, {mode: "select"}).options;
+export default function Ledger() {
+    const accounts = useModel(`account`, {mode: "select"}).options;
     const [reportData, setReportData] = useState([]);
     const [selectedStartDate, setSelectedStartDate] = useState<Date|undefined>(new Date());
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
-    const [selectedVariant, setSelectedVariant] = useState<string>("");
     const [selectedAccount, setSelectedAccount] = useState<string>("");
 
-    const columns = useMemo(() => {
-        const baseColumns = [
-            { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
-            { accessorKey: "journal_reference", header: "Reference" },
-            { accessorKey: "partner", header: "Partner" },
-            { accessorKey: "description", header: "Description" },
-        ];
-
-        // Variant 2 adds extra columns (e.g., Tax and Service)
-        if (selectedVariant === "2") {
-            return [
-                ...baseColumns,
-                { accessorKey: "pay_type", header: "Payment Type" },
-                { accessorKey: "pay_tool", header: "Payment Tool" },
-                { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
-            ];
-  }
-
-        // Variant 1 (Default 5 columns)
-        return [
-            ...baseColumns,
-            { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
-        ];
-    }, [selectedVariant]);
+    const columns = [
+        { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+        { accessorKey: "reference", header: "Reference" },
+        { accessorKey: "description", header: "Description" },
+        { accessorKey: "debit", header: "Debit", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.debit)},-`  },
+        { accessorKey: "credit", header: "Credit", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.credit)},-`  },
+    ];
 
     const [printData, setPrintData] = useState([]);
     const printRef = useRef<HTMLDivElement>(null);
 
     const handlePrint = useReactToPrint({
         contentRef: printRef,
-        documentTitle: "Income Report",
+        documentTitle: "Ledger",
     });
     
     const generateReport = () => {
         if (selectedStartDate && selectedEndDate) {
-            api.get(`/income`, {
+            api.get(`/account/${selectedAccount}`, {
                 params: {
-                    variant: selectedVariant,
                     start: selectedStartDate.toDateString(),
-                    end: selectedEndDate.toDateString(),
-                    account: selectedAccount
+                    end: selectedEndDate.toDateString()
                 }
             })
                 .then((response) => {
@@ -74,7 +54,6 @@ export default function IncomeReport() {
     const clear = () => {
         setSelectedStartDate(new Date());
         setSelectedEndDate(new Date());
-        setSelectedVariant("1");
         setSelectedAccount("");
         setReportData([]);
         setPrintData([]);
@@ -93,22 +72,11 @@ export default function IncomeReport() {
     return (
         <div>
             <DataTable
-                title="Income Report"
+                title="Ledger"
                 columns={columns}
                 data={reportData}
                 customFilter={
-                    <div className={`grid grid-cols-5 gap-3`}>
-                        <div className="mt-2">
-                            <Label>Variant</Label>
-                            <AppSelect
-                                options={[
-                                    { value: "1", label: "Variant 1" },
-                                    { value: "2", label: "Variant 2" },
-                                ]}
-                                value={selectedVariant}
-                                onValueChange={(val) => setSelectedVariant(val)}
-                            />
-                        </div>
+                    <div className={`grid grid-cols-4 gap-3`}>
                         <div className="mt-2">
                             <Label>Start Date</Label>
                             <DatePicker
@@ -128,7 +96,7 @@ export default function IncomeReport() {
                             <AppSelect
                                 value={selectedAccount}
                                 onValueChange={(value) => setSelectedAccount(value)}
-                                options={wallets}
+                                options={accounts}
                             />
                         </div>
                         <div className="grid grid-cols-2 mt-2 gap-2">
@@ -143,12 +111,10 @@ export default function IncomeReport() {
 
             <div className="hidden">
                 <div ref={printRef} className="print:block p-3 bg-white">
-                    <CashflowReportTemplate 
-                        reportTitle="Income Report"
-                        variant={selectedVariant}
+                    <LedgerTemplate 
                         startDate={selectedStartDate?.toLocaleDateString("id-ID")||""} 
                         endDate={selectedEndDate?.toLocaleDateString("id-ID")||""} 
-                        account={wallets.find(opt => opt.value === selectedAccount)?.label || ""} 
+                        account={selectedAccount} 
                         data={printData} 
                     />
                 </div>

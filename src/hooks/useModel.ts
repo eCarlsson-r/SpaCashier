@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { ApiResourceType, ApiResourceData } from "@/lib/api-resources";
+import { useRealtimeSync } from "./useRealtimeSync";
 
 export function useModel<T extends ApiResourceType>(entity: T | string, options: {
     params?: object,
@@ -12,6 +13,14 @@ export function useModel<T extends ApiResourceType>(entity: T | string, options:
     const baseEntity = entity.split('/')[0];
 
     const queryKey = [entity, options.params].filter(Boolean);
+
+    useRealtimeSync({
+        // When Reverb says "treatments" updated, invalidate this specific queryKey
+        [baseEntity]: () => {
+            console.log(`Realtime: Refreshing ${queryKey}`);
+            queryClient.invalidateQueries({ queryKey });
+        }
+    });
 
     const { data: response, ...queryRest } = useQuery({
         queryKey: queryKey,

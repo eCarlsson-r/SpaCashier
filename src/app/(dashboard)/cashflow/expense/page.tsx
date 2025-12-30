@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 const columns = [
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "journal_reference", header: "Reference" },
     { accessorKey: "partner", header: "Cash Partner" },
     { accessorKey: "description", header: "Description" }

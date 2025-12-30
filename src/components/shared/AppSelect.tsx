@@ -45,6 +45,18 @@ export function AppSelect({
         }
     }, [value, multiple]);
 
+    const handleSelect = (optionValue: string) => {
+        if (multiple) {
+            const newValues = selectedValues.includes(optionValue)
+                ? selectedValues.filter((v: string) => v !== optionValue)
+                : [...selectedValues, optionValue];
+            onValueChange(JSON.stringify(newValues));
+        } else {
+            onValueChange(optionValue);
+            setOpen(false);
+        }
+    };
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -71,25 +83,28 @@ export function AppSelect({
                     <CommandList className="max-h-[300px]">
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup>
-                            {options.map((option: any) => (
-                                <CommandItem
-                                    key={option.value}
-                                    value={option.label} // CommandItem searches by this value
-                                    onSelect={() => {
-                                        onValueChange(option.value)
-                                        setOpen(false)
-                                    }}
-                                    className="flex items-center justify-between py-3 px-3 cursor-pointer"
-                                >
-                                    <span className="truncate">{option.label}</span>
-                                    <Check
-                                        className={cn(
-                                            "ml-auto h-4 w-4",
-                                            value === option.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                </CommandItem>
-                            ))}
+                            {options.map((option: any) => {
+                                const isSelected = multiple 
+                                    ? selectedValues.includes(option.value.toString())
+                                    : value === option.value.toString();
+                                    
+                                return (
+                                    <CommandItem
+                                        key={option.value}
+                                        value={option.label}
+                                        onSelect={() => handleSelect(option.value.toString())}
+                                        className="flex items-center justify-between py-3 px-3 cursor-pointer"
+                                    >
+                                        <span className="truncate">{option.label}</span>
+                                        <Check
+                                            className={cn(
+                                                "ml-auto h-4 w-4",
+                                                isSelected ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
+                                    </CommandItem>
+                                );
+                            })}
                         </CommandGroup>
                     </CommandList>
                 </Command>

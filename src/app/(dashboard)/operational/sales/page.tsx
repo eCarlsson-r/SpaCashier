@@ -14,6 +14,7 @@ import { SalesCart } from "@/components/operational/sales-cart";
 import { ThermalReceipt } from "@/components/print/thermal-receipt";
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
+import { useAuth } from "@/hooks/useAuth";
 
 interface SalesItem {
     treatment_id: number | string;
@@ -35,8 +36,9 @@ const TotalRow = ({ label, value, highlight = false }: { label: string, value: n
 
 export default function SalesForm() {
     const form = useForm();
+    const activeUser = useAuth().user;
     const [items, setItems] = useState<SalesItem[]>([]); // The treatment list table
-    const [selectedBranch, setSelectedBranch] = useState<any>(null); // This holds logo, address, etc.
+    const [selectedBranch, setSelectedBranch] = useState<string>(activeUser?.employee?.branch_id.toString() || ""); // This holds logo, address, etc.
 
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -272,7 +274,7 @@ export default function SalesForm() {
                             <FormItem>
                                 <FormLabel>Employee</FormLabel>
                                 <FormControl>
-                                    <AppSelect options={employees} {...field} onValueChange={field.onChange} />
+                                    <AppSelect options={employees} value={activeUser?.employee?.id.toString() || ""} onValueChange={field.onChange} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

@@ -7,36 +7,32 @@ import api from "@/lib/api";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
-import { CashflowReportTemplate } from "@/components/print/cashflow-report-template";
+import { BalanceSheetTemplate } from "@/components/print/balance-sheet-template";
 
-export default function ExpenseReport() {
+export default function BalanceSheet() {
     const [reportData, setReportData] = useState([]);
-    const [selectedStartDate, setSelectedStartDate] = useState<Date|undefined>(new Date());
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
 
     const columns = [
-        { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
-        { accessorKey: "journal_reference", header: "Reference" },
-        { accessorKey: "partner", header: "Partner" },
-        { accessorKey: "description", header: "Description" },
-        { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+        { accessorKey: "type", header: "Type" },
+        { accessorKey: "category", header: "Category" },
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "balance", header: "Balance", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.balance)},-`  },
     ];
 
     const [printData, setPrintData] = useState([]);
     const printRef = useRef<HTMLDivElement>(null);
-    
+
     const handlePrint = useReactToPrint({
         contentRef: printRef,
-        documentTitle: "Expense Report",
+        documentTitle: "Balance Sheet",
     });
     
     const generateReport = () => {
-        if (selectedStartDate && selectedEndDate) {
-            api.get(`/expense`, {
+        if (selectedEndDate) {
+            api.get(`/account`, {
                 params: {
-                    start: selectedStartDate.toDateString(),
-                    end: selectedEndDate.toDateString(),
-                    account: selectedAccount
+                    end: selectedEndDate.toDateString()
                 }
             })
                 .then((response) => {
@@ -49,7 +45,6 @@ export default function ExpenseReport() {
     }
 
     const clear = () => {
-        setSelectedStartDate(new Date());
         setSelectedEndDate(new Date());
         setReportData([]);
         setPrintData([]);
@@ -68,18 +63,11 @@ export default function ExpenseReport() {
     return (
         <div>
             <DataTable
-                title="Expense Report"
+                title="Balance Sheet"
                 columns={columns}
                 data={reportData}
                 customFilter={
-                    <div className={`grid grid-cols-4 gap-3`}>
-                        <div className="mt-2">
-                            <Label>Start Date</Label>
-                            <DatePicker
-                                value={new Date(selectedStartDate || "")}
-                                onChange={(date) => setSelectedStartDate(new Date(date||""))}
-                            />
-                        </div>
+                    <div className={`grid grid-cols-2 gap-3`}>
                         <div className="mt-2">
                             <Label>End Date</Label>
                             <DatePicker
@@ -99,11 +87,8 @@ export default function ExpenseReport() {
 
             <div className="hidden">
                 <div ref={printRef} className="print:block p-3 bg-white">
-                    <CashflowReportTemplate 
-                        reportTitle="Expense Report" 
-                        startDate={selectedStartDate?.toDateString()||""} 
-                        endDate={selectedEndDate?.toDateString()||""} 
-                        account={selectedAccount} 
+                    <BalanceSheetTemplate 
+                        endDate={selectedEndDate?.toLocaleDateString("id-ID")||""} 
                         data={printData} 
                     />
                 </div>

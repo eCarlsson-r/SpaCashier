@@ -6,40 +6,36 @@ import { DatePicker } from "@/components/shared/DatePicker";
 import { AppSelect } from "@/components/shared/AppSelect";
 import api from "@/lib/api";
 import { Label } from "@/components/ui/label";
-import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
-import { CashflowReportTemplate } from "@/components/print/cashflow-report-template";
+import { VoucherReportTemplate } from "@/components/print/voucher-report-template";
 
-export default function IncomeReport() {
-    const wallets = useModel(`wallet`, {mode: "select"}).options;
+export default function VoucherStockReport() {
     const [reportData, setReportData] = useState([]);
-    const [selectedStartDate, setSelectedStartDate] = useState<Date|undefined>(new Date());
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
     const [selectedVariant, setSelectedVariant] = useState<string>("");
-    const [selectedAccount, setSelectedAccount] = useState<string>("");
+    const [selectedMetric, setSelectedMetric] = useState(["in-stock", "sold-out"]);
 
     const columns = useMemo(() => {
         const baseColumns = [
-            { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
-            { accessorKey: "journal_reference", header: "Reference" },
-            { accessorKey: "partner", header: "Partner" },
-            { accessorKey: "description", header: "Description" },
+            { accessorKey: "name", header: "Treatment Name" },
         ];
 
         // Variant 2 adds extra columns (e.g., Tax and Service)
-        if (selectedVariant === "2") {
+        if (selectedVariant === "QTY") {
             return [
                 ...baseColumns,
-                { accessorKey: "pay_type", header: "Payment Type" },
-                { accessorKey: "pay_tool", header: "Payment Tool" },
-                { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+                { accessorKey: "range", header: "Vouchers" },
+                { accessorKey: "count", header: "Count" },
+                { accessorKey: "customer-name", header: "Customer Name" },
             ];
-  }
+        }
 
         // Variant 1 (Default 5 columns)
         return [
             ...baseColumns,
+            { accessorKey: "period", header: "Period", cell: ({row}) => `${row.original.month} ${row.original.year}` },
+            { accessorKey: "count", header: "Count" },
             { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
         ];
     }, [selectedVariant]);
@@ -49,33 +45,33 @@ export default function IncomeReport() {
 
     const handlePrint = useReactToPrint({
         contentRef: printRef,
-        documentTitle: "Income Report",
+        documentTitle: "Voucher Stock Report",
     });
     
     const generateReport = () => {
-        if (selectedStartDate && selectedEndDate) {
-            api.get(`/income`, {
+        if (selectedEndDate) {
+            api.get(`/voucher`, {
                 params: {
                     variant: selectedVariant,
-                    start: selectedStartDate.toDateString(),
-                    end: selectedEndDate.toDateString(),
-                    account: selectedAccount
+                    end: selectedEndDate,
+                    metric: JSON.stringify(selectedMetric)
                 }
+            }).then((response) => {
+                // Normalize the nested structure from backend into a flat array for the table
+                const flattened = response.data.flatMap((treatment) => 
+                    selectedVariant === "QTY" ? treatment.voucher : treatment.sales
+                );
+                setReportData(flattened);
             })
-                .then((response) => {
-                    setReportData(response.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching attendance report:", error);
-                });
+            .catch((error) => {
+                console.error("Error fetching attendance report:", error);
+            });
         }
     }
 
     const clear = () => {
-        setSelectedStartDate(new Date());
         setSelectedEndDate(new Date());
-        setSelectedVariant("1");
-        setSelectedAccount("");
+        setSelectedVariant("QTY");
         setReportData([]);
         setPrintData([]);
     }
@@ -93,44 +89,43 @@ export default function IncomeReport() {
     return (
         <div>
             <DataTable
-                title="Income Report"
+                title="Voucher Stock Report"
                 columns={columns}
                 data={reportData}
                 customFilter={
-                    <div className={`grid grid-cols-5 gap-3`}>
+                    <div className={`grid grid-cols-4 gap-3`}>
                         <div className="mt-2">
                             <Label>Variant</Label>
                             <AppSelect
                                 options={[
-                                    { value: "1", label: "Variant 1" },
-                                    { value: "2", label: "Variant 2" },
+                                    { value: "QTY", label: "Quantity" },
+                                    { value: "REKAP_TANGGAL_PENJUALAN", label: "Sales Recap" },
                                 ]}
                                 value={selectedVariant}
                                 onValueChange={(val) => setSelectedVariant(val)}
                             />
                         </div>
                         <div className="mt-2">
-                            <Label>Start Date</Label>
-                            <DatePicker
-                                value={new Date(selectedStartDate || "")}
-                                onChange={(date) => setSelectedStartDate(new Date(date||""))}
-                            />
-                        </div>
-                        <div className="mt-2">
-                            <Label>End Date</Label>
+                            <Label>Report until</Label>
                             <DatePicker
                                 value={new Date(selectedEndDate || "")}
                                 onChange={(date) => setSelectedEndDate(new Date(date||""))}
                             />
                         </div>
-                        <div className="mt-2">
-                            <Label>Account</Label>
-                            <AppSelect
-                                value={selectedAccount}
-                                onValueChange={(value) => setSelectedAccount(value)}
-                                options={wallets}
-                            />
-                        </div>
+                        {
+                            selectedVariant == "QTY" && (<div className="mt-2">
+                                <Label>Metric</Label>
+                                <AppSelect
+                                    value={JSON.stringify(selectedMetric)} multiple={true}
+                                    onValueChange={(value) => setSelectedMetric(JSON.parse(value))}
+                                    options={[
+                                        { value: "in-stock", label: "In Stock" },
+                                        { value: "sold-out", label: "Sold Out" },
+                                    ]}
+                                />
+                            </div>)
+                        }
+                        
                         <div className="grid grid-cols-2 mt-2 gap-2">
                             <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
                             <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => clear()}>Clear Report</Button>
@@ -143,12 +138,9 @@ export default function IncomeReport() {
 
             <div className="hidden">
                 <div ref={printRef} className="print:block p-3 bg-white">
-                    <CashflowReportTemplate 
-                        reportTitle="Income Report"
-                        variant={selectedVariant}
-                        startDate={selectedStartDate?.toLocaleDateString("id-ID")||""} 
+                    <VoucherReportTemplate 
+                        variant={selectedVariant} 
                         endDate={selectedEndDate?.toLocaleDateString("id-ID")||""} 
-                        account={wallets.find(opt => opt.value === selectedAccount)?.label || ""} 
                         data={printData} 
                     />
                 </div>

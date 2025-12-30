@@ -56,7 +56,7 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/components/print/voucherusage-report-templatetsx", "src/components/print/ledger-templatetsx"  ],
   "exclude": [
     "node_modules"
   ]

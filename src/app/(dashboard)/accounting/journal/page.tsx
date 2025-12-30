@@ -5,7 +5,7 @@ import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 
 const columns = [
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "reference", header: "Reference" },
     { accessorKey: "description", header: "Description" },
 ];

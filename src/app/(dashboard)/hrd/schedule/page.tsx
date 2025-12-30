@@ -115,7 +115,7 @@ export default function SchedulePage() {
                                         setSelectedDate(date);
                                         if (date) {
                                             // Using dayjs format to get Year-WNumber (e.g., 2025-W52)
-                                            const weekStr = dayjs(date).format("YYYY-[W]WW");
+                                            const weekStr = dayjs(date).add(1, 'weeks').format("YYYY-[W]WW");
                                             setSelectedWeek(weekStr);
                                         }
                                     }}

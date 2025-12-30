@@ -11,7 +11,7 @@ import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 
 const columns = [
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "start", header: "Time" },
     { accessorKey: "therapist_name", header: "Therapist" },
     { accessorKey: "treatment_name", header: "Treatment" },

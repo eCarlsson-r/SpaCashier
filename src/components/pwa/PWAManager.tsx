@@ -29,13 +29,6 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     const [isSupported, setIsSupported] = useState(false)
     const [subscription, setSubscription] = useState<PushSubscription | null>(null)
 
-    useEffect(() => {
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-            setIsSupported(true)
-            registerServiceWorker()
-        }
-    }, [])
-
     async function registerServiceWorker() {
         try {
             const registration = await navigator.serviceWorker.register('/sw.js', {
@@ -48,6 +41,13 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
             console.error('Service worker registration failed:', error)
         }
     }
+    
+    useEffect(() => {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            setIsSupported(true)
+            registerServiceWorker()
+        }
+    }, [])
 
     async function subscribe() {
         try {

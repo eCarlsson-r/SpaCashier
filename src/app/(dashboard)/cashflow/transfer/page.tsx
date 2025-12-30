@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 const columns = [
-    { accessorKey: "date", header: "Date" },
+    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
     { accessorKey: "from_wallet_id", header: "From Wallet" },
     { accessorKey: "to_wallet_id", header: "To Wallet" },
-    { accessorKey: "amount", header: "Amount" },
+    { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
     { accessorKey: "description", header: "Description" },
 ];
 
