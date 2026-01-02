@@ -21,7 +21,9 @@ type Period = z.infer<typeof PeriodSchema>;
 
 interface CompensationRecord {
     id: number;
+    employee: object;
     employee_id: string;
+    grade: string;
     complete_name: string;
     base_salary: number;
     therapist_bonus: string;
@@ -441,7 +443,6 @@ export default function CompensationPage() {
                 setIsPreparingPDF(false);
             }, 300);
         } catch (error) {
-            toast.error(error.message);
             setIsPreparingPDF(false);
         }
     };
@@ -465,9 +466,9 @@ export default function CompensationPage() {
                     <div className="w-64">
                         <label className="text-xs font-bold text-slate-500">PAYROLL PERIODE</label>
                         <AppSelect
-                            value={selectedPeriod?.id.toString() || ""}
+                            value={selectedPeriod?.id?.toString() || ""}
                             options={periods.map((p: Period) => ({
-                                value: p.id,
+                                value: p.id?.toString() || "",
                                 label: p.start + ' - ' + p.end,
                             }))}
                             onValueChange={(value) => setSelectedPeriodId(parseInt(value))}

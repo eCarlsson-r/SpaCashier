@@ -7,6 +7,7 @@ import { DatePicker } from "@/components/shared/DatePicker";
 import { AppSelect } from "@/components/shared/AppSelect";
 import api from "@/lib/api";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
 
 const columns = [
     { accessorKey: "employee.name", header: "Employee Name" },
@@ -18,7 +19,8 @@ const columns = [
 ];
 
 export default function AttendanceReport() {
-    const employees = useModel(`employee`, {mode: "select"}).options;
+    const { user } = useAuth();
+    const employees = useModel('employee', (user?.type == "THERAPIST")?{mode:'select', params:{'id':user?.employee?.id}}:(user?.type == "STAFF"?{mode:'select', params:{'branch_id':user?.employee?.branch_id}}:{mode: "select"})).options;
     const [reportData, setReportData] = useState([]);
     const [selectedStartDate, setSelectedStartDate] = useState<string|undefined>(new Date().toISOString());
     const [selectedEndDate, setSelectedEndDate] = useState<string|undefined>(new Date().toISOString());

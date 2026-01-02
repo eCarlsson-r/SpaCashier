@@ -11,6 +11,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SessionTimer } from "@/components/shared/SessionTimer";
+import { useAuth } from "@/hooks/useAuth";
 
 type SessionData = {
     id: string;
@@ -23,11 +24,27 @@ type SessionData = {
 export default function SessionPage() {
     const router = useRouter();
     const [selectedStatus, setSelectedStatus] = useState(["waiting", "ongoing"]);
+    const { user } = useAuth();
+
+    let params;
+    if (user?.type == "THERAPIST") {
+        params = {
+            status: JSON.stringify(selectedStatus),
+            employee_id: user?.employee?.id
+        };
+    } else if (user?.type == "STAFF") {
+        params = {
+            status: JSON.stringify(selectedStatus),
+            branch_id: user?.branch?.id
+        };
+    } else {
+        params = {
+            status: JSON.stringify(selectedStatus)
+        };
+    }
 
     const { data: sessionData } = useModel("session", {
-        params: {
-            status: JSON.stringify(selectedStatus)
-        },
+        params: params,
         mode: "table"
     });
 
@@ -129,13 +146,37 @@ export default function SessionPage() {
         }
     ];
 
-    return <DataTable
-        title="Session"
-        columns={columns}
-        data={sessionData}
-        customFilter={
-            <div className="flex items-center gap-2" >
-                <span className="text-sm font-medium">Status</span>
+    if (user?.type == "THERAPIST") {
+        return <DataTable
+            title="Session"
+            columns={columns}
+            data={sessionData}
+            customFilter={
+                <div className="flex items-center gap-2" >
+                    <span className="text-sm font-medium">Status</span>
+                    <div className="w-[200px]">
+                        <AppSelect multiple={true}
+                            options={[
+                                { value: "ongoing", label: "Ongoing" },
+                                { value: "completed", label: "Completed" },
+                                { value: "waiting", label: "Waiting" },
+                                { value: "canceled", label: "Cancelled" }
+                            ]}
+                            value={JSON.stringify(selectedStatus)}
+                            onValueChange={(val) => setSelectedStatus(JSON.parse(val))}
+                        />
+                    </div>
+                </div>
+            }
+        />
+    } else {
+        return <DataTable
+            title="Session"
+            columns={columns}
+            data={sessionData}
+            customFilter={
+                <div className="flex items-center gap-2" >
+                    <span className="text-sm font-medium">Status</span>
                 <div className="w-[200px]">
                     <AppSelect multiple={true}
                         options={[
@@ -152,4 +193,5 @@ export default function SessionPage() {
         }
         tableAction={() => router.push("/operational/session/new")}
     />;
+    }
 }

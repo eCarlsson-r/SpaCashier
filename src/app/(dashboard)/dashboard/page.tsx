@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/ui/card";
-import { Users, Ticket, CheckCircle, Activity } from "lucide-react";
+import { Users, Ticket, CheckCircle, Activity, Spotlight, HandCoins, BanknoteX, ReceiptText } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -17,14 +17,16 @@ export default function Dashboard() {
     const [profitYear, setProfitYear] = useState("2022");
     const [jobDate, setJobDate] = useState(new Date());
     const [payrollPeriod, setPayrollPeriod] = useState("");
+    const [payrollSummary, setPayrollSummary] = useState([]);
     const profitYears = [
         { value: "2019", label: "2019" },
         { value: "2020", label: "2020" },
         { value: "2021", label: "2021" },
         { value: "2022", label: "2022" },
     ];
-    const params = {profit_year: profitYear, job_date: jobDate.toISOString().split('T')[0], branch_id: 0, employee_id: 0};
+    
     const { user } = useAuth();
+    let params = {profit_year: profitYear, job_date: jobDate.toISOString().split('T')[0]};
     if (user?.type === "STAFF") {
         params.branch_id = user?.employee?.branch_id;
     } else if (user?.type === "THERAPIST") {
@@ -40,21 +42,33 @@ export default function Dashboard() {
     });
     // Helper to format currency
     const formatCurr = (val: number) => new Intl.NumberFormat('id-ID').format(val);
-    const periods = useModel("period", {"mode":"select"}).options
+    const periods = useModel("period", {"mode":"select", params: {employee_id: user?.employee?.id}}).options
+
+    const getPayrollData = async (period: string) => {
+        setPayrollPeriod(period);
+        const { data } = await api.get('/compensation', {
+            params: {
+                "period_id": period,
+                "employee_id": user?.employee?.id
+            }
+        });
+
+        setPayrollSummary(data);
+    }
 
     const stats = (user?.type == "THERAPIST") ? [
         { label: "Completed Sessions", value: data?.completed_sessions || 0, icon: CheckCircle, color: "text-emerald-600" },
         { label: "Ongoing Sessions", value: data?.active_sessions || 0, icon: Activity, color: "text-amber-600" },
-        { label: "Today Commision", value: `Rp. ${formatCurr(data?.today_commision) || 0},-`, icon: Ticket, color: "text-blue-600" },
-        { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Ticket, color: "text-blue-600" },
-        { label: "Current Commision", value: `Rp. ${formatCurr(data?.current_commision) || 0},-`, icon: Users, color: "text-teal-600" },
-        { label: "Current Deduction", value: `Rp. ${formatCurr(data?.current_deduction) || 0},-`, icon: Users, color: "text-teal-600" }
+        { label: "Today Commision", value: `Rp. ${formatCurr(data?.today_commision) || 0},-`, icon: ReceiptText, color: "text-blue-600" },
+        { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Spotlight, color: "text-blue-600" },
+        { label: "Current Commision", value: `Rp. ${formatCurr(data?.current_commision) || 0},-`, icon: HandCoins, color: "text-emerald-600" },
+        { label: "Current Deduction", value: `Rp. ${formatCurr(data?.current_deduction) || 0},-`, icon: BanknoteX, color: "text-rose-600" }
     ] : [
         { label: "Completed Sessions", value: data?.completed_sessions || 0, icon: CheckCircle, color: "text-emerald-600" },
         { label: "Ongoing Sessions", value: data?.active_sessions || 0, icon: Activity, color: "text-amber-600" },
         { label: "Vouchers Sold", value: data?.vouchers_sold || 0, icon: Ticket, color: "text-blue-600" },
-        { label: "Total Sales", value: `Rp. ${formatCurr(data?.today_sales) || 0},-`, icon: Users, color: "text-teal-600" },
-        { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Ticket, color: "text-blue-600" },
+        { label: "Total Sales", value: `Rp. ${formatCurr(data?.today_sales) || 0},-`, icon: ReceiptText, color: "text-teal-600" },
+        { label: "Hot Treatment", value: data?.hot_treatment || "", icon: Spotlight, color: "text-blue-600" },
         { label: "Hot Therapist", value: data?.hot_therapist || "", icon: Users, color: "text-blue-600" },
     ];
     
@@ -77,6 +91,16 @@ export default function Dashboard() {
                 hashmap[item.month] = item;
             }
         }
+        // Convert the hashmap values back to an array and sort by id
+        chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
+    } else if (data?.monthly_income) {
+        const hashmap: Record<string, any> = {};
+
+        // Process the first array: add each object to the hashmap using its id as the key
+        for (const item of data.monthly_income) {
+            hashmap[item.month] = item;
+        }
+
         // Convert the hashmap values back to an array and sort by id
         chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
     } else if (data?.monthly_commision && data?.monthly_attendance) {
@@ -135,8 +159,8 @@ export default function Dashboard() {
                                 <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rp${value/1000}k`} />
                                 <Tooltip />
-                                <Bar dataKey="income" fill={colors.emerald[600]} radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="expense" fill={colors.rose[600]} radius={[4, 4, 0, 0]} />
+                                {data?.monthly_income && <Bar dataKey="income" fill={colors.emerald[600]} radius={[4, 4, 0, 0]} />}
+                                {data?.monthly_expense && <Bar dataKey="expense" fill={colors.rose[600]} radius={[4, 4, 0, 0]} />}
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -150,12 +174,15 @@ export default function Dashboard() {
                                 <AppSelect 
                                     value={payrollPeriod}
                                     options={periods}
-                                    onValueChange={(e) => setPayrollPeriod(e)}
+                                    onValueChange={(e) => {getPayrollData(e)}}
                                 />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            To be implemented...
+                            <DataTable columns={[
+                                { accessorKey: 'attribute', header : 'Payroll Attribute' },
+                                { accessorKey: 'value', header : 'Payroll Value', cell: ({ row }) => (typeof row.original.value == "string") ? row.original.value : `Rp. ${formatCurr(row.original.value)}` }
+                            ]} data={payrollSummary} />
                         </CardContent>
                     </Card>
                 ) : (
@@ -175,9 +202,13 @@ export default function Dashboard() {
                                 { accessorKey: "name", header: "Employee" },
                                 { accessorKey: "clock_in", header: "Clock In" },
                                 {
-                                    accessorKey: "completed_sessions",
+                                    accessorKey: "sessions",
                                     header: "Sessions",
-                                    cell: ({ row }) => <Badge variant="secondary">{row.original.completed_sessions}</Badge>
+                                    cell: ({ row }) => <div className="flex gap-3">
+                                        <Badge variant="default">{row.original.active_sessions || 0}</Badge>
+                                        <Badge variant="secondary">{row.original.completed_sessions || 0}</Badge>
+                                        {parseInt(row.original.active_sessions || 0) + parseInt(row.original.completed_sessions || 0)}
+                                    </div>
                                 },
                                 { accessorKey: "deduction", header: "Deduction" }
                             ]}

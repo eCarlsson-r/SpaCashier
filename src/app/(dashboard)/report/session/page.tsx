@@ -20,7 +20,8 @@ const columns = [
 ];
 
 export default function SessionReport() {
-    const employees = useModel(`employee`, {mode: "select"}).options;
+    const {user} = useAuth();
+    const employees = useModel('employee', (user?.type == "THERAPIST")?{mode:'select', params:{'id':user?.employee?.id}}:(user?.type == "STAFF"?{mode:'select', params:{'branch_id':user?.employee?.branch_id}}:{mode: "select"}));
     const [reportData, setReportData] = useState([]);
     const [selectedStartDate, setSelectedStartDate] = useState<string|undefined>(new Date().toISOString());
     const [selectedEndDate, setSelectedEndDate] = useState<string|undefined>(new Date().toISOString());
@@ -36,8 +37,8 @@ export default function SessionReport() {
                     start: selectedStartDate,
                     end: selectedEndDate,
                     status: JSON.stringify(selectedStatus),
-                    from_employee: selectedFromEmployee,
-                    to_employee: selectedToEmployee,
+                    from_employee: user?.type == "THERAPIST" ? user?.employee?.id : selectedFromEmployee,
+                    to_employee: user?.type == "THERAPIST" ? user?.employee?.id : selectedToEmployee,
                     order_by: selectedOrder
                 }
             })
@@ -61,85 +62,86 @@ export default function SessionReport() {
     }
 
     return (
-        <div>
-            <DataTable
-                title="Session Report"
-                columns={columns}
-                data={reportData}
-                customFilter={
-                    <div className={`grid grid-cols-${useAuth().user?.type === "THERAPIST" ? 6 : 4} gap-3`}>
-                        <div className="mt-2">
-                            <Label>Start Date</Label>
-                            <DatePicker
-                                value={new Date(selectedStartDate || "")}
-                                onChange={(date) => setSelectedStartDate(date)}
-                            />
-                        </div>
-                        <div className="mt-2">
-                            <Label>End Date</Label>
-                            <DatePicker
-                                value={new Date(selectedEndDate || "")}
-                                onChange={(date) => setSelectedEndDate(date)}
-                            />
-                        </div>
-                        <div className="mt-2">
-                            <Label>Status</Label>
-                            <AppSelect
-                                options={[
-                                    { value: "waiting", label: "Waiting" },
-                                    { value: "ongoing", label: "Ongoing" },
-                                    { value: "completed", label: "Completed" },
-                                    { value: "cancelled", label: "Cancelled" },
-                                ]} multiple={true}
-                                value={JSON.stringify(selectedStatus)}
-                                onValueChange={(val) => setSelectedStatus(JSON.parse(val))}
-                            />
-                        </div>
-                        {useAuth().user?.type !== "THERAPIST" && (
-                            <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
-                        )}
-                        {useAuth().user?.type !== "THERAPIST" && (
-                            <div className="mt-2">
-                                <Label>From Employee</Label>
-                                <AppSelect
-                                    value={selectedFromEmployee}
-                                    onValueChange={(value) => setSelectedFromEmployee(value)}
-                                    options={employees}
-                                />
-                            </div>
-                        )}
-                        {useAuth().user?.type !== "THERAPIST" && (
-                            <div className="mt-2">
-                                <Label>To Employee</Label>
-                                <AppSelect
-                                    value={selectedToEmployee}
-                                    onValueChange={(value) => setSelectedToEmployee(value)}
-                                    options={employees}
-                                />
-                            </div>
-                        )}
-                        <div className="mt-2">
-                            <Label>Order by</Label>
-                            <AppSelect
-                                value={selectedOrder}
-                                onValueChange={(value) => setSelectedOrder(value)}
-                                options={(useAuth().user?.type !== "THERAPIST")?[
-                                    { value: "sessions.date", label: "Date" },
-                                    { value: "sessions.employee_id", label: "Therapist" },
-                                    { value: "sessions.treatment_id", label: "Treatment" },
-                                ]:[
-                                    { value: "sessions.date", label: "Date" },
-                                    { value: "sessions.treatment_id", label: "Treatment" },
-                                ]}
-                            />
-                        </div>
-                        {useAuth().user?.type == "THERAPIST" && (<Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>)}
-                        <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => clear()}>Clear Report</Button>
+        <DataTable
+            title="Session Report"
+            columns={columns}
+            data={reportData}
+            customFilter={
+                <div className={`grid grid-cols-${user?.type === "THERAPIST" ? 5 : 3} gap-3`}>
+                    <div className="mt-2">
+                        <Label>Start Date</Label>
+                        <DatePicker
+                            value={new Date(selectedStartDate || "")}
+                            onChange={(date) => setSelectedStartDate(date)}
+                        />
                     </div>
-                }   
-                tableAction={() => printReport()}
-                tableActionText="Print Report"
-            />
-        </div>
+                    <div className="mt-2">
+                        <Label>End Date</Label>
+                        <DatePicker
+                            value={new Date(selectedEndDate || "")}
+                            onChange={(date) => setSelectedEndDate(date)}
+                        />
+                    </div>
+                    <div className="mt-2">
+                        <Label>Status</Label>
+                        <AppSelect
+                            options={[
+                                { value: "waiting", label: "Waiting" },
+                                { value: "ongoing", label: "Ongoing" },
+                                { value: "completed", label: "Completed" },
+                                { value: "cancelled", label: "Cancelled" },
+                            ]} multiple={true}
+                            value={JSON.stringify(selectedStatus)}
+                            onValueChange={(val) => setSelectedStatus(JSON.parse(val))}
+                        />
+                    </div>
+                    {user?.type !== "THERAPIST" && (
+                        <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
+                    )}
+                    {user?.type !== "THERAPIST" && (
+                        <div className="mt-2">
+                            <Label>From Employee</Label>
+                            <AppSelect
+                                value={selectedFromEmployee}
+                                onValueChange={(value) => setSelectedFromEmployee(value)}
+                                options={employees}
+                            />
+                        </div>
+                    )}
+                    {user?.type !== "THERAPIST" && (
+                        <div className="mt-2">
+                            <Label>To Employee</Label>
+                            <AppSelect
+                                value={selectedToEmployee}
+                                onValueChange={(value) => setSelectedToEmployee(value)}
+                                options={employees}
+                            />
+                        </div>
+                    )}
+                    <div className="mt-2">
+                        <Label>Order by</Label>
+                        <AppSelect
+                            value={selectedOrder}
+                            onValueChange={(value) => setSelectedOrder(value)}
+                            options={(user?.type !== "THERAPIST")?[
+                                { value: "sessions.date", label: "Date" },
+                                { value: "sessions.employee_id", label: "Therapist" },
+                                { value: "sessions.treatment_id", label: "Treatment" },
+                            ]:[
+                                { value: "sessions.date", label: "Date" },
+                                { value: "sessions.treatment_id", label: "Treatment" },
+                            ]}
+                        />
+                    </div>
+                    {user?.type !== "THERAPIST" ? (
+                        <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
+                    ) : (<div className="mt-2 gap-3">
+                        <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
+                        <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => clear()}>Clear Report</Button>
+                    </div>)}
+                    
+                </div>
+            }
+        />
     );
 }
