@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/ui/button";
-import { FilePlus, Banknote, Trash2 } from "lucide-react";
+import { FilePlus, Banknote } from "lucide-react";
 import { AppSelect } from "@/components/shared/AppSelect";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -15,6 +15,8 @@ import { ThermalReceipt } from "@/components/print/thermal-receipt";
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
 import { useAuth } from "@/hooks/useAuth";
+import { NewCustomerModal } from "@/components/operational/new-customer-modal";
+import { Customer } from "@/lib/types";
 
 interface SalesItem {
     treatment_id: number | string;
@@ -63,6 +65,15 @@ export default function SalesForm() {
     const treatmentOptions = useModel("treatment", { mode: "select" }).options;
 
     const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+    const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
+
+    const handleNewCustomer = (customer: Customer) => {
+        api.post('/customer', customer).then(() => {
+            setIsNewCustomerOpen(false);
+        }).catch(e => {
+            console.log(e);
+        });
+    };
 
     const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const deduction = form.watch("deduction_amount") || 0;
@@ -254,7 +265,7 @@ export default function SalesForm() {
                             <FormItem>
                                 <div className="flex gap-2">
                                     <FormLabel>Customer</FormLabel>
-                                    <Button size="icon" variant="outline">+</Button>
+                                    <Button onClick={() => setIsNewCustomerOpen(true)} size="icon" variant="outline">+</Button>
                                 </div>
                                 <FormControl>
                                     <AppSelect options={customers} {...field} onValueChange={field.onChange} />
@@ -320,6 +331,12 @@ export default function SalesForm() {
                 setPaymentsAdded={setPaymentsAdded}
                 onClose={() => setIsPayModalOpen(false)}
                 onFinalize={handleFinalize}
+            />
+
+            <NewCustomerModal
+                isOpen={isNewCustomerOpen}
+                onClose={() => setIsNewCustomerOpen(false)}
+                onSave={handleNewCustomer}
             />
 
             {/* The Hidden Receipt Component */}

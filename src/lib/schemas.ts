@@ -140,9 +140,9 @@ export const CustomerSchema = z.object({
   country: z.string().nullable(),
   place_of_birth: z.string(),
   date_of_birth: z.string().nullable(),
-  mobile: z.string(),
-  email: z.string(),
-  liability_account: z.number(),
+  mobile: z.string().nullable(),
+  email: z.string().nullable(),
+  liability_account: z.number().nullable(),
 });
 
 export const DiscountSchema = z.object({

@@ -9,7 +9,7 @@ import { useModel } from "@/hooks/useModel";
 import api from "@/lib/api";
 import { useEffect } from "react";
 import React from "react";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner"; // For nice notifications
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
 
