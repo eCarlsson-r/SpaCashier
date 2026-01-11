@@ -72,9 +72,9 @@ export default function Dashboard() {
         { label: "Hot Therapist", value: data?.hot_therapist || "", icon: Users, color: "text-blue-600" },
     ];
     
-    let chartData: any[] = [];
+    let chartData: object[] = [];
     if (data?.monthly_income && data?.monthly_expense) {
-        const hashmap: Record<string, any> = {};
+        const hashmap: Record<number, {month: number, income?: number, expense?: number}> = {};
 
         // Process the first array: add each object to the hashmap using its id as the key
         for (const item of data.monthly_income) {
@@ -94,7 +94,7 @@ export default function Dashboard() {
         // Convert the hashmap values back to an array and sort by id
         chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
     } else if (data?.monthly_income) {
-        const hashmap: Record<string, any> = {};
+        const hashmap: Record<number, {month: number, income: number}> = {};
 
         // Process the first array: add each object to the hashmap using its id as the key
         for (const item of data.monthly_income) {
@@ -104,7 +104,7 @@ export default function Dashboard() {
         // Convert the hashmap values back to an array and sort by id
         chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
     } else if (data?.monthly_commision && data?.monthly_attendance) {
-        const hashmap: Record<string, any> = {};
+        const hashmap: Record<number, {month: number, commision?: number, attendance?: number}> = {};
 
         // Process the first array: add each object to the hashmap using its id as the key
         for (const item of data.monthly_commision) {
@@ -201,13 +201,13 @@ export default function Dashboard() {
                             columns={[
                                 { accessorKey: "name", header: "Employee" },
                                 { accessorKey: "clock_in", header: "Clock In" },
+                                { accessorKey: "active_sessions", header: "Active Sessions", cell: (info)=> <Badge variant="default">{info.getValue() as number || 0}</Badge>},
+                                { accessorKey: "completed_sessions", header: "Completed Sessions", cell: (info)=> <Badge variant="secondary">{info.getValue() as number || 0}</Badge>},
                                 {
                                     accessorKey: "sessions",
-                                    header: "Sessions",
-                                    cell: ({ row }) => <div className="flex gap-3">
-                                        <Badge variant="default">{row.original.active_sessions || 0}</Badge>
-                                        <Badge variant="secondary">{row.original.completed_sessions || 0}</Badge>
-                                        {parseInt(row.original.active_sessions || 0) + parseInt(row.original.completed_sessions || 0)}
+                                    header: "Total Sessions",
+                                    cell: (info) => <div className="flex gap-3">
+                                        {parseInt(info.row.original.active_sessions || 0) + parseInt(info.row.original.completed_sessions || 0)}
                                     </div>
                                 },
                                 { accessorKey: "deduction", header: "Deduction" }

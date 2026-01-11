@@ -11,7 +11,7 @@ import { Loader2, Send } from "lucide-react";
 import { useState } from "react";
 
 interface BonusData {
-    id?: string;
+    id?: number | null;
     treatment_id?: string;
     gross_bonus?: number;
     trainer_deduction?: number;
@@ -34,8 +34,8 @@ export default function BonusPage() {
     const treatments = useModel("treatment", { mode: "select" }).options;
 
     const getBonusColumns = (
-        onUpdate: (id: string, data: BonusData) => void,
-        syncingId: string | null
+        onUpdate: (id: number | null, data: BonusData) => void,
+        syncingId: number | null
     ): ColumnDef<BonusData>[] => [ // Ensure type is explicitly set here
         {
             accessorKey: "treatment_id",
@@ -45,7 +45,7 @@ export default function BonusPage() {
                     <AppSelect
                         options={treatments}
                         value={row.original.treatment_id || ""}
-                        onValueChange={(val) => onUpdate(row.original.id || "", { treatment_id: val })}
+                        onValueChange={(val) => onUpdate(row.original.id || null, { treatment_id: val })}
                     />
                 </div>
             ),
@@ -104,7 +104,7 @@ export default function BonusPage() {
                     size="icon"
                     className="text-sky-600"
                     disabled={syncingId === row.original.id}
-                    onClick={() => onUpdate(row.original.id || "", {
+                    onClick={() => onUpdate(row.original.id || null, {
                         gross_bonus: row.original.pendingGross || row.original.gross_bonus,
                         trainer_deduction: row.original.pendingTrainer || row.original.trainer_deduction,
                         savings_deduction: row.original.pendingSaving || row.original.savings_deduction,
@@ -120,9 +120,9 @@ export default function BonusPage() {
         },
     ];
 
-    const [syncingId, setSyncingId] = useState<string | null>(null);
+    const [syncingId, setSyncingId] = useState<number | null>(null);
 
-    const handleSingleUpdate = async (id: string, updatedData: BonusData) => {
+    const handleSingleUpdate = async (id: number | null, updatedData: BonusData) => {
         setSyncingId(id);
         try {
             await api.put(`/bonus/${id}`, updatedData);

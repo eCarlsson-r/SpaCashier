@@ -24,11 +24,11 @@ const roomColumns = [
 
 export default function BedsPage() {
     const router = useRouter();
-    const [selectedRoom, setSelectedRoom] = useState<any>(null);
+    const [selectedRoom, setSelectedRoom] = useState<RoomData | null>(null);
     const selectedRoomId = selectedRoom?.id;
 
     // Fetch details for the specific room when one is selected
-    const { data: roomDetail, isLoading } = useQuery({
+    const { data: roomDetail } = useQuery({
         queryKey: ['room', selectedRoomId],
         queryFn: async () => {
             const res = await api.get(`/room/${selectedRoomId}?show=session`);
@@ -154,7 +154,7 @@ export default function BedsPage() {
                             const room = row as RoomData;
                             setSelectedRoom(room);
                         }}
-                        highlightId={selectedRoom?.id}
+                        highlightId={selectedRoom?.id?.toString()}
                     />
                 </CardContent>
             </Card>

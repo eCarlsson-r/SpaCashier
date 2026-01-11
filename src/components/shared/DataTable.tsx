@@ -26,7 +26,8 @@ interface DataTableProps<TData, TValue> {
     actions?: (item: TData) => React.ReactNode;
     onRowClick?: (item: TData) => void;
     customFilter?: React.ReactNode;
-    rowSelection?: RowSelectionState,
+    highlightId?: string;
+    rowSelection?: RowSelectionState;
     setRowSelection?: OnChangeFn<RowSelectionState>;
     getRowId?: (row: TData) => string;
 }
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
     actions,
     onRowClick,
     customFilter,
+    highlightId,
     rowSelection,
     setRowSelection,
     getRowId
@@ -114,7 +116,7 @@ export function DataTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} onClick={() => onRowClick && onRowClick(row.original)}>
+                                <TableRow key={row.id} data-state={row.id === highlightId ? "selected" : ""} onClick={() => onRowClick && onRowClick(row.original)}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
