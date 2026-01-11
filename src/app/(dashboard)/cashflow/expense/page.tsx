@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ExpenseSchema } from "@/lib/schemas";
 import { ColumnDef } from "@tanstack/react-table";
+import { z } from "zod";
 
-const columns: ColumnDef<typeof ExpenseSchema>[] = [
+const columns: ColumnDef<z.infer<typeof ExpenseSchema>>[] = [
     { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "journal_reference", header: "Reference" },
     { accessorKey: "partner", header: "Cash Partner" },

@@ -10,6 +10,9 @@ import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { CashflowReportTemplate } from "@/components/print/cashflow-report-template";
+import { ColumnDef } from "@tanstack/react-table";
+import z from "zod";
+import { IncomeSchema } from "@/lib/schemas";
 
 export default function IncomeReport() {
     const wallets = useModel(`wallet`, {mode: "select"}).options;
@@ -20,8 +23,8 @@ export default function IncomeReport() {
     const [selectedAccount, setSelectedAccount] = useState<string>("");
 
     const columns = useMemo(() => {
-        const baseColumns = [
-            { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+        const baseColumns: ColumnDef<z.infer<typeof IncomeSchema>>[] = [
+            { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
             { accessorKey: "journal_reference", header: "Reference" },
             { accessorKey: "partner", header: "Partner" },
             { accessorKey: "description", header: "Description" },
@@ -33,14 +36,14 @@ export default function IncomeReport() {
                 ...baseColumns,
                 { accessorKey: "pay_type", header: "Payment Type" },
                 { accessorKey: "pay_tool", header: "Payment Tool" },
-                { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+                { accessorKey: "amount", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
             ];
   }
 
         // Variant 1 (Default 5 columns)
         return [
             ...baseColumns,
-            { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+            { accessorKey: "amount", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
         ];
     }, [selectedVariant]);
 
@@ -148,7 +151,7 @@ export default function IncomeReport() {
                         variant={selectedVariant}
                         startDate={selectedStartDate?.toLocaleDateString("id-ID")||""} 
                         endDate={selectedEndDate?.toLocaleDateString("id-ID")||""} 
-                        account={wallets.find(opt => opt.value === selectedAccount)?.label || ""} 
+                        account={wallets.find((opt: { label: string; value: string | number }) => opt.value === selectedAccount)?.label || ""} 
                         data={printData} 
                     />
                 </div>

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { VoucherReportTemplate } from "@/components/print/voucher-report-template";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function VoucherStockReport() {
     const [reportData, setReportData] = useState([]);
@@ -17,7 +18,7 @@ export default function VoucherStockReport() {
     const [selectedMetric, setSelectedMetric] = useState(["in-stock", "sold-out"]);
 
     const columns = useMemo(() => {
-        const baseColumns = [
+        const baseColumns:ColumnDef<{name: string, range: string, count: number, customer_name: string, period: string, month: string, year: string, amount: number}>[] = [
             { accessorKey: "name", header: "Treatment Name" },
         ];
 
@@ -34,9 +35,9 @@ export default function VoucherStockReport() {
         // Variant 1 (Default 5 columns)
         return [
             ...baseColumns,
-            { accessorKey: "period", header: "Period", cell: ({row}) => `${row.original.month} ${row.original.year}` },
+            { accessorKey: "period", header: "Period", cell: (info) => `${info.row.original.month} ${info.row.original.year}` },
             { accessorKey: "count", header: "Count" },
-            { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+            { accessorKey: "amount", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.row.original.amount)},-` },
         ];
     }, [selectedVariant]);
 
@@ -58,7 +59,7 @@ export default function VoucherStockReport() {
                 }
             }).then((response) => {
                 // Normalize the nested structure from backend into a flat array for the table
-                const flattened = response.data.flatMap((treatment) => 
+                const flattened = response.data.flatMap((treatment: {voucher: unknown, sales: unknown}) => 
                     selectedVariant === "QTY" ? treatment.voucher : treatment.sales
                 );
                 setReportData(flattened);

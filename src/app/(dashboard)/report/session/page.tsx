@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 
-const columns = [
-    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+const columns: ColumnDef<{date: string, start: string, therapist_name: string, treatment_name: string, payment: string, status: string}>[] = [
+    { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "start", header: "Time" },
     { accessorKey: "therapist_name", header: "Therapist" },
     { accessorKey: "treatment_name", header: "Treatment" },
@@ -21,7 +22,7 @@ const columns = [
 
 export default function SessionReport() {
     const {user} = useAuth();
-    const employees = useModel('employee', (user?.type == "THERAPIST")?{mode:'select', params:{'id':user?.employee?.id}}:(user?.type == "STAFF"?{mode:'select', params:{'branch_id':user?.employee?.branch_id}}:{mode: "select"}));
+    const employees = useModel('employee', (user?.type == "THERAPIST")?{mode:'select', params:{'id':user?.employee?.id}}:(user?.type == "STAFF"?{mode:'select', params:{'branch_id':user?.employee?.branch_id}}:{mode: "select"})).options;
     const [reportData, setReportData] = useState([]);
     const [selectedStartDate, setSelectedStartDate] = useState<string|undefined>(new Date().toISOString());
     const [selectedEndDate, setSelectedEndDate] = useState<string|undefined>(new Date().toISOString());

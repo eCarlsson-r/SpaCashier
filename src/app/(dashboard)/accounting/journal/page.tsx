@@ -5,8 +5,9 @@ import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { JournalSchema } from "@/lib/schemas";
+import { z } from "zod";
 
-const columns: ColumnDef<typeof JournalSchema>[] = [
+const columns: ColumnDef<z.infer<typeof JournalSchema>>[] = [
     { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "reference", header: "Reference" },
     { accessorKey: "description", header: "Description" },

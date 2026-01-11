@@ -10,6 +10,7 @@ import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { LedgerTemplate } from "@/components/print/ledger-template";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function Ledger() {
     const accounts = useModel(`account`, {mode: "select"}).options;
@@ -18,12 +19,12 @@ export default function Ledger() {
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
     const [selectedAccount, setSelectedAccount] = useState<string>("");
 
-    const columns = [
-        { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+    const columns: ColumnDef<{date: string, reference: string, description: string, debit: number, credit: number}>[] = [
+        { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
         { accessorKey: "reference", header: "Reference" },
         { accessorKey: "description", header: "Description" },
-        { accessorKey: "debit", header: "Debit", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.debit)},-`  },
-        { accessorKey: "credit", header: "Credit", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.credit)},-`  },
+        { accessorKey: "debit", header: "Debit", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`  },
+        { accessorKey: "credit", header: "Credit", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`  },
     ];
 
     const [printData, setPrintData] = useState([]);

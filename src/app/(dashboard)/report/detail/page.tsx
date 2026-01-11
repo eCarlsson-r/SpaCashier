@@ -20,25 +20,25 @@ export default function DetailedReport() {
     const columns = useMemo(() => {
         if (selectedVariant === "voucher-sales") {
             return [
-                { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+                { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
                 { accessorKey: "journal_reference", header: "Reference" },
                 { accessorKey: "description", header: "Description" },
                 { accessorKey: "quantity", header: "Quantity" },
-                { accessorKey: "price", header: "Price", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.price)},-` },
-                { accessorKey: "total", header: "Total", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.total)},-` },
+                { accessorKey: "price", header: "Price", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+                { accessorKey: "total", header: "Total", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
             ];
         } else if (selectedVariant === "walkin-voucher-usage") {
             return [
-                { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+                { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
                 { accessorKey: "time", header: "Time" },
                 { accessorKey: "reference", header: "Reference" },
                 { accessorKey: "therapist_name", header: "Therapist" },
                 { accessorKey: "description", header: "Description" },
-                { accessorKey: "price", header: "Price", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.price)},-` },
+                { accessorKey: "price", header: "Price", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
             ];
         } else if (selectedVariant === "sales-by-date") {
             return [
-                { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+                { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
                 { accessorKey: "treatment", header: "Treatment" },
                 { accessorKey: "voucher_quantity", header: "Voucher Sales Qty." },
                 { accessorKey: "voucher_price", header: "Voucher Sales Amount" },

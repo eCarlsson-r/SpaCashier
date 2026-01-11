@@ -10,8 +10,9 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { AttendanceSchema } from "@/lib/schemas";
 import { ColumnDef } from "@tanstack/react-table";
+import { z } from "zod";
 
-const columns: ColumnDef<typeof AttendanceSchema>[] = [
+const columns: ColumnDef<z.infer<typeof AttendanceSchema>>[] = [
     { accessorKey: "employee.name", header: "Employee Name" },
     { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "shift_id", header: "Shift" },

@@ -26,7 +26,7 @@ export default function Dashboard() {
     ];
     
     const { user } = useAuth();
-    let params = {profit_year: profitYear, job_date: jobDate.toISOString().split('T')[0]};
+    const params: { profit_year: string, job_date: string, [key: string]: number | string } = {profit_year: profitYear, job_date: jobDate.toISOString().split('T')[0]};
     if (user?.type === "STAFF") {
         params.branch_id = user?.employee?.branch_id;
     } else if (user?.type === "THERAPIST") {
@@ -181,7 +181,7 @@ export default function Dashboard() {
                         <CardContent>
                             <DataTable columns={[
                                 { accessorKey: 'attribute', header : 'Payroll Attribute' },
-                                { accessorKey: 'value', header : 'Payroll Value', cell: ({ row }) => (typeof row.original.value == "string") ? row.original.value : `Rp. ${formatCurr(row.original.value)}` }
+                                { accessorKey: 'value', header : 'Payroll Value', cell: (info) => (typeof info.getValue() == "string") ? info.getValue() : `Rp. ${formatCurr(info.getValue() as number)}` }
                             ]} data={payrollSummary} />
                         </CardContent>
                     </Card>
@@ -192,7 +192,7 @@ export default function Dashboard() {
                             <CardTitle>Staff Attendance & Performance</CardTitle>
                             <DatePicker 
                                 value={jobDate}
-                                onChange={(e) => setJobDate(new Date(e))}
+                                onChange={(e) => setJobDate(new Date(e || ""))}
                             />
                         </div>
                     </CardHeader>

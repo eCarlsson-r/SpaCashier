@@ -22,7 +22,6 @@ interface AppSelectProps {
     options: { label: string; value: string | number }[];
     placeholder?: string;
     multiple?: boolean;
-    disabled?: boolean;
 }
 
 export function AppSelect({
@@ -30,8 +29,7 @@ export function AppSelect({
     onValueChange,
     options,
     placeholder = "Select option...",
-    multiple = false,
-    disabled = false
+    multiple = false
 }: AppSelectProps) {
     const [open, setOpen] = React.useState(false);
 
@@ -83,7 +81,7 @@ export function AppSelect({
                     <CommandList className="max-h-[300px]">
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup>
-                            {options.map((option: any) => {
+                            {options.map((option: { label: string; value: string | number }) => {
                                 const isSelected = multiple 
                                     ? selectedValues.includes(option.value.toString())
                                     : value === option.value.toString();

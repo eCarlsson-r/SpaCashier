@@ -11,15 +11,18 @@ import { useModel } from "@/hooks/useModel";
 import { Button } from "@/components/ui/button";
 import { SalesReportTemplate } from "@/components/print/sales-report-template";
 import { useReactToPrint } from "react-to-print";
+import { ColumnDef } from "@tanstack/react-table";
+import { z } from "zod";
+import { SalesRecordSchema } from "@/lib/schemas";
 
-const columns = [
-    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+const columns: ColumnDef<{date: string, income: {journal_reference: string}, customer: {name: string}, subtotal: number, discount: number, total: number, description: string, records: z.infer<typeof SalesRecordSchema>[]}>[] = [
+    { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "income.journal_reference", header: "Reference" },
     { accessorKey: "customer.name", header: "Customer Name" },
-    { accessorKey: "subtotal", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.subtotal)},-` },
-    { accessorKey: "discount", header: "Discount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.discount)},-` },
-    { accessorKey: "total", header: "Total", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.total)},-` },
-    { accessorKey: "description", header: "Description", cell: ({row}) => row.original.records[0].description },
+    { accessorKey: "subtotal", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "discount", header: "Discount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "total", header: "Total", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "description", header: "Description", cell: (info) => info.row.original.records[0].description },
 ];
 
 export default function SalesReport() {

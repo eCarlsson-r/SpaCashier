@@ -15,11 +15,11 @@ export default function ExpenseReport() {
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
 
     const columns = [
-        { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+        { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue()).toDateString():"" },
         { accessorKey: "journal_reference", header: "Reference" },
         { accessorKey: "partner", header: "Partner" },
         { accessorKey: "description", header: "Description" },
-        { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+        { accessorKey: "amount", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue())},-` },
     ];
 
     const [printData, setPrintData] = useState([]);

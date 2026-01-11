@@ -11,29 +11,41 @@ import { Loader2, Send } from "lucide-react";
 import { useState } from "react";
 
 interface BonusData {
-    id: string;
-    treatment_id: string;
-    gross_bonus: number;
-    trainer_deduction: number;
-    savings_deduction: number;
-    pendingGross?: string;
-    pendingTrainer?: string;
-    pendingSaving?: string;
+    id?: string;
+    treatment_id?: string;
+    gross_bonus?: number;
+    trainer_deduction?: number;
+    savings_deduction?: number;
+    pendingGross?: number;
+    pendingTrainer?: number;
+    pendingSaving?: number;
 }
 
-export const getBonusColumns = (
-    onUpdate: (id: string, data: any) => void,
-    syncingId: string | null
-): ColumnDef<BonusData>[] => [ // Ensure type is explicitly set here
+export default function BonusPage() {
+    const [selectedGrade, setSelectedGrade] = useState("A");
+
+    const { data: bonusData } = useModel("bonus", {
+        params: {
+            grade: selectedGrade
+        },
+        mode: "table"
+    });
+
+    const treatments = useModel("treatment", { mode: "select" }).options;
+
+    const getBonusColumns = (
+        onUpdate: (id: string, data: BonusData) => void,
+        syncingId: string | null
+    ): ColumnDef<BonusData>[] => [ // Ensure type is explicitly set here
         {
             accessorKey: "treatment_id",
             header: "Treatment",
             cell: ({ row }) => (
                 <div className="flex items-center gap-2">
                     <AppSelect
-                        options={useModel("treatment", { mode: "select" }).options}
-                        value={row.original.treatment_id}
-                        onValueChange={(val) => onUpdate(row.original.id, { treatment_id: val })}
+                        options={treatments}
+                        value={row.original.treatment_id || ""}
+                        onValueChange={(val) => onUpdate(row.original.id || "", { treatment_id: val })}
                     />
                 </div>
             ),
@@ -48,7 +60,7 @@ export const getBonusColumns = (
                         defaultValue={row.original.gross_bonus}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingGross = e.target.value)}
+                        onChange={(e) => (row.original.pendingGross = Number(e.target.value))}
                     />
                 </div>
             ),
@@ -63,7 +75,7 @@ export const getBonusColumns = (
                         defaultValue={row.original.trainer_deduction}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingTrainer = e.target.value)}
+                        onChange={(e) => (row.original.pendingTrainer = Number(e.target.value))}
                     />
                 </div>
             ),
@@ -78,7 +90,7 @@ export const getBonusColumns = (
                         defaultValue={row.original.savings_deduction}
                         className="h-8 w-32"
                         // Update a temporary property on the row object
-                        onChange={(e) => (row.original.pendingSaving = e.target.value)}
+                        onChange={(e) => (row.original.pendingSaving = Number(e.target.value))}
                     />
                 </div>
             ),
@@ -92,7 +104,7 @@ export const getBonusColumns = (
                     size="icon"
                     className="text-sky-600"
                     disabled={syncingId === row.original.id}
-                    onClick={() => onUpdate(row.original.id, {
+                    onClick={() => onUpdate(row.original.id || "", {
                         gross_bonus: row.original.pendingGross || row.original.gross_bonus,
                         trainer_deduction: row.original.pendingTrainer || row.original.trainer_deduction,
                         savings_deduction: row.original.pendingSaving || row.original.savings_deduction,
@@ -108,19 +120,9 @@ export const getBonusColumns = (
         },
     ];
 
-export default function BonusPage() {
-    const [selectedGrade, setSelectedGrade] = useState("A");
-
-    const { data: bonusData } = useModel("bonus", {
-        params: {
-            grade: selectedGrade
-        },
-        mode: "table"
-    });
-
     const [syncingId, setSyncingId] = useState<string | null>(null);
 
-    const handleSingleUpdate = async (id: string, updatedData: any) => {
+    const handleSingleUpdate = async (id: string, updatedData: BonusData) => {
         setSyncingId(id);
         try {
             await api.put(`/bonus/${id}`, updatedData);

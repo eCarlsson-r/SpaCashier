@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { BalanceSheetTemplate } from "@/components/print/balance-sheet-template";
 import { ColumnDef } from "@tanstack/react-table";
+import { z } from "zod";
+import { AccountSchema } from "@/lib/schemas";
 
 export default function BalanceSheet() {
     const [reportData, setReportData] = useState([]);
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
 
-    const columns: ColumnDef<unknown>[] = [
+    const columns: ColumnDef<z.infer<typeof AccountSchema>>[] = [
         { accessorKey: "type", header: "Type" },
         { accessorKey: "category", header: "Category" },
         { accessorKey: "name", header: "Name" },

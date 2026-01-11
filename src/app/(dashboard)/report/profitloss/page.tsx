@@ -11,6 +11,7 @@ import { ProfitLossTemplate } from "@/components/print/profit-loss-template";
 import { Input } from "@/components/ui/input";
 import { AppSelect } from "@/components/shared/AppSelect";
 import { useModel } from "@/hooks/useModel";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function ProfitLoss() {
     const accounts = useModel(`account`, {mode: "select"}).options;
@@ -23,11 +24,11 @@ export default function ProfitLoss() {
     const [selectedAccount, setSelectedAccount] = useState<string>("");
     const [retainedEarning, setRetainedEarning] = useState<string>("");
 
-    const columns = [
+    const columns: ColumnDef<{category: string, name: string, current: number, previous: number}>[] = [
         { accessorKey: "category", header: "Account Category" },
         { accessorKey: "name", header: "Account Name" },
-        { accessorKey: "current", header: "This Month", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.current)},-`   },
-        { accessorKey: "previous", header: "Until This Month", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.previous)},-`   },
+        { accessorKey: "current", header: "This Month", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`   },
+        { accessorKey: "previous", header: "Until This Month", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`   },
     ];
 
     const calculateRetainedEarning = () => {
@@ -96,11 +97,11 @@ export default function ProfitLoss() {
                     <h1 className="text-2xl font-bold">Retained Earnings</h1>
     
                     {/* Right Side: Search and Button Container */}
-                    <div className="flex items-center grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-5 gap-2">
                         <div className="mt-2">
                             <Label>Start Date</Label>
                             <DatePicker
-                                value={new Date(selectedRStartDate || "")}
+                                value={selectedRStartDate}
                                 onChange={(date) => setSelectedRStartDate(new Date(date||""))}
                             />
                         </div>
@@ -108,7 +109,7 @@ export default function ProfitLoss() {
                         <div className="mt-2">
                             <Label>End Date</Label>
                             <DatePicker
-                                value={new Date(selectedREndDate || "")}
+                                value={selectedREndDate}
                                 onChange={(date) => setSelectedREndDate(new Date(date||""))}
                             />
                         </div>
