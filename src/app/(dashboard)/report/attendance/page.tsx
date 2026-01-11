@@ -8,14 +8,16 @@ import { AppSelect } from "@/components/shared/AppSelect";
 import api from "@/lib/api";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { AttendanceSchema } from "@/lib/schemas";
+import { ColumnDef } from "@tanstack/react-table";
 
-const columns = [
+const columns: ColumnDef<typeof AttendanceSchema>[] = [
     { accessorKey: "employee.name", header: "Employee Name" },
-    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+    { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "shift_id", header: "Shift" },
     { accessorKey: "clock_in", header: "Clock In" },
     { accessorKey: "clock_out", header: "Clock Out" },
-    { accessorKey: "deduction", header: "Deduction", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.deduction)},-` },
+    { accessorKey: "deduction", header: "Deduction", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
 ];
 
 export default function AttendanceReport() {

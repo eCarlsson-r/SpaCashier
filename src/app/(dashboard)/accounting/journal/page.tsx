@@ -3,9 +3,11 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
+import { ColumnDef } from "@tanstack/react-table";
+import { JournalSchema } from "@/lib/schemas";
 
-const columns = [
-    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+const columns: ColumnDef<typeof JournalSchema>[] = [
+    { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "reference", header: "Reference" },
     { accessorKey: "description", header: "Description" },
 ];

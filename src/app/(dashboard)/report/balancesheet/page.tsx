@@ -8,16 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { BalanceSheetTemplate } from "@/components/print/balance-sheet-template";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function BalanceSheet() {
     const [reportData, setReportData] = useState([]);
     const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
 
-    const columns = [
+    const columns: ColumnDef<unknown>[] = [
         { accessorKey: "type", header: "Type" },
         { accessorKey: "category", header: "Category" },
         { accessorKey: "name", header: "Name" },
-        { accessorKey: "balance", header: "Balance", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.balance)},-`  },
+        { accessorKey: "balance", header: "Balance", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`  },
     ];
 
     const [printData, setPrintData] = useState([]);

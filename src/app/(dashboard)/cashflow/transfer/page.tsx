@@ -3,12 +3,14 @@ import { DataTable } from "@/components/shared/DataTable";
 import { useModel } from "@/hooks/useModel";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { TransferSchema } from "@/lib/schemas";
+import { ColumnDef } from "@tanstack/react-table";
 
-const columns = [
-    { accessorKey: "date", header: "Date", cell: ({row}) => (row.original.date)?new Date(row.original.date).toDateString():"" },
+const columns: ColumnDef<typeof TransferSchema>[] = [
+    { accessorKey: "date", header: "Date", cell: (info) => (info.getValue())?new Date(info.getValue() as string).toDateString():"" },
     { accessorKey: "from_wallet_id", header: "From Wallet" },
     { accessorKey: "to_wallet_id", header: "To Wallet" },
-    { accessorKey: "amount", header: "Amount", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.amount)},-` },
+    { accessorKey: "amount", header: "Amount", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
     { accessorKey: "description", header: "Description" },
 ];
 

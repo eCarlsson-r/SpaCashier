@@ -15,7 +15,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
     title?: string;
@@ -26,7 +25,6 @@ interface DataTableProps<TData, TValue> {
     searchKey?: string; // e.g., "name" or "customer_code"
     actions?: (item: TData) => React.ReactNode;
     onRowClick?: (item: TData) => void;
-    highlightId?: string;
     customFilter?: React.ReactNode;
     rowSelection?: RowSelectionState,
     setRowSelection?: OnChangeFn<RowSelectionState>;
@@ -42,7 +40,6 @@ export function DataTable<TData, TValue>({
     searchKey,
     actions,
     onRowClick,
-    highlightId,
     customFilter,
     rowSelection,
     setRowSelection,

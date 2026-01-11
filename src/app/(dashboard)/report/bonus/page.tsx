@@ -8,13 +8,14 @@ import { AppSelect } from "@/components/shared/AppSelect";
 import api from "@/lib/api";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { ColumnDef } from "@tanstack/react-table";
 
-const columns = [
+const columns: ColumnDef<{treatment_name: string, treatment_price: number, therapist_bonus: number, recruit_bonus: number}>[] = [
     { accessorKey: "treatment_name", header: "Treatment" },
-    { accessorKey: "treatment_price", header: "Treatment Price", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.treatment_price)},-` },
-    { accessorKey: "therapist_bonus", header: "Bonus Therapist", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.therapist_bonus)},-` },
-    { accessorKey: "recruit_bonus", header: "Bonus Rekruit", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.recruit_bonus)},-` },
-    { accessorKey: "total", header: "Total Bonus", cell: ({row}) => `Rp. ${new Intl.NumberFormat('id-ID').format(row.original.therapist_bonus+row.original.recruit_bonus)},-` },
+    { accessorKey: "treatment_price", header: "Treatment Price", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "therapist_bonus", header: "Bonus Therapist", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "recruit_bonus", header: "Bonus Rekruit", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-` },
+    { accessorKey: "total", header: "Total Bonus", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format((info.row.original.therapist_bonus || 0) + (info.row.original.recruit_bonus || 0))},-` },
 ];
 
 export default function BonusReport() {
