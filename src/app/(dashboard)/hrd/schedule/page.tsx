@@ -15,29 +15,19 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import isoWeek from 'dayjs/plugin/isoWeek';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { CellContext, Row } from "@tanstack/react-table";
 
-dayjs.extend(relativeTime);
-dayjs.extend(isoWeek);
-
-const formatShift = (info: any) => {
-    if (info.getValue() === "M") return "Morning";
-    else if (info.getValue() === "A") return "Afternoon";
-    else if (info.getValue() === "D") return "Whole Day";
-    else if (info.getValue() === "L") return "On Leave";
-    else if (info.getValue() === "N") return "New Normal";
-};
-
-const columns = [
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "job_type", header: "Job Type", cell: (info: any) => info.getValue() === "cashier" ? "Cashier" : "Therapist" },
-    { accessorKey: "monday", header: "Monday", cell: formatShift },
-    { accessorKey: "tuesday", header: "Tuesday", cell: formatShift },
-    { accessorKey: "wednesday", header: "Wednesday", cell: formatShift },
-    { accessorKey: "thursday", header: "Thursday", cell: formatShift },
-    { accessorKey: "friday", header: "Friday", cell: formatShift },
-    { accessorKey: "saturday", header: "Saturday", cell: formatShift },
-    { accessorKey: "sunday", header: "Sunday", cell: formatShift },
-];
+interface Schedule {
+    name: string;
+    job_type: string;
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+}
 
 export default function SchedulePage() {
     const [selectedWeek, setSelectedWeek] = useState("");
@@ -47,6 +37,32 @@ export default function SchedulePage() {
 
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncInfo, setSyncInfo] = useState({ last_sync: null, is_online: false });
+
+    const employees = useModel("employee", { mode: "select" }).options;
+    const shifts = useModel("shift", { mode: "select" }).options;
+
+    dayjs.extend(relativeTime);
+    dayjs.extend(isoWeek);
+
+    const formatShift = ({cell}: CellContext<Schedule, string>) => {
+        if (cell.getValue() === "M") return "Morning";
+        else if (cell.getValue() === "A") return "Afternoon";
+        else if (cell.getValue() === "D") return "Whole Day";
+        else if (cell.getValue() === "L") return "On Leave";
+        else if (cell.getValue() === "N") return "New Normal";
+    };
+
+    const columns = [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "job_type", header: "Job Type", cell: ({row}: {row: Row<Schedule>}) => row.original.job_type === "cashier" ? "Cashier" : "Therapist" },
+        { accessorKey: "monday", header: "Monday", cell: formatShift },
+        { accessorKey: "tuesday", header: "Tuesday", cell: formatShift },
+        { accessorKey: "wednesday", header: "Wednesday", cell: formatShift },
+        { accessorKey: "thursday", header: "Thursday", cell: formatShift },
+        { accessorKey: "friday", header: "Friday", cell: formatShift },
+        { accessorKey: "saturday", header: "Saturday", cell: formatShift },
+        { accessorKey: "sunday", header: "Sunday", cell: formatShift },
+    ];
 
     const fetchStatus = async () => {
         const res = await api.get('/attendance/sync-status');
@@ -70,7 +86,7 @@ export default function SchedulePage() {
         }
     };
 
-    const { data: scheduleData, create: createSchedule } = useModel(`attendance/${selectedWeek}`, {
+    const { data: scheduleData } = useModel<"attendance", Schedule>(`attendance/${selectedWeek}`, {
         mode: "table"
     });
 
@@ -88,14 +104,15 @@ export default function SchedulePage() {
         setActiveModal("schedule");
     };
 
-    const onSubmit = async (data: any) => {
-        try {
-            await createSchedule(data);
-            setActiveModal("");
-            form.reset();
-        } catch (error) {
-            // Error is handled globally by api.ts and toast
-        }
+    const onSubmit = async (data: { 
+        employee_id: string;
+        start_date: string;
+        end_date: string;
+        shift_id: string;
+    }) => {
+        await api.post(`/attendance/${selectedWeek}`, data);
+        setActiveModal("");
+        form.reset();
     };
 
     return (
@@ -170,7 +187,7 @@ export default function SchedulePage() {
                                             <AppSelect
                                                 value={field.value}
                                                 onValueChange={field.onChange}
-                                                options={useModel("employee", { mode: "select" }).options}
+                                                options={employees}
                                                 placeholder="Select Employee"
                                             />
                                         </FormControl>
@@ -225,7 +242,7 @@ export default function SchedulePage() {
                                             <AppSelect
                                                 value={field.value}
                                                 onValueChange={field.onChange}
-                                                options={useModel("shift", { mode: "select" }).options}
+                                                options={shifts}
                                                 placeholder="Select Shift"
                                             />
                                         </FormControl>

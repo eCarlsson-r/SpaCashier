@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ApiResourceType, ApiResourceData } from "@/lib/api-resources";
 import { useRealtimeSync } from "./useRealtimeSync";
 
-export function useModel<T extends ApiResourceType>(entity: T | string, options: {
+export function useModel<T extends ApiResourceType, R = ApiResourceData<T>>(entity: T | string, options: {
     params?: object,
     mode?: 'table' | 'select'
 } = { mode: 'table' }) {
@@ -44,14 +44,14 @@ export function useModel<T extends ApiResourceType>(entity: T | string, options:
 
     const selectOptions = React.useMemo(() => {
         if (options.mode !== 'select') return [];
-        return tableData.map((item: any) => ({
+        return tableData.map((item: {id: string, name: string, complete_name: string, label: string, value: string}) => ({
             label: item.name || item.complete_name || item.label || "Unknown",
             value: (item.id ?? item.value ?? "").toString(),
         }));
     }, [tableData, options.mode]);
 
     return {
-        data: tableData as ApiResourceData<T>[],
+        data: tableData as R[],
         options: selectOptions,
         remove: deleteMutation.mutateAsync,
         isDeleting: deleteMutation.isPending,

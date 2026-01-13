@@ -94,7 +94,7 @@ export default function Dashboard() {
         // Convert the hashmap values back to an array and sort by id
         chartData = Object.values(hashmap).sort((a, b) => a.month - b.month);
     } else if (data?.monthly_income) {
-        const hashmap: Record<number, {month: number, income: number}> = {};
+        const hashmap: Record<number, {month: number, income?: number}> = {};
 
         // Process the first array: add each object to the hashmap using its id as the key
         for (const item of data.monthly_income) {
