@@ -12,14 +12,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SessionTimer } from "@/components/shared/SessionTimer";
 import { useAuth } from "@/hooks/useAuth";
-
-type SessionData = {
-    id: string;
-    start: string;
-    end: string;
-    status: string;
-    treatment_duration: number;
-}
+import { SessionSchema } from "@/lib/schemas";
+import z from "zod";
 
 export default function SessionPage() {
     const router = useRouter();
@@ -98,12 +92,12 @@ export default function SessionPage() {
         {
             accessorKey: "session.start",
             header: "Duration",
-            cell: ({ row }: { row: { original: SessionData } }) => {
+            cell: ({ row }: { row: { original: z.infer<typeof SessionSchema> } }) => {
                 if (row.original.status === "ongoing" || row.original.status === "completed") {
                     return (
                         <SessionTimer
                             startTime={row.original.start}
-                            durationMinutes={row.original.treatment_duration}
+                            durationMinutes={row.original.treatment.duration}
                             status={row.original.status}
                             endTime={row.original.end}
                         />
@@ -118,14 +112,14 @@ export default function SessionPage() {
         {
             accessorKey: "session.status",
             header: "Actions",
-            cell: ({ row: { original } }: { row: { original: SessionData } }) => {
+            cell: ({ row: { original } }: { row: { original: z.infer<typeof SessionSchema> } }) => {
                 if (original.status === "waiting") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => startSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => startSession.mutate(original.id?.toString() || "")}>
                                 <Play className="h-4 w-4 text-green-500" />
                             </Button>
-                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id?.toString() || "")}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>
@@ -133,10 +127,10 @@ export default function SessionPage() {
                 } else if (original.status === "ongoing") {
                     return (
                         <div className="flex items-center gap-2">
-                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => finishSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => finishSession.mutate(original.id?.toString() || "")}>
                                 <FlagTriangleRight className="h-4 w-4 text-purple-500" />
                             </Button>
-                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id)}>
+                            <Button type="button" className="hover:bg-sky-200" variant="ghost" size="sm" onClick={() => removeSession.mutate(original.id?.toString() || "")}>
                                 <X className="h-4 w-4 text-red-500" />
                             </Button>
                         </div>

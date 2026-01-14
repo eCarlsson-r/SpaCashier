@@ -315,21 +315,6 @@ export const SaleSchema = z.object({
   employee_id: z.number(),
 });
 
-export const SessionSchema = z.object({
-  id: z.number().nullable(),
-  order_time: z.string().nullable(),
-  reserved_time: z.any().nullable(),
-  bed_id: z.number(),
-  customer_id: z.number(),
-  payment: z.string(),
-  date: z.string(),
-  start: z.string().nullable(),
-  end: z.string().nullable(),
-  status: z.string(),
-  treatment_id: z.string(),
-  employee_id: z.number().nullable(),
-});
-
 export const ShiftSchema = z.object({
   id: z.string().default(''),
   name: z.string().default(''),
@@ -401,6 +386,22 @@ export const WalkinSchema = z.object({
   customer_id: z.number(),
   sales_id: z.number(),
   session_id: z.number(),
+});
+
+export const SessionSchema = z.object({
+  id: z.number().nullable(),
+  order_time: z.string().nullable(),
+  reserved_time: z.any().nullable(),
+  bed_id: z.number(),
+  customer_id: z.number(),
+  payment: z.string(),
+  date: z.string(),
+  start: z.string().nullable(),
+  end: z.string().nullable(),
+  status: z.string(),
+  treatment_id: z.string(),
+  employee_id: z.number().nullable(),
+  treatment: TreatmentSchema
 });
 
 export const WalletSchema = z.object({
