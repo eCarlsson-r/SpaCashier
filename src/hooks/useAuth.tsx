@@ -16,6 +16,10 @@ interface User {
     branch_id: number;
     gender: string;
   };
+  branch: {
+    id: number;
+    name: string;
+  };
   branches: Branch[];
 }
 
@@ -38,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data } = await api.get("/user"); // Matches Laravel's Auth::user()
       setUser(data);
     } catch (err) {
+      console.info(err);
       setUser(null);
       Cookies.remove("auth_token");
     } finally {
