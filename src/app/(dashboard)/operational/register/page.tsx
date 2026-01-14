@@ -33,11 +33,11 @@ export default function RegisterVoucherForm() {
     setPdfUrl(null); // Clears the preview area
   };
 
-  const generateVoucherPdf = (vouchers: any, treatmentName: string) => {
+  const generateVoucherPdf = (vouchers: {id: string, register_date: string}[], treatmentName: string) => {
     // 'p' = portrait, 'cm' = centimeters (matches your original)
     const doc = new jsPDF("p", "cm");
 
-    vouchers.forEach((voucher: any, idx: number) => {
+    vouchers.forEach((voucher: {id: string, register_date: string}, idx: number) => {
       const date = new Date(voucher.register_date) || new Date();
       const formattedDate = `${date.getDate()}/${("00" + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear()}`;
 
@@ -53,9 +53,10 @@ export default function RegisterVoucherForm() {
 
       // 2. Convert canvas to Image Data
       const jpegUrl = canvas.toDataURL("image/jpeg");
+      const imgProps = doc.getImageProperties(jpegUrl);
 
       // 3. Add Content using your original coordinates
-      doc.addImage(jpegUrl, 'JPEG', 0.4, 1.8);
+      doc.addImage(jpegUrl, 'JPG', 0.4, 1.8, imgProps.width, imgProps.height);
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(13);
@@ -74,11 +75,11 @@ export default function RegisterVoucherForm() {
     return doc.output('blob');
   };
 
-  const onRegister = (data: any) => {
+  const onRegister = (data: {quantity: number, treatment_id: string}) => {
     // Send request to register vouchers
     api.post('/voucher', data).then(function (response) {
       // Get treatment label from your select options
-      const treatmentLabel = treatmentOptions.find(t => t.value === data.treatment_id)?.label;
+      const treatmentLabel = treatmentOptions.find((t: {value: string, label: string}) => t.value === data.treatment_id)?.label;
       // Generate PDF string
       const pdfDataUri = generateVoucherPdf(response.data, treatmentLabel);
 
@@ -86,7 +87,7 @@ export default function RegisterVoucherForm() {
       setPdfUrl(URL.createObjectURL(pdfDataUri));
       toast.success("Vouchers registered and PDF generated!");
     }).catch(function (error) {
-      toast.error("Registration failed.");
+      toast.error("Registration failed: "+ error);
     });
   };
 
@@ -98,7 +99,7 @@ export default function RegisterVoucherForm() {
       api.get(`/voucher?treatment=${treatment}`)
         .then(res => {
           form.setValue("prefix", treatment);
-          let voucherCode = ("id" in res.data) ? parseInt(res.data.id.split(treatment)[1]) : 0;
+          const voucherCode = ("id" in res.data) ? parseInt(res.data.id.split(treatment)[1]) : 0;
           form.setValue("start", treatment + (("0000000000" + (voucherCode + 1)).slice(-6)));
           form.setValue("end", treatment + (("0000000000" + (voucherCode + qty)).slice(-6)));
         }).catch(e => {
@@ -107,7 +108,7 @@ export default function RegisterVoucherForm() {
           form.setValue("end", treatment + (("0000000000" + qty).slice(-6)));
         });
     }
-  }, [qty, treatment, form.setValue]);
+  }, [qty, treatment, form]);
 
   useEffect(() => {
     return () => {
