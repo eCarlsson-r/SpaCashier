@@ -34,7 +34,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-gradientto-b from-cyan-50 via-cyan-300 to-sky-600">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-b from-cyan-50 via-cyan-300 to-sky-600">
       <Card className="w-[400px]">
         <CardHeader className="text-center">
           <CardTitle>
@@ -42,7 +42,7 @@ export default function LoginPage() {
               className="mx-auto"
               src="/images/logo.png"
               alt="Logo"
-              width={100}
+              width={300}
               height={100}
             />
           </CardTitle>
