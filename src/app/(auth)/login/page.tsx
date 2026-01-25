@@ -6,54 +6,67 @@ import api from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
+import Image from "next/image";
 import { toast } from "sonner"; // For nice notifications
-import Cookies from 'js-cookie';
-
+import Cookies from "js-cookie";
 export default function LoginPage() {
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
 
-        const formData = new FormData(e.currentTarget);
-        const credentials = Object.fromEntries(formData);
+    const formData = new FormData(e.currentTarget);
+    const credentials = Object.fromEntries(formData);
 
-        try {
-            const { data } = await api.post("/login", credentials);
-            Cookies.set('auth_token', data.token, { expires: 7, secure: true });
-            toast.success("Login successful!");
-            router.push("/dashboard"); // Default landing page
-        } catch (err) {
-            toast.error("Invalid credentials. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      const { data } = await api.post("/login", credentials);
+      Cookies.set("auth_token", data.token, { expires: 7, secure: true });
+      toast.success("Login successful!");
+      router.push("/dashboard"); // Default landing page
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-cyan-50 via-cyan-300 to-sky-600">
-            <Card className="w-[400px]">
-                <CardHeader className="text-center">
-                    <CardTitle><img className="mx-auto" src="/images/logo.png" alt="Logo" /></CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Username</label>
-                            <Input name="username" required placeholder="admin" />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Password</label>
-                            <Input name="password" type="password" required />
-                        </div>
-                        <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700" disabled={loading}>
-                            {loading ? "Authenticating..." : "Sign In"}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-linear-gradientto-b from-cyan-50 via-cyan-300 to-sky-600">
+      <Card className="w-[400px]">
+        <CardHeader className="text-center">
+          <CardTitle>
+            <Image
+              className="mx-auto"
+              src="/images/logo.png"
+              alt="Logo"
+              width={100}
+              height={100}
+            />
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Username</label>
+              <Input name="username" required placeholder="admin" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Password</label>
+              <Input name="password" type="password" required />
+            </div>
+            <Button
+              type="submit"
+              className="w-full bg-sky-600 hover:bg-sky-700"
+              disabled={loading}
+            >
+              {loading ? "Authenticating..." : "Sign In"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

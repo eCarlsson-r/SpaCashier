@@ -9,93 +9,128 @@ import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import { BalanceSheetTemplate } from "@/components/print/balance-sheet-template";
 import { ColumnDef } from "@tanstack/react-table";
-import { z } from "zod";
-import { AccountSchema } from "@/lib/schemas";
 
 export default function BalanceSheet() {
-    const [reportData, setReportData] = useState([]);
-    const [selectedEndDate, setSelectedEndDate] = useState<Date|undefined>(new Date());
+  const [reportData, setReportData] = useState<
+    {
+      type: string;
+      category: string;
+      name: string;
+      balance: number;
+    }[]
+  >([]);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(
+    new Date(),
+  );
 
-    const columns: ColumnDef<z.infer<typeof AccountSchema>>[] = [
-        { accessorKey: "type", header: "Type" },
-        { accessorKey: "category", header: "Category" },
-        { accessorKey: "name", header: "Name" },
-        { accessorKey: "balance", header: "Balance", cell: (info) => `Rp. ${new Intl.NumberFormat('id-ID').format(info.getValue() as number)},-`  },
-    ];
+  const columns: ColumnDef<{
+    type: string;
+    category: string;
+    name: string;
+    balance: number;
+  }>[] = [
+    { accessorKey: "type", header: "Type" },
+    { accessorKey: "category", header: "Category" },
+    { accessorKey: "name", header: "Name" },
+    {
+      accessorKey: "balance",
+      header: "Balance",
+      cell: (info) =>
+        `Rp. ${new Intl.NumberFormat("id-ID").format(info.getValue() as number)},-`,
+    },
+  ];
 
-    const [printData, setPrintData] = useState([]);
-    const printRef = useRef<HTMLDivElement>(null);
+  const [printData, setPrintData] = useState<
+    {
+      type: string;
+      category: string;
+      name: string;
+      balance: number;
+    }[]
+  >([]);
+  const printRef = useRef<HTMLDivElement>(null);
 
-    const handlePrint = useReactToPrint({
-        contentRef: printRef,
-        documentTitle: "Balance Sheet",
-    });
-    
-    const generateReport = () => {
-        if (selectedEndDate) {
-            api.get(`/account`, {
-                params: {
-                    end: selectedEndDate.toDateString()
-                }
-            })
-                .then((response) => {
-                    setReportData(response.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching attendance report:", error);
-                });
-        }
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Balance Sheet",
+  });
+
+  const generateReport = () => {
+    if (selectedEndDate) {
+      api
+        .get(`/account`, {
+          params: {
+            end: selectedEndDate.toDateString(),
+          },
+        })
+        .then((response) => {
+          setReportData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching attendance report:", error);
+        });
     }
+  };
 
-    const clear = () => {
-        setSelectedEndDate(new Date());
-        setReportData([]);
-        setPrintData([]);
-    }
+  const clear = () => {
+    setSelectedEndDate(new Date());
+    setReportData([]);
+    setPrintData([]);
+  };
 
-    const printReport = () => {
-        setPrintData(reportData);
-        // Triggering after a small delay ensures the 'report' template is loaded into the ref
-        setTimeout(() => {
-            if (printRef.current) {
-                handlePrint();
-            }
-        }, 250);
-    };
+  const printReport = () => {
+    setPrintData(reportData);
+    // Triggering after a small delay ensures the 'report' template is loaded into the ref
+    setTimeout(() => {
+      if (printRef.current) {
+        handlePrint();
+      }
+    }, 250);
+  };
 
-    return (
-        <div>
-            <DataTable
-                title="Balance Sheet"
-                columns={columns}
-                data={reportData}
-                customFilter={
-                    <div className={`grid grid-cols-2 gap-3`}>
-                        <div className="mt-2">
-                            <Label>End Date</Label>
-                            <DatePicker
-                                value={new Date(selectedEndDate || "")}
-                                onChange={(date) => setSelectedEndDate(new Date(date||""))}
-                            />
-                        </div>
-                        <div className="grid grid-cols-2 mt-2 gap-2">
-                            <Button className="bg-sky-600 hover:bg-sky-700" onClick={() => generateReport()}>Find</Button>
-                            <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => clear()}>Clear Report</Button>
-                        </div>
-                    </div>
-                }   
-                tableAction={() => printReport()}
-                tableActionText="Print Report"
-            />
-
-            <div className="hidden">
-                <div ref={printRef} className="print:block p-3 bg-white">
-                    <BalanceSheetTemplate 
-                        endDate={selectedEndDate?.toLocaleDateString("id-ID")||""} 
-                        data={printData} 
-                    />
-                </div>
+  return (
+    <div>
+      <DataTable
+        title="Balance Sheet"
+        columns={columns}
+        data={reportData}
+        customFilter={
+          <div className={`grid grid-cols-2 gap-3`}>
+            <div className="mt-2">
+              <Label>End Date</Label>
+              <DatePicker
+                value={new Date(selectedEndDate || "")}
+                onChange={(date) => setSelectedEndDate(new Date(date || ""))}
+              />
             </div>
+            <div className="grid grid-cols-2 mt-2 gap-2">
+              <Button
+                className="bg-sky-600 hover:bg-sky-700"
+                onClick={() => generateReport()}
+              >
+                Find
+              </Button>
+              <Button
+                className="bg-rose-600 hover:bg-rose-700"
+                onClick={() => clear()}
+              >
+                Clear Report
+              </Button>
+            </div>
+          </div>
+        }
+        tableAction={() => printReport()}
+        tableActionText="Print Report"
+      />
+
+      <div className="hidden">
+        <div ref={printRef} className="print:block p-3 bg-white">
+          <BalanceSheetTemplate
+            endDate={selectedEndDate?.toLocaleDateString("id-ID") || ""}
+            data={printData}
+          />
         </div>
-    );
+      </div>
+    </div>
+  );
 }

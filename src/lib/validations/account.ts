@@ -16,9 +16,7 @@ export const ACCOUNT_TYPES = [
 export const AccountSchema = z.object({
     name: z.string().min(1, "Account name is required"),
     category: z.string().min(1, "Category (e.g. Bank, Kartu Kredit) is required"),
-    type: z.enum(ACCOUNT_TYPES, {
-        errorMap: () => ({ message: "Please select a valid account type" }),
-    }),
+    type: z.enum(ACCOUNT_TYPES),
 });
 
 export type AccountFormValues = z.infer<typeof AccountSchema>;

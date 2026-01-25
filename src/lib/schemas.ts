@@ -1,22 +1,23 @@
 import { z } from 'zod';
 
 export const AccountSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   name: z.string(),
   type: z.string(),
+  category: z.string().optional(),
 });
 
 export const AgentSchema = z.object({
-  id: z.number().nullable(),
+  id: z.number().nullable().optional(),
   name: z.string(),
-  address: z.string().nullable(),
-  city: z.string().nullable(),
-  email: z.string().nullable(),
-  phone: z.string().nullable(),
-  mobile: z.string().nullable(),
-  discount: z.number().nullable(),
-  commission: z.number().nullable(),
-  liability_account: z.number().nullable(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  mobile: z.string().optional(),
+  discount: z.coerce.number().optional(),
+  commission: z.coerce.number().optional(),
+  liability_account: z.coerce.number().nullable().optional(),
 });
 
 export const AttendanceSchema = z.object({
@@ -34,14 +35,19 @@ export const BankSchema = z.object({
 });
 
 export const BannerSchema = z.object({
-  id: z.number().nullable(),
-  image: z.string(),
-  intro_key: z.string(),
-  title_key: z.string(),
-  subtitle_key: z.string(),
-  description_key: z.string(),
-  action_key: z.string(),
-  action_page: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  image: z.any().optional(),
+  introduction: z.string().optional(),
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  description: z.string().optional(),
+  action: z.string().optional(),
+  action_page: z.string().optional(),
+  intro_key: z.string().optional(),
+  title_key: z.string().optional(),
+  subtitle_key: z.string().optional(),
+  description_key: z.string().optional(),
+  action_key: z.string().optional(),
 });
 
 export const BedSchema = z.object({
@@ -75,18 +81,18 @@ export const BonuSchema = z.object({
 });
 
 export const BranchSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   name: z.string(),
   address: z.string(),
   city: z.string(),
   country: z.string(),
   phone: z.string(),
-  description: z.string().nullable(),
-  cash_account: z.string().nullable(),
-  walkin_account: z.string().nullable(),
-  voucher_purchase_account: z.string().nullable(),
-  voucher_usage_account: z.string().nullable(),
-  branch_img: z.string(),
+  description: z.string().optional(),
+  cash_account: z.string().optional(),
+  walkin_account: z.string().optional(),
+  voucher_purchase_account: z.string().optional(),
+  voucher_usage_account: z.string().optional(),
+  branch_img: z.any().optional(),
 });
 
 export const CartRecordSchema = z.object({
@@ -107,14 +113,14 @@ export const CartRecordSchema = z.object({
 });
 
 export const CategorySchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string(),
-  description: z.string(),
-  i18n: z.string().nullable(),
-  header_img: z.string().nullable(),
-  body_img1: z.string().nullable(),
-  body_img2: z.string().nullable(),
-  body_img3: z.string().nullable(),
+  description: z.string().optional(),
+  i18n: z.string().optional(),
+  header_img: z.any().optional(),
+  body_img1: z.any().optional(),
+  body_img2: z.any().optional(),
+  body_img3: z.any().optional(),
 });
 
 export const CompensationSchema = z.object({
@@ -132,28 +138,28 @@ export const CompensationSchema = z.object({
 });
 
 export const CustomerSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   name: z.string(),
-  gender: z.string(),
-  address: z.string().nullable(),
-  city: z.string().nullable(),
-  country: z.string().nullable(),
-  place_of_birth: z.string(),
-  date_of_birth: z.string().nullable(),
-  mobile: z.string().nullable(),
-  email: z.string().nullable(),
-  liability_account: z.number().nullable(),
+  gender: z.string().default("M"),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  place_of_birth: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  mobile: z.string().optional(),
+  email: z.string().optional(),
+  liability_account: z.coerce.number().nullable().optional(),
 });
 
 export const DiscountSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string(),
-  type: z.string(),
-  percent: z.number(),
-  amount: z.number(),
-  quantity: z.number(),
+  type: z.string().default("POTONGAN"),
+  percent: z.coerce.number().default(0),
+  amount: z.coerce.number().default(0),
+  quantity: z.coerce.number().default(0),
   expiry_date: z.string(),
-  account_id: z.number(),
+  account_id: z.coerce.number().nullable().optional(),
 });
 
 export const EmployeeSchema = z.object({
@@ -162,88 +168,97 @@ export const EmployeeSchema = z.object({
   complete_name: z.string(),
   name: z.string(),
   status: z.string(),
-  identity_type: z.string(),
-  identity_number: z.string(),
-  place_of_birth: z.string(),
-  date_of_birth: z.string(),
+  identity_type: z.string().optional(),
+  identity_number: z.string().optional(),
+  place_of_birth: z.string().optional(),
+  date_of_birth: z.string().optional(),
   certified: z.number().default(0),
   vaccine1: z.boolean().default(false),
   vaccine2: z.boolean().default(false),
-  recruiter: z.number().nullable(),
+  recruiter: z.number().nullable().optional(),
   branch_id: z.string(),
-  base_salary: z.number(),
-  expertise: z.string(),
-  gender: z.string(),
-  phone: z.string(),
-  address: z.string(),
-  mobile: z.string(),
-  email: z.string(),
-  absent_deduction: z.number().default(50000),
-  meal_fee: z.number().default(0),
-  late_deduction: z.number().default(20000),
+  base_salary: z.coerce.number().default(0),
+  expertise: z.string().optional(),
+  gender: z.string().default("M"),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  mobile: z.string().optional(),
+  email: z.string().optional(),
+  absent_deduction: z.coerce.number().default(50000),
+  meal_fee: z.coerce.number().default(0),
+  late_deduction: z.coerce.number().default(20000),
   bank_account: z.string().default(''),
   bank: z.string().default(''),
+  grade: z.object({
+    grade: z.string().optional(),
+  }).optional(),
 });
 
 export const ExpenseItemSchema = z.object({
-  id: z.number().nullable(),
-  expense_id: z.number(),
-  account_id: z.number(),
-  amount: z.number(),
-  description: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  expense_id: z.coerce.number().optional(),
+  account_id: z.string(),
+  amount: z.coerce.number().default(0),
+  description: z.string().default(''),
+  type: z.string().default('biaya'),
 });
 
 export const ExpensePaymentSchema = z.object({
-  id: z.number().nullable(),
-  expense_id: z.number(),
-  type: z.string(),
-  wallet_id: z.number(),
-  amount: z.number(),
-  description: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  expense_id: z.coerce.number().optional(),
+  type: z.string().default('cash'),
+  wallet_id: z.string(),
+  amount: z.coerce.number().default(0),
+  description: z.string().default(''),
 });
 
 export const ExpenseSchema = z.object({
-  id: z.number().nullable(),
-  journal_reference: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  journal_reference: z.string().optional(),
   date: z.string(),
   partner_type: z.string(),
   partner: z.string(),
   description: z.string().default(''),
+  items: z.array(ExpenseItemSchema).default([]),
+  payments: z.array(ExpensePaymentSchema).default([]),
 });
 
 export const GradeSchema = z.object({
-  id: z.number().nullable(),
-  employee_id: z.number(),
+  id: z.coerce.number().nullable().optional(),
+  employee_id: z.coerce.number(),
   grade: z.string(),
   start_date: z.string(),
-  end_date: z.string().nullable(),
+  end_date: z.string().optional(),
 });
 
 export const IncomeItemSchema = z.object({
-  id: z.number().nullable(),
-  income_id: z.number(),
-  type: z.string(),
-  transaction: z.string(),
-  amount: z.number(),
-  description: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  income_id: z.coerce.number().optional(),
+  type: z.string().default('biaya'),
+  transaction: z.string().optional(),
+  account_id: z.string().optional(),
+  amount: z.coerce.number().default(0),
+  description: z.string().default(''),
 });
 
 export const IncomePaymentSchema = z.object({
-  id: z.number().nullable(),
-  income_id: z.number(),
-  type: z.string(),
-  wallet_id: z.number(),
-  amount: z.number(),
-  description: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  income_id: z.coerce.number().optional(),
+  type: z.string().default('cash'),
+  wallet_id: z.string(),
+  amount: z.coerce.number().default(0),
+  description: z.string().default(''),
 });
 
 export const IncomeSchema = z.object({
-  id: z.number().nullable(),
-  journal_reference: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  journal_reference: z.string().optional(),
   date: z.string(),
   partner_type: z.string(),
-  partner: z.number(),
-  description: z.string(),
+  partner: z.any().optional(),
+  description: z.string().default(''),
+  items: z.array(IncomeItemSchema).default([]),
+  payments: z.array(IncomePaymentSchema).default([]),
 });
 
 export const JournalRecordSchema = z.object({
@@ -256,16 +271,20 @@ export const JournalRecordSchema = z.object({
 });
 
 export const JournalSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   reference: z.string(),
   date: z.string(),
   description: z.string(),
   records: z.array(z.object({
     account_id: z.string(),
-    debit: z.number().default(0),
-    credit: z.number().default(0),
-    description: z.string().nullable(),
-  }))
+    debit: z.coerce.number().default(0),
+    credit: z.coerce.number().default(0),
+    description: z.string().optional(),
+  })),
+  temp_account_id: z.string().optional(),
+  temp_debit: z.coerce.number().optional(),
+  temp_credit: z.coerce.number().optional(),
+  temp_description: z.string().optional(),
 });
 
 export const PeriodSchema = z.object({
@@ -276,15 +295,16 @@ export const PeriodSchema = z.object({
 });
 
 export const RoomSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   name: z.string(),
-  description: z.string().nullable(),
-  image: z.string().nullable(),
+  description: z.string().optional(),
+  image: z.any().optional(),
   branch_id: z.string(),
   bed: z.array(z.object({
+    id: z.coerce.number().nullable().optional(),
     name: z.string(),
-    description: z.string().nullable(),
-  })),
+    description: z.string().optional(),
+  })).optional().default([]),
 });
 
 export const SalesRecordSchema = z.object({
@@ -323,23 +343,23 @@ export const ShiftSchema = z.object({
 });
 
 export const SupplierSchema = z.object({
-  id: z.number().nullable(),
+  id: z.coerce.number().nullable().optional(),
   name: z.string(),
   contact: z.string(),
-  bank: z.string().nullable(),
-  bank_account: z.string().nullable(),
-  address: z.string().nullable(),
-  mobile: z.string().nullable(),
-  email: z.string().nullable(),
+  bank: z.string().optional(),
+  bank_account: z.string().optional(),
+  address: z.string().optional(),
+  mobile: z.string().optional(),
+  email: z.string().optional(),
 });
 
 export const TransferSchema = z.object({
-  id: z.number().nullable(),
-  journal_reference: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  journal_reference: z.string().optional(),
   date: z.string(),
   from_wallet_id: z.string(),
   to_wallet_id: z.string(),
-  amount: z.number(),
+  amount: z.coerce.number().default(0),
   description: z.string(),
 });
 
@@ -347,18 +367,18 @@ export const TreatmentSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().default(''),
-  price: z.number(),
-  duration: z.number(),
+  price: z.coerce.number(),
+  duration: z.coerce.number(),
   category_id: z.string(),
   room: z.string().default('["VIPSG","VIPCP","STDRM"]'),
-  applicable_days: z.string(),
-  applicable_time_end: z.string(),
-  applicable_time_start: z.string(),
-  minimum_quantity: z.number(),
-  voucher_normal_quantity: z.number().nullable(),
-  voucher_purchase_quantity: z.number().nullable(),
-  body_img: z.string(),
-  icon_img: z.string(),
+  applicable_days: z.any(),
+  applicable_time_end: z.string().optional(),
+  applicable_time_start: z.string().optional(),
+  minimum_quantity: z.coerce.number().default(1),
+  voucher_normal_quantity: z.coerce.number().optional(),
+  voucher_purchase_quantity: z.coerce.number().optional(),
+  body_img: z.any().optional(),
+  icon_img: z.any().optional(),
 });
 
 export const UserSchema = z.object({
@@ -389,19 +409,22 @@ export const WalkinSchema = z.object({
 });
 
 export const SessionSchema = z.object({
-  id: z.number().nullable(),
-  order_time: z.string().nullable(),
-  reserved_time: z.any().nullable(),
-  bed_id: z.number(),
-  customer_id: z.number(),
-  payment: z.string(),
-  date: z.string(),
-  start: z.string().nullable(),
-  end: z.string().nullable(),
-  status: z.string(),
+  id: z.coerce.number().nullable().optional(),
+  order_time: z.string().optional(),
+  reserved_at: z.string().optional(),
+  bed_id: z.string(),
+  room_id: z.string().optional(),
+  customer_id: z.string(),
+  payment: z.string().default('walk-in'),
+  walkin_id: z.string().optional(),
+  voucher_id: z.string().optional(),
+  date: z.string().optional(),
+  start: z.string().optional(),
+  end: z.string().optional(),
+  status: z.string().default('draft'),
   treatment_id: z.string(),
-  employee_id: z.number().nullable(),
-  treatment: TreatmentSchema
+  employee_id: z.string().optional(),
+  treatment: TreatmentSchema.optional(),
 });
 
 export const WalletSchema = z.object({
