@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
-import { PWAProvider } from "@/components/pwa/PWAManager";
+
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -31,10 +31,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <PWAProvider>
-            {children}
-            <Toaster position="top-right" richColors />
-          </PWAProvider>
+          {children}
+          <Toaster position="top-right" richColors />
         </QueryProvider>
       </body>
     </html>
