@@ -12,7 +12,7 @@ if (typeof window !== 'undefined') {
     window.Pusher = Pusher;
 }
 
-export const echo = new Echo({
+export const echo = typeof window !== 'undefined' ? new Echo({
     broadcaster: 'reverb',
     key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
     wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
@@ -21,4 +21,4 @@ export const echo = new Echo({
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME ?? 'https') === 'https',
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-});
+}) : undefined;
