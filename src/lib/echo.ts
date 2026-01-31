@@ -14,11 +14,11 @@ if (typeof window !== 'undefined') {
 
 export const echo = new Echo({
     broadcaster: 'reverb',
-    client: Pusher,
     key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
     wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
     wsPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT ?? 80),
     wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT ?? 443),
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME ?? 'https') === 'https',
+    disableStats: true,
     enabledTransports: ['ws', 'wss'],
 });
