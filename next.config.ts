@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const url = process.env.NEXT_PUBLIC_API_URL.split(":");
+const url = (process.env.NEXT_PUBLIC_API_URL ?? "").split(":");
 const currentHost = (url.length > 2) ? {
   protocol: url[0],
   hostname: url[1].replace("//", ""),
