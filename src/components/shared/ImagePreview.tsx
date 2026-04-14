@@ -39,7 +39,7 @@ export function ImagePreview<T extends FieldValues>({
 
   const displayImage =
     preview ||
-    (currentImageUrl ? `${process.env.NEXT_PUBLIC_API_URL.replace("/api", "")}${currentImageUrl}` : null);
+    (currentImageUrl ? `${(process.env.NEXT_PUBLIC_API_URL ?? "").replace("/api", "")}${currentImageUrl}` : null);
 
   return (
     <div className="space-y-2 border p-4 rounded-lg bg-sky-50/50">
