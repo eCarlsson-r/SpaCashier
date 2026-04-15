@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { PWAProvider } from "@/components/pwa/PWAManager";
+import { StaffChatPanel } from "@/components/ai/StaffChatPanel";
 
 export default function DashboardLayout({
   children,
@@ -34,6 +35,7 @@ export default function DashboardLayout({
               </div>
             </header>
             <main className="container flex-1 py-8">{children}</main>
+            <StaffChatPanel />
           </div>
         </PWAProvider>
       </BranchProvider>

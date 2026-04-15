@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { EntityForm } from "../shared/EntityForm";
 import { SessionSchema } from "@/lib/schemas";
 import z from "zod";
+import { RecommendationPanel } from "@/components/ai/RecommendationPanel";
+import { useAuth } from "@/hooks/useAuth";
 
 type SessionFormValues = z.infer<typeof SessionSchema>;
 
@@ -25,6 +27,8 @@ function SessionFormContent({
 }) {
   const { control, watch, setValue } = form;
   const paymentType = watch("payment");
+  const customerId = watch("customer_id");
+  const { user } = useAuth();
 
   const { data: walkins, options: walkinOptions } = useModel("walkin", {
     mode: "select",
@@ -302,6 +306,11 @@ function SessionFormContent({
           />
         </div>
       </div>
+
+      <RecommendationPanel
+        customerId={customerId}
+        branchId={user?.employee?.branch_id}
+      />
     </div>
   );
 }

@@ -24,6 +24,7 @@ import { useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { NewCustomerModal } from "@/components/operational/new-customer-modal";
 import { Customer } from "@/lib/types";
+import { RecommendationPanel } from "@/components/ai/RecommendationPanel";
 
 interface SalesItem {
   treatment_id: number | string;
@@ -407,6 +408,11 @@ export default function SalesForm() {
           <TotalRow label="Grand Total" value={grandTotal} highlight />
         </div>
       </div>
+
+      <RecommendationPanel
+        customerId={form.watch("customer")}
+        branchId={form.watch("branch")}
+      />
 
       <SalesCart
         items={items}
