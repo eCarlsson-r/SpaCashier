@@ -11,9 +11,9 @@ export default defineConfig({
     testTimeout: 30000,
   },
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@/ui": path.resolve(__dirname, "./src/components/ui"),
-    },
+    alias: [
+      { find: "@/ui", replacement: path.resolve(__dirname, "./src/components/ui") },
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
   },
 });

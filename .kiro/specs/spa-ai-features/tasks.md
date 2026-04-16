@@ -232,82 +232,82 @@ Incremental implementation of four AI-powered features across SpaCashier (Next.j
 - [x] 10. Checkpoint — Ensure all conflict resolution tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Post-Session Feedback Collection — backend
-  - [-] 11.1 Implement `FeedbackController` in Laravel
+- [x] 11. Post-Session Feedback Collection — backend
+  - [x] 11.1 Implement `FeedbackController` in Laravel
     - `POST /api/feedback`: validate session exists, within 48h window, no duplicate for customer+session
     - Persist `Feedback` record; dispatch `SentimentAnalysisJob` to Redis queue; return HTTP 201 immediately
     - Return HTTP 422 (`feedback_window_closed`) if outside 48h window
     - Return HTTP 409 (`feedback_already_submitted`) on duplicate
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7_
 
-  - [~] 11.2 Write property tests for FeedbackController (PHP/Eris, `feedback.property.test.ts`)
+  - [x] 11.2 Write property tests for FeedbackController (PHP/Eris, `feedback.property.test.ts`)
     - **Property 21: Feedback submission payload completeness** — generate random feedback form submissions; assert payload contains non-null `rating`, `comment`, `session_id`, `customer_id`
     - **Property 22: Feedback time window enforcement** — generate random submission timestamps relative to session completion; assert accepted iff T − S ≤ 48h
     - **Property 23: One feedback per customer per session** — generate duplicate submission attempts; assert second submission rejected and exactly one record persisted
     - **Validates: Requirements 9.3, 9.4, 9.5, 9.6, 9.7**
 
-  - [~] 11.3 Write unit tests for FeedbackController
+  - [x] 11.3 Write unit tests for FeedbackController
     - Test 422 returned when feedback submitted after 48h window
     - Test 409 returned on duplicate submission
     - Test 201 returned immediately (non-blocking) on valid submission
     - _Requirements: 9.4, 9.5, 9.7_
 
-  - [~] 11.4 Implement `SentimentAnalysisJob` in Laravel
+  - [x] 11.4 Implement `SentimentAnalysisJob` in Laravel
     - If comment is empty: set `sentiment_score = 0.0`, `sentiment_label = 'neutral'`, skip AI call
     - Otherwise call OpenAI Sentiment_Analyzer; parse score in [-1.0, 1.0] and label in {positive, neutral, negative}
     - Update `Feedback` record; broadcast `FeedbackAnalyzed` event to `private-branch.{branchId}`
     - On failure: retry up to 5 times at 60-second intervals; after 5 failures set `analysis_status = 'analysis_failed'`
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-  - [~] 11.5 Write property tests for SentimentAnalysisJob (PHP/Eris, `sentiment.property.test.ts`)
+  - [x] 11.5 Write property tests for SentimentAnalysisJob (PHP/Eris, `sentiment.property.test.ts`)
     - **Property 24: Sentiment output validity** — generate random comment strings; assert score in [-1.0, 1.0] and label in {positive, neutral, negative}
     - **Property 25: Sentiment retry exhaustion** — generate job failure sequences; assert after exactly 5 failures `analysis_status = 'analysis_failed'`
     - **Validates: Requirements 10.3, 10.6**
 
-  - [~] 11.6 Write unit tests for SentimentAnalysisJob
+  - [x] 11.6 Write unit tests for SentimentAnalysisJob
     - Test empty comment sets score=0.0, label='neutral', no AI call made
     - Test job queued and feedback submission returns 201 immediately
     - Test `FeedbackAnalyzed` event broadcast after successful analysis
     - _Requirements: 10.4, 10.5_
 
-- [ ] 12. Post-Session Feedback Collection — frontend (SpaBooking)
-  - [~] 12.1 Implement feedback prompt listener in SpaBooking (`app/composables/useFeedbackPrompt.ts`)
+- [x] 12. Post-Session Feedback Collection — frontend (SpaBooking)
+  - [x] 12.1 Implement feedback prompt listener in SpaBooking (`app/composables/useFeedbackPrompt.ts`)
     - Subscribe to `private-customer.{customerId}` for session-completion feedback prompt events
     - Trigger display of feedback form modal on event receipt
     - _Requirements: 9.1, 9.2_
 
-  - [~] 12.2 Implement `<FeedbackForm>` component in SpaBooking (`app/components/ai/FeedbackForm.vue`)
+  - [x] 12.2 Implement `<FeedbackForm>` component in SpaBooking (`app/components/ai/FeedbackForm.vue`)
     - Star rating field (1–5) and free-text comment field (max 1000 characters)
     - Submit to `POST /api/feedback` with rating, comment, session_id, customer_id
     - Show error message when feedback window closed (422) or already submitted (409)
     - _Requirements: 9.2, 9.3, 9.5, 9.6, 9.7_
 
-  - [~] 12.3 Write unit tests for FeedbackForm (SpaBooking)
+  - [x] 12.3 Write unit tests for FeedbackForm (SpaBooking)
     - Test form validation: rating required (1–5), comment max 1000 chars
     - Test error message shown on 422 (window closed) and 409 (duplicate)
     - _Requirements: 9.5, 9.7_
 
-- [ ] 13. Sentiment Dashboard — backend
-  - [~] 13.1 Implement `SentimentController` in Laravel
+- [x] 13. Sentiment Dashboard — backend
+  - [x] 13.1 Implement `SentimentController` in Laravel
     - `GET /api/ai/sentiment/dashboard`: return average score, label distribution, time-series data; filter by branch, treatment, therapist, time period (7/30/90 days); manager role only
     - `GET /api/ai/sentiment/summary`: call OpenAI to generate ≤150-word summary of last 50 feedback records for the selected filter
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
 
-  - [~] 13.2 Write property tests for SentimentController (PHP/Eris, `sentiment.property.test.ts`)
+  - [x] 13.2 Write property tests for SentimentController (PHP/Eris, `sentiment.property.test.ts`)
     - **Property 26: Sentiment dashboard access control** — generate random staff roles; assert non-manager roles receive HTTP 403
     - **Property 27: Sentiment dashboard filter correctness** — generate random filter combinations and feedback datasets; assert all returned records match every active filter criterion
     - **Property 28: AI summary word count invariant** — generate random summary strings; assert word count is at most 150
     - **Property 29: Recent negative feedback correctness** — generate random feedback datasets with mixed labels; assert displayed records all have `sentiment_label = 'negative'` and are the 5 most recent by `submitted_at`
     - **Validates: Requirements 11.1, 11.3, 11.5, 11.6**
 
-  - [~] 13.3 Write unit tests for SentimentController
+  - [x] 13.3 Write unit tests for SentimentController
     - Test 403 returned for non-manager staff
     - Test filter by branch, treatment, therapist returns only matching records
     - Test time-series data covers correct date range for each period option
     - _Requirements: 11.1, 11.3, 11.4_
 
-- [ ] 14. Sentiment Dashboard — frontend (SpaCashier)
-  - [~] 14.1 Implement `SentimentDashboard` page in SpaCashier (`src/app/dashboard/sentiment/page.tsx`)
+- [x] 14. Sentiment Dashboard — frontend (SpaCashier)
+  - [x] 14.1 Implement `SentimentDashboard` page in SpaCashier (`src/app/dashboard/sentiment/page.tsx`)
     - Route protected by manager-role middleware
     - Fetch `GET /api/ai/sentiment/dashboard` via React Query with filter params
     - Display: average score, label distribution (positive/neutral/negative counts), time-series chart (Recharts), AI summary (max 150 words), top-5 recent negative feedback records
@@ -315,44 +315,44 @@ Incremental implementation of four AI-powered features across SpaCashier (Next.j
     - Update all metrics within 3 seconds of filter change
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
 
-  - [~] 14.2 Implement real-time dashboard updates in SpaCashier
+  - [x] 14.2 Implement real-time dashboard updates in SpaCashier
     - Subscribe to `private-branch.{branchId}` for `FeedbackAnalyzed` events via Laravel Echo
     - On event receipt, invalidate React Query cache for dashboard data to trigger re-fetch
     - Fall back to 30-second React Query refetch interval when WebSocket disconnects
     - _Requirements: 11.7_
 
-  - [~] 14.3 Write unit tests for SentimentDashboard (SpaCashier)
+  - [x] 14.3 Write unit tests for SentimentDashboard (SpaCashier)
     - Test dashboard renders average score, label distribution, time-series chart, AI summary, and negative feedback list
     - Test filter change triggers data re-fetch
     - Test real-time update invalidates cache on `FeedbackAnalyzed` event
     - Test manager-only route redirects non-manager staff
     - _Requirements: 11.1, 11.2, 11.3, 11.7_
 
-- [~] 15. Checkpoint — Ensure all sentiment and feedback tests pass
+- [x] 15. Checkpoint — Ensure all sentiment and feedback tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Integration wiring and end-to-end validation
-  - [~] 16.1 Wire `BookingObserver` to recommendation cache invalidation
+- [x] 16. Integration wiring and end-to-end validation
+  - [x] 16.1 Wire `BookingObserver` to recommendation cache invalidation
     - On `Booking@created`, call `POST /api/ai/recommendations/invalidate/{customerId}` within 60 seconds
     - Verify cache key `rec:{customerId}:{branchId}` is cleared in Redis
     - _Requirements: 3.2_
 
-  - [~] 16.2 Wire session completion event to feedback prompt
+  - [x] 16.2 Wire session completion event to feedback prompt
     - On `Session@completed`, broadcast feedback prompt event to `private-customer.{customerId}` via Reverb
     - Verify SpaBooking `useFeedbackPrompt` composable receives and surfaces the event
     - _Requirements: 9.1_
 
-  - [~] 16.3 Configure Laravel Horizon queues
+  - [x] 16.3 Configure Laravel Horizon queues
     - Define `sentiment-analysis` queue in Horizon config with retry delay of 60 seconds and max attempts of 5
     - Define `conflict-evaluation` queue for `EvaluateConflictJob`
     - _Requirements: 10.5, 10.6_
 
-  - [~] 16.4 Configure private channel authorization in Laravel
+  - [x] 16.4 Configure private channel authorization in Laravel
     - Authorize `private-branch.{id}` for staff with matching branch assignment
     - Authorize `private-customer.{id}` for the authenticated customer with matching ID
     - _Requirements: 6.4, 7.1_
 
-  - [~] 16.5 Write integration tests
+  - [x] 16.5 Write integration tests
     - Test recommendation response time is at most 2 seconds under realistic load
     - Test chatbot response time is at most 5 seconds
     - Test conflict evaluation completes within 3 seconds of booking event
@@ -364,7 +364,7 @@ Incremental implementation of four AI-powered features across SpaCashier (Next.j
     - Test real-time dashboard update on new `FeedbackAnalyzed` event
     - _Requirements: 1.4, 4.5, 6.3, 6.4, 7.5, 9.1, 10.2, 11.4, 11.7_
 
-- [~] 17. Final checkpoint — Ensure all tests pass
+- [x] 17. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -12,18 +12,18 @@ Incremental implementation of offline-first PWA capabilities and full English/In
 
 ## Tasks
 
-- [ ] 1. Install dependencies and configure PWA for SpaCashier
+- [x] 1. Install dependencies and configure PWA for SpaCashier
   - Install `@ducanh2912/next-pwa` and `next-intl` packages
   - Update `SpaCashier/next.config.ts` to wrap with `withPWA`, configure Workbox with Cache-First for static assets (30-day TTL), NetworkFirst for API GET requests (5s timeout, 100 entries, 24h TTL), and `additionalManifestEntries` for `en.json` and `id.json` translation catalogs
   - Create `SpaCashier/public/manifest.json` with name, short_name, description, start_url, display: standalone, theme_color, background_color, and icons at 192×192 and 512×512 (the existing `src/app/manifest.ts` route handler can be removed or kept alongside)
   - _Requirements: 1.1, 2.1, 2.5, 3.1, 3.3, 5.1, 11.4_
 
-- [ ] 2. Install dependencies and configure PWA for SpaBooking
+- [x] 2. Install dependencies and configure PWA for SpaBooking
   - Install `@vite-pwa/nuxt` and `@nuxtjs/i18n` packages
   - Update `SpaBooking/nuxt.config.ts` to add `@vite-pwa/nuxt` module with manifest (name, short_name, description, start_url, display: standalone, theme_color, background_color, icons 192×192 and 512×512), Workbox Cache-First for static assets, NetworkFirst for API GET requests, and `additionalManifestEntries` for `en.json` and `id.json`
   - _Requirements: 1.2, 2.2, 2.6, 3.2, 3.4, 5.2, 11.5_
 
-- [ ] 3. Set up i18n for SpaCashier with next-intl
+- [x] 3. Set up i18n for SpaCashier with next-intl
   - Create `SpaCashier/src/messages/en.json` and `SpaCashier/src/messages/id.json` with keys for all existing UI strings: navigation labels, button text, form labels, validation messages, table headers, status labels, offline banner, sync notifications, and PWA install prompt strings
   - Create `SpaCashier/src/i18n/routing.ts` with `defineRouting({ locales: ['en', 'id'], defaultLocale: 'en' })`
   - Create `SpaCashier/src/i18n/request.ts` with `getRequestConfig` that loads messages for the active locale
@@ -31,7 +31,7 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - Add `LocaleProvider` to `SpaCashier/src/app/layout.tsx`
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 9.1, 9.3_
 
-- [ ] 4. Set up i18n for SpaBooking with @nuxtjs/i18n
+- [-] 4. Set up i18n for SpaBooking with @nuxtjs/i18n
   - Create `SpaBooking/app/i18n/locales/en.json` and `SpaBooking/app/i18n/locales/id.json` with keys for all existing UI strings: navigation labels, button text, form labels, validation messages, status labels, offline banner, sync notifications, and PWA install prompt strings
   - Update `SpaBooking/nuxt.config.ts` to add `@nuxtjs/i18n` module with `locales`, `defaultLocale: 'en'`, `langDir: 'i18n/locales/'`, `strategy: 'prefix'`, and `detectBrowserLanguage` using cookie key `spa-locale` with fallback `en`
   - _Requirements: 7.1, 7.2, 7.3, 7.5, 7.6, 7.9, 9.2, 9.4_
@@ -50,15 +50,15 @@ Incremental implementation of offline-first PWA capabilities and full English/In
     - **Property 1: Offline write operations are stored with correct structure**
     - **Validates: Requirements 4.1, 4.2**
 
-  - [ ]* 7.2 Write property test for FIFO ordering (SpaCashier)
+  - [ ] 7.2 Write property test for FIFO ordering (SpaCashier)
     - **Property 2: Offline queue preserves FIFO ordering**
     - **Validates: Requirements 4.3, 4.4**
 
-  - [ ]* 7.3 Write property test for successful sync clears queue (SpaCashier)
+  - [ ] 7.3 Write property test for successful sync clears queue (SpaCashier)
     - **Property 3: Successful sync removes operation from queue**
     - **Validates: Requirements 4.5**
 
-  - [ ]* 7.4 Write property test for 4xx error removes operation (SpaCashier)
+  - [ ] 7.4 Write property test for 4xx error removes operation (SpaCashier)
     - **Property 4: 4xx sync errors remove the operation from queue**
     - **Validates: Requirements 4.7, 4.8**
 
@@ -97,12 +97,12 @@ Incremental implementation of offline-first PWA capabilities and full English/In
     - Test `pendingCount` is displayed correctly
     - _Requirements: 3.5, 4.9, 10.1_
 
-  - [ ]* 14.2 Write unit tests for OfflineIndicator (SpaBooking)
+  - [ ] 14.2 Write unit tests for OfflineIndicator (SpaBooking)
     - Test banner renders when `isOnline === false`
     - Test banner is hidden when `isOnline === true`
     - _Requirements: 3.6, 4.10, 10.2_
 
-  - [ ]* 14.3 Write property test for offline indicator count matches queue length
+  - [ ] 14.3 Write property test for offline indicator count matches queue length
     - **Property 5: Offline indicator count matches queue length**
     - **Validates: Requirements 4.9, 4.10, 10.1, 10.2**
 
@@ -113,12 +113,12 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 4.5, 4.6, 4.7, 4.8, 10.3, 10.4_
 
 - [ ] 16. Write unit tests for SyncNotification
-  - [ ]* 16.1 Write unit tests for SyncNotification (SpaCashier)
+  - [ ] 16.1 Write unit tests for SyncNotification (SpaCashier)
     - Test success toast shown on `SYNC_SUCCESS` message
     - Test error toast shown with operation details on `SYNC_FAILED` message
     - _Requirements: 4.5, 4.7, 10.3_
 
-  - [ ]* 16.2 Write unit tests for SyncNotification (SpaBooking)
+  - [ ] 16.2 Write unit tests for SyncNotification (SpaBooking)
     - Test success toast shown on `SYNC_SUCCESS` message
     - Test error toast shown with operation details on `SYNC_FAILED` message
     - _Requirements: 4.6, 4.8, 10.4_
@@ -135,17 +135,17 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 5.4, 5.6, 5.8_
 
 - [ ] 20. Write unit and property tests for InstallPrompt
-  - [ ]* 20.1 Write unit tests for InstallPrompt (SpaCashier)
+  - [ ] 20.1 Write unit tests for InstallPrompt (SpaCashier)
     - Test does not render when snoozed within 7 days
     - Test renders when snooze has expired
     - _Requirements: 5.7_
 
-  - [ ]* 20.2 Write unit tests for InstallPrompt (SpaBooking)
+  - [ ] 20.2 Write unit tests for InstallPrompt (SpaBooking)
     - Test does not render when snoozed within 7 days
     - Test renders when snooze has expired
     - _Requirements: 5.8_
 
-  - [ ]* 20.3 Write property test for install prompt snooze
+  - [ ] 20.3 Write property test for install prompt snooze
     - **Property 6: Install prompt snooze is respected**
     - **Validates: Requirements 5.7, 5.8**
 
@@ -159,33 +159,33 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 7.4, 7.5, 7.8_
 
 - [ ] 23. Write unit and property tests for i18n locale switching
-  - [ ]* 23.1 Write unit tests for LanguageSwitcher (SpaCashier)
+  - [ ] 23.1 Write unit tests for LanguageSwitcher (SpaCashier)
     - Test calls locale change handler with correct locale code on selection
     - Test default locale is `en` when no preference stored
     - _Requirements: 6.4, 6.6_
 
-  - [ ]* 23.2 Write unit tests for LanguageSwitcher (SpaBooking)
+  - [ ] 23.2 Write unit tests for LanguageSwitcher (SpaBooking)
     - Test calls locale change handler with correct locale code on selection
     - Test default locale is `en` when no preference stored
     - _Requirements: 7.4, 7.6_
 
-  - [ ]* 23.3 Write property test for locale preference round-trip (SpaCashier)
+  - [ ] 23.3 Write property test for locale preference round-trip (SpaCashier)
     - **Property 8: Locale preference round-trip**
     - **Validates: Requirements 6.5, 11.1**
 
-  - [ ]* 23.4 Write property test for locale preference round-trip (SpaBooking)
+  - [ ] 23.4 Write property test for locale preference round-trip (SpaBooking)
     - **Property 8: Locale preference round-trip (cookie)**
     - **Validates: Requirements 7.5, 11.2**
 
-  - [ ]* 23.5 Write property test for all UI strings served from active locale catalog (SpaCashier)
+  - [ ] 23.5 Write property test for all UI strings served from active locale catalog (SpaCashier)
     - **Property 7: All UI strings are served from the active locale's catalog**
     - **Validates: Requirements 6.3, 10.5**
 
-  - [ ]* 23.6 Write property test for locale-aware number and date formatting
+  - [ ] 23.6 Write property test for locale-aware number and date formatting
     - **Property 9: Locale-aware number and date formatting**
     - **Validates: Requirements 6.7, 7.7**
 
-  - [ ]* 23.7 Write property test for SpaBooking locale-prefixed URL generation
+  - [ ] 23.7 Write property test for SpaBooking locale-prefixed URL generation
     - **Property 10: SpaBooking locale-prefixed URL generation**
     - **Validates: Requirements 7.9**
 
@@ -205,19 +205,19 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 9.2, 9.4_
 
 - [ ] 27. Write property tests for translation catalog completeness
-  - [ ]* 27.1 Write property test for translation catalog key symmetry (SpaCashier)
+  - [ ] 27.1 Write property test for translation catalog key symmetry (SpaCashier)
     - **Property 14: Translation catalog key symmetry**
     - **Validates: Requirements 9.3**
 
-  - [ ]* 27.2 Write property test for translation catalog key symmetry (SpaBooking)
+  - [ ] 27.2 Write property test for translation catalog key symmetry (SpaBooking)
     - **Property 14: Translation catalog key symmetry**
     - **Validates: Requirements 9.4**
 
-  - [ ]* 27.3 Write property test for missing key fallback to English (SpaCashier)
+  - [ ] 27.3 Write property test for missing key fallback to English (SpaCashier)
     - **Property 15: Missing translation key falls back to English**
     - **Validates: Requirements 9.5**
 
-  - [ ]* 27.4 Write property test for missing key fallback to English (SpaBooking)
+  - [ ] 27.4 Write property test for missing key fallback to English (SpaBooking)
     - **Property 15: Missing translation key falls back to English**
     - **Validates: Requirements 9.6**
 
@@ -235,15 +235,15 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 8.1, 8.5_
 
 - [ ] 30. Write property tests for AI translation service
-  - [ ]* 30.1 Write property test for AI translation not invoked for English locale
+  - [ ] 30.1 Write property test for AI translation not invoked for English locale
     - **Property 11: AI translation is invoked only for non-English locales**
     - **Validates: Requirements 8.2**
 
-  - [ ]* 30.2 Write property test for AI translation fallback on service failure
+  - [ ] 30.2 Write property test for AI translation fallback on service failure
     - **Property 12: AI translation fallback on service failure**
     - **Validates: Requirements 8.4**
 
-  - [ ]* 30.3 Write property test for AI translation preserves treatment names and numeric values
+  - [ ] 30.3 Write property test for AI translation preserves treatment names and numeric values
     - **Property 13: AI translation preserves treatment names and numeric values**
     - **Validates: Requirements 8.6**
 
@@ -257,7 +257,7 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - _Requirements: 11.4, 11.5, 11.6, 11.7_
 
 - [ ] 33. Write property test for offline locale switching
-  - [ ]* 33.1 Write property test for offline locale switching uses precached catalogs
+  - [ ] 33.1 Write property test for offline locale switching uses precached catalogs
     - **Property 16: Offline locale switching uses precached catalogs**
     - **Validates: Requirements 11.6, 11.7**
 

@@ -1,0 +1,21 @@
+{
+  "name": "SpaCashier",
+  "short_name": "SpaCashier",
+  "description": "Spa cashier and point-of-sale management",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0084d1",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
