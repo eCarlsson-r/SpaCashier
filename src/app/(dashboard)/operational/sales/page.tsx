@@ -365,6 +365,7 @@ export default function SalesForm() {
                 <FormControl>
                   <AppSelect
                     options={employees}
+                    {...field}
                     value={activeUser?.employee?.id.toString() || ""}
                     onValueChange={field.onChange}
                   />
