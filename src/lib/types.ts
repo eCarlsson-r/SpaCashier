@@ -215,3 +215,28 @@ export type SentimentDashboardData = {
   aiSummary: string; // max 150 words
   recentNegative: FeedbackSummary[]; // max 5
 };
+
+// ─── PWA + i18n Types ────────────────────────────────────────────────────────
+
+export type Locale = 'en' | 'id';
+
+export type QueuedOperation = {
+  id: string;
+  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  url: string;
+  headers: Record<string, string>;
+  body: string;
+  enqueuedAt: number;
+  retryCount: number;
+  status: 'pending' | 'syncing' | 'failed';
+};
+
+export type SyncResult =
+  | { type: 'success'; operationId: string }
+  | { type: 'client_error'; operationId: string; status: number; message: string }
+  | { type: 'server_error'; operationId: string; status: number };
+
+export type InstallPromptState = {
+  canPrompt: boolean;
+  snoozedUntil: number | null;
+};

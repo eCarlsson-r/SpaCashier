@@ -92,7 +92,7 @@ function makeQueryClient() {
   return new QueryClient({ defaultOptions: { queries: { retry: false } } });
 }
 
-function wrapper({ children }: { children: React.ReactNode }) {
+function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={makeQueryClient()}>
       {children}
@@ -148,9 +148,9 @@ async function renderDashboard() {
     '@/app/(dashboard)/dashboard/sentiment/page'
   );
   return render(
-    <wrapper>
+    <Wrapper>
       <SentimentDashboard />
-    </wrapper>
+    </Wrapper>
   );
 }
 

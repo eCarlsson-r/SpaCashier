@@ -9,8 +9,7 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
+    NavigationMenuTrigger
 } from "@/ui/navigation-menu";
 
 export function Navbar() {
@@ -23,8 +22,8 @@ export function Navbar() {
                     <NavigationMenuItem key={group.category}>
                         <NavigationMenuTrigger className="bg-transparent text-white">{group.category}</NavigationMenuTrigger>
                         <NavigationMenuContent>
-                            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                                {group.items.map((item) => (
+                            <ul className="grid w-100 gap-3 p-4 md:w-125 md:grid-cols-2 lg:w-150">
+                                {group.items.map((item: { title: string; href: string; description: string }) => (
                                     <li key={item.title}>
                                         <NavigationMenuLink asChild>
                                             <Link

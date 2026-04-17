@@ -4,12 +4,6 @@
 
 Incremental implementation of offline-first PWA capabilities and full English/Indonesian internationalization across SpaCashier (Next.js 16 / React 19) and SpaBooking (Nuxt 3 / Vue 3), with AI-generated content translation via the Laravel backend. Tasks are ordered so each step builds on the previous, ending with full integration and wiring.
 
-## Current State
-
-- SpaCashier: No PWA packages installed (`@ducanh2912/next-pwa`, `next-intl` absent from `package.json`). A basic `manifest.ts` route handler exists at `src/app/manifest.ts` but no Workbox config. No i18n setup.
-- SpaBooking: No PWA packages installed (`@vite-pwa/nuxt`, `@nuxtjs/i18n` absent from `package.json`). No i18n setup.
-- SpaInformationSystem-API: No `AITranslationService` exists yet.
-
 ## Tasks
 
 - [x] 1. Install dependencies and configure PWA for SpaCashier
@@ -31,197 +25,192 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - Add `LocaleProvider` to `SpaCashier/src/app/layout.tsx`
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 9.1, 9.3_
 
-- [-] 4. Set up i18n for SpaBooking with @nuxtjs/i18n
+- [x] 4. Set up i18n for SpaBooking with @nuxtjs/i18n
   - Create `SpaBooking/app/i18n/locales/en.json` and `SpaBooking/app/i18n/locales/id.json` with keys for all existing UI strings: navigation labels, button text, form labels, validation messages, status labels, offline banner, sync notifications, and PWA install prompt strings
   - Update `SpaBooking/nuxt.config.ts` to add `@nuxtjs/i18n` module with `locales`, `defaultLocale: 'en'`, `langDir: 'i18n/locales/'`, `strategy: 'prefix'`, and `detectBrowserLanguage` using cookie key `spa-locale` with fallback `en`
   - _Requirements: 7.1, 7.2, 7.3, 7.5, 7.6, 7.9, 9.2, 9.4_
 
-- [ ] 5. Checkpoint — Ensure PWA config and i18n setup build without errors
+- [x] 5. Checkpoint — Ensure PWA config and i18n setup build without errors
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement IndexedDB offline queue module (shared)
+- [x] 6. Implement IndexedDB offline queue module (shared)
   - Create `SpaCashier/src/lib/offlineQueue.ts` implementing `OfflineQueueManager` interface: `enqueue`, `getPending` (ordered by `enqueuedAt` ASC), `markSyncing`, `remove`, `markFailed`, `count` — backed by IndexedDB database `spa-offline-queue`, object store `operations`, with indexes on `enqueuedAt` and `status`
   - Add `Locale`, `QueuedOperation`, `SyncResult`, and `InstallPromptState` TypeScript types to `SpaCashier/src/lib/types.ts`
   - Create `SpaBooking/app/utils/offlineQueue.ts` with the same `OfflineQueueManager` interface and IndexedDB schema
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 7. Write property-based tests for the offline queue module
-  - [ ] 7.1 Write property test for offline write operation structure (SpaCashier)
+  - [x] 6.1 Write property test for offline write operation structure (SpaCashier)
     - **Property 1: Offline write operations are stored with correct structure**
     - **Validates: Requirements 4.1, 4.2**
 
-  - [ ] 7.2 Write property test for FIFO ordering (SpaCashier)
+  - [x] 6.2 Write property test for FIFO ordering (SpaCashier)
     - **Property 2: Offline queue preserves FIFO ordering**
     - **Validates: Requirements 4.3, 4.4**
 
-  - [ ] 7.3 Write property test for successful sync clears queue (SpaCashier)
+  - [x] 6.3 Write property test for successful sync clears queue (SpaCashier)
     - **Property 3: Successful sync removes operation from queue**
     - **Validates: Requirements 4.5**
 
-  - [ ] 7.4 Write property test for 4xx error removes operation (SpaCashier)
+  - [x] 6.4 Write property test for 4xx error removes operation (SpaCashier)
     - **Property 4: 4xx sync errors remove the operation from queue**
     - **Validates: Requirements 4.7, 4.8**
 
-- [ ] 8. Implement service worker fetch interception for SpaCashier
+- [x] 7. Implement service worker fetch interception for SpaCashier
   - Create `SpaCashier/src/sw-custom.ts` (injected via Workbox `injectManifest`) that intercepts POST/PUT/PATCH/DELETE requests: when offline, enqueues via `offlineQueue` and returns a synthetic `202 Accepted` response; when online, passes through directly
   - Implement `serializeRequest` helper to extract method, URL, headers, and body from a `Request`
   - _Requirements: 4.1, 4.3_
 
-- [ ] 9. Implement service worker fetch interception for SpaBooking
+- [x] 8. Implement service worker fetch interception for SpaBooking
   - Create `SpaBooking/app/sw-custom.ts` with the same write-interception logic as SpaCashier, adapted for the Nuxt/Vite PWA plugin's `injectManifest` mode
   - _Requirements: 4.2, 4.4_
 
-- [ ] 10. Implement PWAProvider and offline queue hook for SpaCashier
+- [x] 9. Implement PWAProvider and offline queue hook for SpaCashier
   - Extend `SpaCashier/src/components/pwa/PWAManager.tsx` — add `isOnline`, `pendingCount`, `showUpdatePrompt`, and `applyUpdate` to `PWAContextType`; listen to `online`/`offline` window events; poll `offlineQueue.count()` reactively; detect waiting service worker and expose `showUpdatePrompt`
   - Create `SpaCashier/src/hooks/useOfflineQueue.ts` that wraps `offlineQueue` and exposes reactive `pendingCount`, `enqueue`, and `flush`
   - _Requirements: 1.3, 3.5, 3.7, 4.5, 4.7, 4.9_
 
-- [ ] 11. Implement offline queue composable for SpaBooking
+- [x] 10. Implement offline queue composable for SpaBooking
   - Create `SpaBooking/app/composables/useOfflineQueue.ts` — Vue composable wrapping `offlineQueue.ts`, exposing reactive `isOnline: Ref<boolean>`, `pendingCount: Ref<number>`, `enqueue`, and `flush`; listen to `online`/`offline` events
   - _Requirements: 1.4, 3.6, 3.8, 4.6, 4.8, 4.10_
 
-- [ ] 12. Implement OfflineIndicator component for SpaCashier
+- [x] 11. Implement OfflineIndicator component for SpaCashier
   - Create `SpaCashier/src/components/pwa/OfflineIndicator.tsx` — persistent banner shown when `isOnline === false`, displaying translated offline message and `pendingCount` using `next-intl` `useTranslations`
   - Integrate `OfflineIndicator` into `SpaCashier/src/app/(dashboard)/layout.tsx`
   - _Requirements: 3.5, 4.9, 10.1, 10.5_
 
-- [ ] 13. Implement OfflineIndicator component for SpaBooking
-  - Create `SpaBooking/app/components/pwa/OfflineIndicator.vue` — persistent banner shown when `isOnline === false`, displaying translated offline message and `pendingCount` using `useI18n()`
-  - Integrate `OfflineIndicator` into `SpaBooking/app/layouts/default.vue`
-  - _Requirements: 3.6, 4.10, 10.2, 10.6_
-
-- [ ] 14. Write unit tests for OfflineIndicator components
-  - [ ] 14.1 Write unit tests for OfflineIndicator (SpaCashier)
+  - [x] 11.1 Write unit tests for OfflineIndicator (SpaCashier)
     - Test banner renders when `isOnline === false`
     - Test banner is hidden when `isOnline === true`
     - Test `pendingCount` is displayed correctly
     - _Requirements: 3.5, 4.9, 10.1_
 
-  - [ ] 14.2 Write unit tests for OfflineIndicator (SpaBooking)
+  - [x] 11.2 Write property test for offline indicator count matches queue length
+    - **Property 5: Offline indicator count matches queue length**
+    - **Validates: Requirements 4.9, 4.10, 10.1, 10.2**
+
+- [x] 12. Implement OfflineIndicator component for SpaBooking
+  - Create `SpaBooking/app/components/pwa/OfflineIndicator.vue` — persistent banner shown when `isOnline === false`, displaying translated offline message and `pendingCount` using `useI18n()`
+  - Integrate `OfflineIndicator` into `SpaBooking/app/layouts/default.vue`
+  - _Requirements: 3.6, 4.10, 10.2, 10.6_
+
+  - [x] 12.1 Write unit tests for OfflineIndicator (SpaBooking)
     - Test banner renders when `isOnline === false`
     - Test banner is hidden when `isOnline === true`
     - _Requirements: 3.6, 4.10, 10.2_
 
-  - [ ] 14.3 Write property test for offline indicator count matches queue length
-    - **Property 5: Offline indicator count matches queue length**
-    - **Validates: Requirements 4.9, 4.10, 10.1, 10.2**
-
-- [ ] 15. Implement SyncNotification for SpaCashier and SpaBooking
+- [x] 13. Implement SyncNotification for SpaCashier and SpaBooking
   - Create `SpaCashier/src/components/pwa/SyncNotification.tsx` — listens for `SYNC_SUCCESS` and `SYNC_FAILED` `postMessage` events from the service worker; shows success toast (using `sonner`) with translated "back online" message when queue empties; shows error toast with operation details on failure
   - Create `SpaBooking/app/components/pwa/SyncNotification.vue` — same logic using `useI18n()` and Nuxt UI toast
   - Integrate both into their respective layouts
   - _Requirements: 4.5, 4.6, 4.7, 4.8, 10.3, 10.4_
 
-- [ ] 16. Write unit tests for SyncNotification
-  - [ ] 16.1 Write unit tests for SyncNotification (SpaCashier)
+  - [x] 13.1 Write unit tests for SyncNotification (SpaCashier)
     - Test success toast shown on `SYNC_SUCCESS` message
     - Test error toast shown with operation details on `SYNC_FAILED` message
     - _Requirements: 4.5, 4.7, 10.3_
 
-  - [ ] 16.2 Write unit tests for SyncNotification (SpaBooking)
+  - [x] 13.2 Write unit tests for SyncNotification (SpaBooking)
     - Test success toast shown on `SYNC_SUCCESS` message
     - Test error toast shown with operation details on `SYNC_FAILED` message
     - _Requirements: 4.6, 4.8, 10.4_
 
-- [ ] 17. Checkpoint — Ensure all offline queue and indicator tests pass
+- [x] 14. Checkpoint — Ensure all offline queue and indicator tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 18. Implement InstallPrompt component for SpaCashier
+- [x] 15. Implement InstallPrompt component for SpaCashier
   - Create `SpaCashier/src/components/pwa/InstallPrompt.tsx` — listens for `beforeinstallprompt` event; reads/writes snooze timestamp from `localStorage` key `pwa-install-snoozed`; does not render if snoozed within 7 days; shows install banner with translated strings; on dismiss, stores `Date.now()` as snooze timestamp
   - _Requirements: 5.3, 5.5, 5.7_
 
-- [ ] 19. Implement InstallPrompt component for SpaBooking
-  - Create `SpaBooking/app/components/pwa/InstallPrompt.vue` — same logic as SpaCashier equivalent, adapted for Vue; uses `useI18n()` for translated strings
-  - _Requirements: 5.4, 5.6, 5.8_
-
-- [ ] 20. Write unit and property tests for InstallPrompt
-  - [ ] 20.1 Write unit tests for InstallPrompt (SpaCashier)
+  - [x] 15.1 Write unit tests for InstallPrompt (SpaCashier)
     - Test does not render when snoozed within 7 days
     - Test renders when snooze has expired
     - _Requirements: 5.7_
 
-  - [ ] 20.2 Write unit tests for InstallPrompt (SpaBooking)
+  - [x] 15.2 Write property test for install prompt snooze
+    - **Property 6: Install prompt snooze is respected**
+    - **Validates: Requirements 5.7, 5.8**
+
+- [x] 16. Implement InstallPrompt component for SpaBooking
+  - Create `SpaBooking/app/components/pwa/InstallPrompt.vue` — same logic as SpaCashier equivalent, adapted for Vue; uses `useI18n()` for translated strings
+  - _Requirements: 5.4, 5.6, 5.8_
+
+  - [x] 16.1 Write unit tests for InstallPrompt (SpaBooking)
     - Test does not render when snoozed within 7 days
     - Test renders when snooze has expired
     - _Requirements: 5.8_
 
-  - [ ] 20.3 Write property test for install prompt snooze
-    - **Property 6: Install prompt snooze is respected**
-    - **Validates: Requirements 5.7, 5.8**
-
-- [ ] 21. Implement LanguageSwitcher for SpaCashier
+- [x] 17. Implement LanguageSwitcher for SpaCashier
   - Create `SpaCashier/src/components/layout/LanguageSwitcher.tsx` — dropdown component showing `EN` / `ID` options; calls `switchLocale` from `LocaleContext`; persists selection to `localStorage` key `spa-locale`
   - Integrate `LanguageSwitcher` into `SpaCashier/src/components/layout/Navbar.tsx` or `UserNav.tsx`
   - _Requirements: 6.4, 6.5, 6.8_
 
-- [ ] 22. Implement LanguageSwitcher for SpaBooking
-  - Create `SpaBooking/app/components/layout/LanguageSwitcher.vue` — uses `useI18n().setLocale()` and `useSwitchLocalePath()` from `@nuxtjs/i18n`; integrates into `SpaBooking/app/components/TheHeader.vue`
-  - _Requirements: 7.4, 7.5, 7.8_
-
-- [ ] 23. Write unit and property tests for i18n locale switching
-  - [ ] 23.1 Write unit tests for LanguageSwitcher (SpaCashier)
+  - [x] 17.1 Write unit tests for LanguageSwitcher (SpaCashier)
     - Test calls locale change handler with correct locale code on selection
     - Test default locale is `en` when no preference stored
     - _Requirements: 6.4, 6.6_
 
-  - [ ] 23.2 Write unit tests for LanguageSwitcher (SpaBooking)
+  - [~] 17.2 Write property test for locale preference round-trip (SpaCashier)
+    - **Property 8: Locale preference round-trip**
+    - **Validates: Requirements 6.5, 11.1**
+
+  - [~] 17.3 Write property test for all UI strings served from active locale catalog (SpaCashier)
+    - **Property 7: All UI strings are served from the active locale's catalog**
+    - **Validates: Requirements 6.3, 10.5**
+
+  - [~] 17.4 Write property test for locale-aware number and date formatting
+    - **Property 9: Locale-aware number and date formatting**
+    - **Validates: Requirements 6.7, 7.7**
+
+- [~] 18. Implement LanguageSwitcher for SpaBooking
+  - Create `SpaBooking/app/components/layout/LanguageSwitcher.vue` — uses `useI18n().setLocale()` and `useSwitchLocalePath()` from `@nuxtjs/i18n`; integrates into `SpaBooking/app/components/TheHeader.vue`
+  - _Requirements: 7.4, 7.5, 7.8_
+
+  - [~] 18.1 Write unit tests for LanguageSwitcher (SpaBooking)
     - Test calls locale change handler with correct locale code on selection
     - Test default locale is `en` when no preference stored
     - _Requirements: 7.4, 7.6_
 
-  - [ ] 23.3 Write property test for locale preference round-trip (SpaCashier)
-    - **Property 8: Locale preference round-trip**
-    - **Validates: Requirements 6.5, 11.1**
-
-  - [ ] 23.4 Write property test for locale preference round-trip (SpaBooking)
+  - [~] 18.2 Write property test for locale preference round-trip (SpaBooking)
     - **Property 8: Locale preference round-trip (cookie)**
     - **Validates: Requirements 7.5, 11.2**
 
-  - [ ] 23.5 Write property test for all UI strings served from active locale catalog (SpaCashier)
-    - **Property 7: All UI strings are served from the active locale's catalog**
-    - **Validates: Requirements 6.3, 10.5**
-
-  - [ ] 23.6 Write property test for locale-aware number and date formatting
-    - **Property 9: Locale-aware number and date formatting**
-    - **Validates: Requirements 6.7, 7.7**
-
-  - [ ] 23.7 Write property test for SpaBooking locale-prefixed URL generation
+  - [~] 18.3 Write property test for SpaBooking locale-prefixed URL generation
     - **Property 10: SpaBooking locale-prefixed URL generation**
     - **Validates: Requirements 7.9**
 
-- [ ] 24. Checkpoint — Ensure all i18n and install prompt tests pass
+- [~] 19. Checkpoint — Ensure all i18n and install prompt tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 25. Externalize all hardcoded UI strings in SpaCashier components
+- [~] 20. Externalize all hardcoded UI strings in SpaCashier components
   - Audit all component files under `SpaCashier/src/components/` and `SpaCashier/src/app/` for hardcoded user-visible strings
   - Replace each hardcoded string with `useTranslations()` calls referencing keys in `en.json` / `id.json`
   - Add corresponding `en` and `id` entries for every new key to both translation catalogs
+  - **Progress: Completed UserNav, Navbar menu, VoucherPrintTemplate. Many components remain.**
   - _Requirements: 9.1, 9.3_
 
-- [ ] 26. Externalize all hardcoded UI strings in SpaBooking components
+  - [~] 20.1 Write property test for translation catalog key symmetry (SpaCashier)
+    - **Property 14: Translation catalog key symmetry**
+    - **Validates: Requirements 9.3**
+
+  - [~] 20.2 Write property test for missing key fallback to English (SpaCashier)
+    - **Property 15: Missing translation key falls back to English**
+    - **Validates: Requirements 9.5**
+
+- [~] 21. Externalize all hardcoded UI strings in SpaBooking components
   - Audit all component files under `SpaBooking/app/components/` and `SpaBooking/app/pages/` for hardcoded user-visible strings
   - Replace each hardcoded string with `useI18n().t()` calls referencing keys in `en.json` / `id.json`
   - Add corresponding `en` and `id` entries for every new key to both translation catalogs
   - _Requirements: 9.2, 9.4_
 
-- [ ] 27. Write property tests for translation catalog completeness
-  - [ ] 27.1 Write property test for translation catalog key symmetry (SpaCashier)
-    - **Property 14: Translation catalog key symmetry**
-    - **Validates: Requirements 9.3**
-
-  - [ ] 27.2 Write property test for translation catalog key symmetry (SpaBooking)
+  - [~] 21.1 Write property test for translation catalog key symmetry (SpaBooking)
     - **Property 14: Translation catalog key symmetry**
     - **Validates: Requirements 9.4**
 
-  - [ ] 27.3 Write property test for missing key fallback to English (SpaCashier)
-    - **Property 15: Missing translation key falls back to English**
-    - **Validates: Requirements 9.5**
-
-  - [ ] 27.4 Write property test for missing key fallback to English (SpaBooking)
+  - [~] 21.2 Write property test for missing key fallback to English (SpaBooking)
     - **Property 15: Missing translation key falls back to English**
     - **Validates: Requirements 9.6**
 
-- [ ] 28. Implement AI translation service in Laravel backend
+- [~] 22. Implement AI translation service in Laravel backend
   - Create `SpaInformationSystem-API/app/Services/AITranslationService.php` implementing `AITranslationServiceInterface` with `translate(string $content, string $targetLocale): string`
   - Return `$content` unchanged when `$targetLocale === 'en'` or content is empty
   - On `$targetLocale === 'id'`, call OpenAI `gpt-4o-mini` with a system prompt instructing preservation of treatment names, proper nouns, and numeric values
@@ -229,53 +218,51 @@ Incremental implementation of offline-first PWA capabilities and full English/In
   - Register `AITranslationService` in the service container
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.6_
 
-- [ ] 29. Integrate AI translation into Laravel API controllers
+  - [~] 22.1 Write property test for AI translation not invoked for English locale
+    - **Property 11: AI translation is invoked only for non-English locales**
+    - **Validates: Requirements 8.2**
+
+  - [~] 22.2 Write property test for AI translation fallback on service failure
+    - **Property 12: AI translation fallback on service failure**
+    - **Validates: Requirements 8.4**
+
+  - [~] 22.3 Write property test for AI translation preserves treatment names and numeric values
+    - **Property 13: AI translation preserves treatment names and numeric values**
+    - **Validates: Requirements 8.6**
+
+- [~] 23. Integrate AI translation into Laravel API controllers
   - Update controllers that return AI-generated content (treatment rationales, chatbot responses, sentiment summaries) to accept `Accept-Language` header or `locale` query parameter
   - Pass the locale to `AITranslationService::translate()` before returning the response
   - _Requirements: 8.1, 8.5_
 
-- [ ] 30. Write property tests for AI translation service
-  - [ ] 30.1 Write property test for AI translation not invoked for English locale
-    - **Property 11: AI translation is invoked only for non-English locales**
-    - **Validates: Requirements 8.2**
-
-  - [ ] 30.2 Write property test for AI translation fallback on service failure
-    - **Property 12: AI translation fallback on service failure**
-    - **Validates: Requirements 8.4**
-
-  - [ ] 30.3 Write property test for AI translation preserves treatment names and numeric values
-    - **Property 13: AI translation preserves treatment names and numeric values**
-    - **Validates: Requirements 8.6**
-
-- [ ] 31. Checkpoint — Ensure all AI translation and catalog tests pass
+- [~] 24. Checkpoint — Ensure all AI translation and catalog tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 32. Implement offline locale switching with precached catalogs
+- [~] 25. Implement offline locale switching with precached catalogs
   - Verify that the Workbox `additionalManifestEntries` for `en.json` and `id.json` are correctly precached in both SpaCashier and SpaBooking service workers
   - Update `LocaleProvider` in SpaCashier to load messages from the precached catalog (served by the service worker) rather than a network fetch, ensuring locale switching works offline
   - Update SpaBooking's `@nuxtjs/i18n` configuration to ensure locale files are served from the precache when offline
   - _Requirements: 11.4, 11.5, 11.6, 11.7_
 
-- [ ] 33. Write property test for offline locale switching
-  - [ ] 33.1 Write property test for offline locale switching uses precached catalogs
+  - [~] 25.1 Write property test for offline locale switching uses precached catalogs
     - **Property 16: Offline locale switching uses precached catalogs**
     - **Validates: Requirements 11.6, 11.7**
 
-- [ ] 34. Wire background sync replay on reconnect
+- [~] 26. Wire background sync replay on reconnect
   - In `SpaCashier/src/components/pwa/PWAManager.tsx`, when the `online` event fires, call `offlineQueue.flush()` which replays all pending operations in FIFO order; on each 2xx response call `offlineQueue.remove(id)` and post `SYNC_SUCCESS`; on 4xx call `offlineQueue.remove(id)` and post `SYNC_FAILED`; on 5xx/network error call `offlineQueue.markFailed(id)` for retry
   - Mirror the same flush logic in `SpaBooking/app/composables/useOfflineQueue.ts`
   - _Requirements: 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 3.7, 3.8_
 
-- [ ] 35. Wire SW update notification in SpaCashier
+- [~] 27. Wire SW update notification in SpaCashier
   - In `PWAManager.tsx`, detect a waiting service worker via `registration.waiting`; set `showUpdatePrompt = true`; implement `applyUpdate()` that calls `registration.waiting.postMessage({ type: 'SKIP_WAITING' })` and reloads the page
   - Add an update notification banner/toast to the dashboard layout that renders when `showUpdatePrompt` is true
   - _Requirements: 1.3_
 
-- [ ] 36. Wire SW update notification in SpaBooking
+- [~] 28. Wire SW update notification in SpaBooking
   - Configure `@vite-pwa/nuxt` with `registerType: 'prompt'` (or equivalent); add a Vue component that shows a non-blocking toast with "Refresh to update" CTA when a new SW is waiting
   - _Requirements: 1.4_
 
-- [ ] 37. Final checkpoint — Ensure all tests pass
+- [~] 29. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -16,11 +16,14 @@ import Cookies from "js-cookie";
 import { useAuth } from "@/hooks/useAuth";
 import { usePWA } from "@/components/pwa/PWAManager";
 import { Bell, BellOff } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function UserNav() {
     const { user } = useAuth();
     const router = useRouter();
     const { isSupported, isSubscribed, subscribe } = usePWA();
+    const t = useTranslations();
 
     const handleLogout = () => {
         // 1. Clear the Auth Cookie (Essential for Middleware)
@@ -66,13 +69,16 @@ export function UserNav() {
                     {isSupported && (
                         <DropdownMenuItem onClick={() => !isSubscribed && subscribe()} disabled={isSubscribed}>
                             {isSubscribed ? <BellOff className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
-                            <span>{isSubscribed ? "Notifications Enabled" : "Enable Notifications"}</span>
+                            <span>{isSubscribed ? t('userNav.notificationsEnabled') : t('userNav.enableNotifications')}</span>
                         </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem asChild>
+                        <LanguageSwitcher />
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
-                    Log out
+                    {t('userNav.logOut')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

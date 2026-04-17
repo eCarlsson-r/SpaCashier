@@ -411,5 +411,16 @@
     "banner": "Anda sedang offline. {count} operasi tertunda.",
     "backOnline": "Kembali online. Semua perubahan telah disinkronkan.",
     "syncFailed": "Sinkronisasi gagal untuk: {operation}"
+  },
+  "voucherPrint": {
+    "brandName": "SpaPro Wellness",
+    "subtitle": "Voucher Perawatan Eksklusif",
+    "service": "Layanan",
+    "validAt": "Berlaku Di",
+    "anyBranch": "Cabang Mana Saja",
+    "expires": "Kadaluarsa",
+    "na": "N/A",
+    "scanInstruction": "Pindai di meja depan untuk menebus",
+    "finePrint": "Tidak dapat dikembalikan. Berlaku untuk satu (1) sesi perawatan saja. Tunjukkan voucher ini saat kedatangan."
   }
 }

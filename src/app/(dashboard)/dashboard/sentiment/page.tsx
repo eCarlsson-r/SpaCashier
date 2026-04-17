@@ -310,8 +310,8 @@ export default function SentimentDashboard() {
                     tickFormatter={(v) => v.toFixed(1)}
                   />
                   <Tooltip
-                    formatter={(value: number) => [
-                      value.toFixed(3),
+                    formatter={(value: number | undefined) => [
+                      (value) ? value.toFixed(3) : 0,
                       "Avg Score",
                     ]}
                   />

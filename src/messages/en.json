@@ -411,5 +411,16 @@
     "banner": "You are offline. {count} operation(s) pending.",
     "backOnline": "Back online. All changes synced.",
     "syncFailed": "Sync failed for: {operation}"
+  },
+  "voucherPrint": {
+    "brandName": "SpaPro Wellness",
+    "subtitle": "Exclusive Treatment Voucher",
+    "service": "Service",
+    "validAt": "Valid At",
+    "anyBranch": "Any Branch",
+    "expires": "Expires",
+    "na": "N/A",
+    "scanInstruction": "Scan at the front desk to redeem",
+    "finePrint": "Non-refundable. Valid for one (1) treatment session only. Present this voucher upon arrival."
   }
 }

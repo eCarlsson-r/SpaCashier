@@ -1,111 +1,110 @@
 export const adminMenuConfig = [
     {
-        category: "Accounting",
-        items: [{ title: "Journal", href: "/accounting/journal", description: "Manage journal data" }],
+        category: "accounting",
+        items: [{ title: "journal", href: "/accounting/journal", description: "journal" }],
     },
     {
-        category: "Cashflow",
+        category: "cashflow",
         items: [
-            { title: "Income", href: "/cashflow/income", description: "Manage income data" },
-            { title: "Expense", href: "/cashflow/expense", description: "Manage expense data" },
-            { title: "Transfer", href: "/cashflow/transfer", description: "Manage transfer data" },
+            { title: "income", href: "/cashflow/income", description: "income" },
+            { title: "expense", href: "/cashflow/expense", description: "expense" },
+            { title: "transfer", href: "/cashflow/transfer", description: "transfer" },
         ]
     },
     {
-        category: "HRD",
+        category: "hrd",
         items: [
-            { title: "Schedule", href: "/hrd/schedule", description: "Manage schedule data" },
-            { title: "Compensation", href: "/hrd/compensation", description: "Manage compensation data" }
+            { title: "schedule", href: "/hrd/schedule", description: "schedule" },
+            { title: "compensation", href: "/hrd/compensation", description: "compensation" }
         ]
     },
     {
-        category: "Master",
+        category: "master",
         items: [
-            { title: "Account", href: "/master/account", description: "Manage account data" },
-            { title: "Cashflow", href: "/master/cashflow", description: "Manage cashflow data" },
-            { title: "Branch", href: "/master/branch", description: "Manage branch data" },
-            { title: "Category", href: "/master/category", description: "Manage category data" },
-            { title: "Customer", href: "/master/customer", description: "Manage customer data" },
-            { title: "Employee", href: "/master/employee", description: "Manage employee data" },
-            { title: "Treatment", href: "/master/treatment", description: "Manage treatment data" },
-            { title: "Room", href: "/master/room", description: "Manage room data" },
-            { title: "Bonus", href: "/master/bonus", description: "Manage bonus data" },
-            { title: "Discount", href: "/master/discount", description: "Manage discount data" },
-            { title: "Supplier", href: "/master/supplier", description: "Manage supplier data" },
-            { title: "Sales Agent", href: "/master/salesagent", description: "Manage sales agent data" },
-            { title: "Banner", href: "/master/banner", description: "Manage banner data" }
+            { title: "account", href: "/master/account", description: "account" },
+            { title: "cashflowMaster", href: "/master/cashflow", description: "cashflowMaster" },
+            { title: "branch", href: "/master/branch", description: "branch" },
+            { title: "category", href: "/master/category", description: "category" },
+            { title: "customer", href: "/master/customer", description: "customer" },
+            { title: "employee", href: "/master/employee", description: "employee" },
+            { title: "treatment", href: "/master/treatment", description: "treatment" },
+            { title: "room", href: "/master/room", description: "room" },
+            { title: "bonus", href: "/master/bonus", description: "bonus" },
+            { title: "discount", href: "/master/discount", description: "discount" },
+            { title: "supplier", href: "/master/supplier", description: "supplier" },
+            { title: "salesAgent", href: "/master/salesagent", description: "salesAgent" },
+            { title: "banner", href: "/master/banner", description: "banner" }
         ],
     },
     {
-        category: "Operational",
+        category: "operational",
         items: [
-            { title: "Sessions", href: "/operational/session", description: "Manage sessions here" },
-            { title: "Register Voucher", href: "/operational/register", description: "Generate new voucher for sale" },
-            { title: "Voucher", href: "/operational/voucher", description: "Check the status of the voucher" },
-            { title: "Sales", href: "/operational/sales", description: "The sales process starts here" },
-            { title: "Active Bed List", href: "/operational/beds", description: "View empty beds in every room" }
+            { title: "sessions", href: "/operational/session", description: "sessions" },
+            { title: "registerVoucher", href: "/operational/register", description: "registerVoucher" },
+            { title: "voucher", href: "/operational/voucher", description: "voucher" },
+            { title: "sales", href: "/operational/sales", description: "sales" },
+            { title: "activeBedList", href: "/operational/beds", description: "activeBedList" }
         ],
     },
     {
-        category: "Report",
+        category: "report",
         items: [
-            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
-            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
-            { title: "Session", href: "/report/session", description: "View session data" },
-            { title: "Sales", href: "/report/sales", description: "View sales data" },
-            { title: "Voucher", href: "/report/voucher", description: "View voucher stock data" },
-            { title: "Detail", href: "/report/detail", description: "View detailed operational data" },
-            { title: "Income", href: "/report/income", description: "View income data" },
-            { title: "Expense", href: "/report/expense", description: "View expense data" },
-            { title: "Ledger", href: "/report/ledger", description: "View ledger" },
-            { title: "Profit and Loss", href: "/report/profitloss", description: "View profit and loss report" },
-            { title: "Balance Sheet", href: "/report/balancesheet", description: "View balance sheet" }
+            { title: "attendance", href: "/report/attendance", description: "attendance" },
+            { title: "bonus", href: "/report/bonus", description: "bonus" },
+            { title: "session", href: "/report/session", description: "session" },
+            { title: "salesReport", href: "/report/sales", description: "salesReport" },
+            { title: "voucherReport", href: "/report/voucher", description: "voucherReport" },
+            { title: "detail", href: "/report/detail", description: "detail" },
+            { title: "incomeReport", href: "/report/income", description: "incomeReport" },
+            { title: "expenseReport", href: "/report/expense", description: "expenseReport" },
+            { title: "ledger", href: "/report/ledger", description: "ledger" },
+            { title: "profitAndLoss", href: "/report/profitloss", description: "profitAndLoss" },
+            { title: "balanceSheet", href: "/report/balancesheet", description: "balanceSheet" }
         ],
     }
 ];
 
 export const staffMenuConfig = [
     {
-        category: "HRD",
+        category: "hrd",
         items: [
-            { title: "Schedule", href: "/hrd/schedule", description: "Manage schedule data" }
+            { title: "schedule", href: "/hrd/schedule", description: "schedule" }
         ]
     },
     {
-        category: "Operational",
+        category: "operational",
         items: [
-            { title: "Sales", href: "/operational/sales", description: "Manage sales data" },
-            { title: "Sessions", href: "/operational/session", description: "Manage session data" },
-            { title: "Active Bed List", href: "/operational/beds", description: "Manage active bed list data" },
+            { title: "sales", href: "/operational/sales", description: "sales" },
+            { title: "sessions", href: "/operational/session", description: "sessions" },
+            { title: "activeBedList", href: "/operational/beds", description: "activeBedList" },
         ],
     },
     {
-        category: "Report",
+        category: "report",
         items: [
-            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
-            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
-            { title: "Session", href: "/report/session", description: "View session data" },
-            { title: "Sales", href: "/report/sales", description: "View sales data" },
-            { title: "Voucher", href: "/report/voucher", description: "View voucher stock data" },
-            { title: "Detail", href: "/report/detail", description: "View detailed operational data" }
+            { title: "attendance", href: "/report/attendance", description: "attendance" },
+            { title: "bonus", href: "/report/bonus", description: "bonus" },
+            { title: "session", href: "/report/session", description: "session" },
+            { title: "salesReport", href: "/report/sales", description: "salesReport" },
+            { title: "voucherReport", href: "/report/voucher", description: "voucherReport" },
+            { title: "detail", href: "/report/detail", description: "detail" }
         ],
     }
 ];
 
 export const therapistMenuConfig = [
     {
-        category: "Operational",
-        permission: "view_operational",
+        category: "operational",
         items: [
-            { title: "Sessions", href: "/operational/session", description: "Manage session data" }
+            { title: "sessions", href: "/operational/session", description: "sessions" }
         ],
     },
     {
-        category: "Report",
+        category: "report",
         items: [
-            { title: "Attendance", href: "/report/attendance", description: "View attendance data" },
-            { title: "Bonus", href: "/report/bonus", description: "View bonus data" },
-            { title: "Session", href: "/report/session", description: "View session data" }
+            { title: "attendance", href: "/report/attendance", description: "attendance" },
+            { title: "bonus", href: "/report/bonus", description: "bonus" },
+            { title: "session", href: "/report/session", description: "session" }
         ],
     }
 ];

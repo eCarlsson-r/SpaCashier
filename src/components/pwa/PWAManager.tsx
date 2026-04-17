@@ -1,9 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { offlineQueue } from "@/lib/offlineQueue";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -20,17 +21,23 @@ function urlBase64ToUint8Array(base64String: string) {
 
 interface PWAContextType {
   isSupported: boolean;
+  isOnline: boolean;
   isSubscribed: boolean;
+  pendingCount: number;
   subscribe: () => Promise<void>;
+  showUpdatePrompt: boolean;
+  applyUpdate: () => void;
 }
 
 const PWAContext = createContext<PWAContextType | undefined>(undefined);
 
 export function PWAProvider({ children }: { children: React.ReactNode }) {
   const [isSupported, setIsSupported] = useState(false);
-  const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null,
-  );
+  const [subscription, setSubscription] = useState<PushSubscription | null>(null);
+  const [isOnline, setIsOnline] = useState(true);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
+  const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
   const { user } = useAuth();
 
   async function registerServiceWorker() {
@@ -39,12 +46,88 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
         scope: "/",
         updateViaCache: "none",
       });
+      registrationRef.current = registration;
+
       const sub = await registration.pushManager.getSubscription();
       setSubscription(sub);
+
+      // Check if there's already a waiting SW
+      if (registration.waiting) {
+        setShowUpdatePrompt(true);
+      }
+
+      if (navigator.onLine) {
+        flushQueue();
+      }
+
+      // Listen for a new SW entering the waiting state
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            setShowUpdatePrompt(true);
+          }
+        });
+      });
     } catch (error) {
       console.error("Service worker registration failed:", error);
     }
   }
+
+  // Online/offline listeners
+  async function flushQueue() {
+    if (typeof navigator === "undefined" || !navigator.serviceWorker) {
+      return;
+    }
+
+    const controller = navigator.serviceWorker.controller;
+    if (!controller) {
+      return;
+    }
+
+    controller.postMessage({ type: "FLUSH_QUEUE" });
+  }
+
+  useEffect(() => {
+    setIsOnline(navigator.onLine);
+
+    const handleOnline = () => {
+      setIsOnline(true);
+      flushQueue();
+    };
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Poll pending queue count every 2 seconds
+  useEffect(() => {
+    let active = true;
+
+    const poll = async () => {
+      try {
+        const count = await offlineQueue.count();
+        if (active) setPendingCount(count);
+      } catch {
+        // IndexedDB may be unavailable; ignore
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, 2000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
@@ -94,9 +177,25 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  function applyUpdate() {
+    const registration = registrationRef.current;
+    if (registration?.waiting) {
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      window.location.reload();
+    }
+  }
+
   return (
     <PWAContext.Provider
-      value={{ isSupported, isSubscribed: !!subscription, subscribe }}
+      value={{
+        isSupported,
+        isOnline,
+        isSubscribed: !!subscription,
+        pendingCount,
+        subscribe,
+        showUpdatePrompt,
+        applyUpdate,
+      }}
     >
       {children}
     </PWAContext.Provider>
