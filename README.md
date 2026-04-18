@@ -38,6 +38,12 @@ SpaCashier is the definitive interface between business strategy and daily excel
 - **Automated Reporting**: Comprehensive sales summaries and operational metrics powered by **Recharts**.
 - **Historical Analysis**: Deep-dive audit trails for every transaction and session modification.
 
+### 🪄 Magic AI Utilities
+
+- **Magic Write**: One-click professional description generation for Master Data (Treatments, Branches, Categories).
+- **Magic Image**: AI-powered image synthesis for banners and treatments directly within the form.
+- **Type-Safe GenAI**: Integrated into the `EntityForm` ecosystem with full TypeScript validation.
+
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 16 (App Router)

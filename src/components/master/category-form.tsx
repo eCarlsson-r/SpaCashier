@@ -12,6 +12,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { MagicAI } from "../shared/MagicAI";
 
 import z from "zod";
 
@@ -66,7 +67,16 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Description</FormLabel>
+                  <MagicAI
+                    type="Treatment Category"
+                    mode="description"
+                    form={form}
+                    fieldName="description"
+                    sourceFields={["name"]}
+                  />
+                </div>
                 <FormControl>
                   <Textarea {...field} />
                 </FormControl>
@@ -76,12 +86,23 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <ImagePreview
-              label="Header Image"
-              name="header_img"
-              form={form}
-              currentImageUrl={form.getValues("header_img")}
-            />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Header Image</span>
+                <MagicAI
+                  type="Treatment Category"
+                  mode="image"
+                  form={form}
+                  fieldName="header_img"
+                />
+              </div>
+              <ImagePreview
+                label=""
+                name="header_img"
+                form={form}
+                currentImageUrl={form.getValues("header_img")}
+              />
+            </div>
             <ImagePreview
               label="Body Image 1"
               name="body_img1"

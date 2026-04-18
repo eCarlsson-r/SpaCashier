@@ -42,7 +42,7 @@ export const adminMenuConfig = [
             { title: "sessions", href: "/operational/session", description: "sessions" },
             { title: "registerVoucher", href: "/operational/register", description: "registerVoucher" },
             { title: "voucher", href: "/operational/voucher", description: "voucher" },
-            { title: "sales", href: "/operational/sales", description: "sales" },
+            { title: "sales", href: "/operational/sales", description: "salesOp" },
             { title: "activeBedList", href: "/operational/beds", description: "activeBedList" }
         ],
     },
@@ -51,7 +51,7 @@ export const adminMenuConfig = [
         items: [
             { title: "attendance", href: "/report/attendance", description: "attendance" },
             { title: "bonus", href: "/report/bonus", description: "bonus" },
-            { title: "session", href: "/report/session", description: "session" },
+            { title: "session", href: "/report/session", description: "sessionReport" },
             { title: "salesReport", href: "/report/sales", description: "salesReport" },
             { title: "voucherReport", href: "/report/voucher", description: "voucherReport" },
             { title: "detail", href: "/report/detail", description: "detail" },

@@ -167,8 +167,8 @@ export default function RegisterVoucherForm() {
         </div>
 
         {/* Top Input Row */}
-        <div className="grid grid-cols-10 gap-4 mb-4">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-10 gap-4 mb-4">
+          <div className="col-span-1 md:col-span-1">
             <FormField
               control={form.control}
               name="quantity"
@@ -184,7 +184,7 @@ export default function RegisterVoucherForm() {
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-1 md:col-span-3">
             <FormField
               control={form.control}
               name="treatment_id"
@@ -204,7 +204,7 @@ export default function RegisterVoucherForm() {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <FormField
               control={form.control}
               name="prefix"
@@ -220,7 +220,7 @@ export default function RegisterVoucherForm() {
             />
           </div>
 
-          <div className="col-span-4 flex items-end gap-2">
+          <div className="col-span-1 md:col-span-4 flex items-end gap-2">
             <div className="flex-1">
               <FormField
                 control={form.control}

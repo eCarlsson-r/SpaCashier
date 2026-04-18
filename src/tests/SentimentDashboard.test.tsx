@@ -100,10 +100,10 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-const MANAGER_USER = {
+const ADMIN_USER = {
   id: 1,
   username: 'manager1',
-  type: 'MANAGER',
+  type: 'ADMIN',
   employee: { id: 10, name: 'Alice', branch_id: 2, gender: 'F' },
   branch: { id: 2, name: 'Main Branch' },
   branches: [],
@@ -161,7 +161,7 @@ beforeEach(() => {
   mockReplace.mockReset();
 
   // Default: manager user, not loading
-  mockUseAuth.mockReturnValue({ user: MANAGER_USER, loading: false });
+  mockUseAuth.mockReturnValue({ user: ADMIN_USER, loading: false });
 
   // Default: realtime hook returns no polling
   mockUseSentimentRealtime.mockReturnValue({ refetchInterval: false });
@@ -444,7 +444,7 @@ describe('SentimentDashboard — manager-only access control', () => {
   });
 
   it('does not redirect manager users', async () => {
-    mockUseAuth.mockReturnValue({ user: MANAGER_USER, loading: false });
+    mockUseAuth.mockReturnValue({ user: ADMIN_USER, loading: false });
 
     await renderDashboard();
 

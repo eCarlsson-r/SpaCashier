@@ -10,6 +10,7 @@ import { PWAProvider, usePWA } from "@/components/pwa/PWAManager";
 import { StaffChatPanel } from "@/components/ai/StaffChatPanel";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { SyncNotification } from "@/components/pwa/SyncNotification";
+import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { isOnline, pendingCount } = usePWA();
@@ -17,15 +18,18 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col items-center bg-sky-50/40">
       <OfflineIndicator isOnline={isOnline} pendingCount={pendingCount} />
       <SyncNotification />
-      <header className="sticky top-0 z-50 w-full border-b bg-sky-600 shadow-sm">
+      <UpdatePrompt />
+      <header className="sticky top-0 z-50 w-full border-b bg-sky-600 shadow-sm px-4 md:px-0">
         <div className="container flex h-16 mx-auto items-center justify-between">
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-4 md:gap-10 flex-row-reverse md:flex-row">
             <Link href="/dashboard">
               <Image
                 src="/images/logo.png"
                 alt="Logo"
-                width={100}
-                height={100}
+                width={200}
+                height={200}
+                className="w-40 h-auto object-contain"
+                priority
               />
             </Link>
             <Navbar />
@@ -33,7 +37,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
           <UserNav />
         </div>
       </header>
-      <main className="container flex-1 py-8">{children}</main>
+      <main className="container flex-1 py-8 px-4 md:px-0">{children}</main>
       <StaffChatPanel />
     </div>
   );

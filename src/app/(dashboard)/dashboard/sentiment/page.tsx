@@ -41,7 +41,7 @@ export default function SentimentDashboard() {
 
   // Role guard — redirect non-managers
   useEffect(() => {
-    if (!loading && user && user.type !== "MANAGER") {
+    if (!loading && user && user.type !== "ADMIN") {
       router.replace("/dashboard");
     }
   }, [user, loading, router]);
@@ -65,7 +65,7 @@ export default function SentimentDashboard() {
         });
         return data;
       },
-      enabled: !loading && user?.type === "MANAGER",
+      enabled: !loading && user?.type === "ADMIN",
       staleTime: 0,
       refetchInterval,
     });
@@ -80,7 +80,7 @@ export default function SentimentDashboard() {
       });
       return data;
     },
-    enabled: !loading && user?.type === "MANAGER",
+    enabled: !loading && user?.type === "ADMIN",
     staleTime: 0,
     refetchInterval,
   });
@@ -100,7 +100,7 @@ export default function SentimentDashboard() {
     );
   }
 
-  if (!user || user.type !== "MANAGER") {
+  if (!user || user.type !== "ADMIN") {
     return null;
   }
 

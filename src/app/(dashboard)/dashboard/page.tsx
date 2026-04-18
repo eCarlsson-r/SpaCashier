@@ -28,8 +28,11 @@ import { useState } from "react";
 import { DatePicker } from "@/components/shared/DatePicker";
 import colors from "tailwindcss/colors";
 import { useModel } from "@/hooks/useModel";
+import { useTranslations } from "next-intl";
 
 export default function Dashboard() {
+  const t = useTranslations("dashboard");
+  const tTable = useTranslations("table");
   const [profitYear, setProfitYear] = useState("2022");
   const [jobDate, setJobDate] = useState(new Date());
   const [payrollPeriod, setPayrollPeriod] = useState("");
@@ -89,37 +92,37 @@ export default function Dashboard() {
     user?.type == "THERAPIST"
       ? [
           {
-            label: "Completed Sessions",
+            label: t("completedSessions"),
             value: data?.completed_sessions || 0,
             icon: CheckCircle,
             color: "text-emerald-600",
           },
           {
-            label: "Ongoing Sessions",
+            label: t("ongoingSessions"),
             value: data?.active_sessions || 0,
             icon: Activity,
             color: "text-amber-600",
           },
           {
-            label: "Today Commision",
+            label: t("todayCommission"),
             value: `Rp. ${formatCurr(data?.today_commision) || 0},-`,
             icon: ReceiptText,
             color: "text-blue-600",
           },
           {
-            label: "Hot Treatment",
+            label: t("hotTreatment"),
             value: data?.hot_treatment || "",
             icon: Spotlight,
             color: "text-blue-600",
           },
           {
-            label: "Current Commision",
+            label: t("currentCommission"),
             value: `Rp. ${formatCurr(data?.current_commision) || 0},-`,
             icon: HandCoins,
             color: "text-emerald-600",
           },
           {
-            label: "Current Deduction",
+            label: t("currentDeduction"),
             value: `Rp. ${formatCurr(data?.current_deduction) || 0},-`,
             icon: BanknoteX,
             color: "text-rose-600",
@@ -127,37 +130,37 @@ export default function Dashboard() {
         ]
       : [
           {
-            label: "Completed Sessions",
+            label: t("completedSessions"),
             value: data?.completed_sessions || 0,
             icon: CheckCircle,
             color: "text-emerald-600",
           },
           {
-            label: "Ongoing Sessions",
+            label: t("ongoingSessions"),
             value: data?.active_sessions || 0,
             icon: Activity,
             color: "text-amber-600",
           },
           {
-            label: "Vouchers Sold",
+            label: t("vouchersSold"),
             value: data?.vouchers_sold || 0,
             icon: Ticket,
             color: "text-blue-600",
           },
           {
-            label: "Total Sales",
+            label: t("totalSales"),
             value: `Rp. ${formatCurr(data?.today_sales) || 0},-`,
             icon: ReceiptText,
             color: "text-teal-600",
           },
           {
-            label: "Hot Treatment",
+            label: t("hotTreatment"),
             value: data?.hot_treatment || "",
             icon: Spotlight,
             color: "text-blue-600",
           },
           {
-            label: "Hot Therapist",
+            label: t("hotTherapist"),
             value: data?.hot_therapist || "",
             icon: Users,
             color: "text-blue-600",
@@ -245,7 +248,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <div className="grid grid-cols-2">
-              <CardTitle>Monthly Revenue Trend</CardTitle>
+              <CardTitle>{t("monthlyRevenueTrend")}</CardTitle>
               <AppSelect
                 value={profitYear}
                 options={profitYears}
@@ -297,7 +300,7 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <div className="grid grid-cols-2">
-                <CardTitle>Payroll Slip</CardTitle>
+                <CardTitle>{t("payrollSlip")}</CardTitle>
                 <AppSelect
                   value={payrollPeriod}
                   options={periods}
@@ -310,10 +313,10 @@ export default function Dashboard() {
             <CardContent>
               <DataTable
                 columns={[
-                  { accessorKey: "attribute", header: "Payroll Attribute" },
+                  { accessorKey: "attribute", header: tTable("payrollAttribute") },
                   {
                     accessorKey: "value",
-                    header: "Payroll Value",
+                    header: tTable("payrollValue"),
                     cell: ({ row }) =>
                       typeof row.original.value == "string"
                         ? row.original.value
@@ -328,7 +331,7 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <div className="grid grid-cols-2">
-                <CardTitle>Staff Attendance & Performance</CardTitle>
+                <CardTitle>{t("staffAttendance")}</CardTitle>
                 <DatePicker
                   value={jobDate}
                   onChange={(e) => setJobDate(new Date(e || ""))}
@@ -338,11 +341,11 @@ export default function Dashboard() {
             <CardContent>
               <DataTable
                 columns={[
-                  { accessorKey: "name", header: "Employee" },
-                  { accessorKey: "clock_in", header: "Clock In" },
+                  { accessorKey: "name", header: tTable("employee") },
+                  { accessorKey: "clock_in", header: tTable("clockIn") },
                   {
                     accessorKey: "active_sessions",
-                    header: "Active Sessions",
+                    header: tTable("activeSessions"),
                     cell: (info) => (
                       <Badge variant="default">
                         {(info.getValue() as number) || 0}
@@ -351,7 +354,7 @@ export default function Dashboard() {
                   },
                   {
                     accessorKey: "completed_sessions",
-                    header: "Completed Sessions",
+                    header: tTable("completedSessions"),
                     cell: (info) => (
                       <Badge variant="secondary">
                         {(info.getValue() as number) || 0}
@@ -360,7 +363,7 @@ export default function Dashboard() {
                   },
                   {
                     accessorKey: "sessions",
-                    header: "Total Sessions",
+                    header: tTable("totalSessions"),
                     cell: (info) => (
                       <div className="flex gap-3">
                         {parseInt(info.row.original.active_sessions || 0) +
@@ -368,7 +371,7 @@ export default function Dashboard() {
                       </div>
                     ),
                   },
-                  { accessorKey: "deduction", header: "Deduction" },
+                  { accessorKey: "deduction", header: tTable("deduction") },
                 ]}
                 data={data?.today || []}
               />

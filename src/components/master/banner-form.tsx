@@ -11,6 +11,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { ImagePreview } from "../shared/ImagePreview";
+import { MagicAI } from "../shared/MagicAI";
 
 import z from "zod";
 
@@ -82,7 +83,16 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Description</FormLabel>
+                    <MagicAI
+                      type="Promotion Banner"
+                      mode="description"
+                      form={form}
+                      fieldName="description"
+                      sourceFields={["title", "subtitle", "introduction"]}
+                    />
+                  </div>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -120,12 +130,23 @@ export function BannerForm({ bannerId }: { bannerId?: string }) {
                 </FormItem>
               )}
             />
-            <ImagePreview
-              label="Banner Image"
-              name="image"
-              form={form}
-              currentImageUrl={form.getValues("image")}
-            />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Banner Image</span>
+                <MagicAI
+                  type="Promotion Banner"
+                  mode="image"
+                  form={form}
+                  fieldName="image"
+                />
+              </div>
+              <ImagePreview
+                label=""
+                name="image"
+                form={form}
+                currentImageUrl={form.getValues("image")}
+              />
+            </div>
           </div>
         </div>
       )}

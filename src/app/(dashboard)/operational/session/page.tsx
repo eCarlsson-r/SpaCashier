@@ -14,8 +14,13 @@ import { SessionTimer } from "@/components/shared/SessionTimer";
 import { useAuth } from "@/hooks/useAuth";
 import { SessionSchema } from "@/lib/schemas";
 import z from "zod";
+import { useTranslations } from "next-intl";
 
 export default function SessionPage() {
+  const t = useTranslations("session");
+  const tCommon = useTranslations("common");
+  const tStatus = useTranslations("status");
+  const tTable = useTranslations("table");
   const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState(["waiting", "ongoing"]);
   const { user } = useAuth();
@@ -56,7 +61,7 @@ export default function SessionPage() {
         queryKey: ["session", JSON.stringify(selectedStatus)],
         exact: false,
       });
-      toast.success("Session is now ongoing");
+      toast.success(t("startSuccess"));
     },
   });
 
@@ -72,7 +77,7 @@ export default function SessionPage() {
         queryKey: ["session", JSON.stringify(selectedStatus)],
         exact: false,
       });
-      toast.success("Session completed and bed is now free");
+      toast.success(t("finishSuccess"));
     },
   });
 
@@ -88,19 +93,19 @@ export default function SessionPage() {
         queryKey: ["session", JSON.stringify(selectedStatus)],
         exact: false,
       });
-      toast.info("Session deleted");
+      toast.info(t("deleteSuccess"));
     },
   });
 
   const columns = [
-    { accessorKey: "order_time", header: "Order" },
-    { accessorKey: "customer_name", header: "Customer" },
-    { accessorKey: "treatment_name", header: "Treatment" },
-    { accessorKey: "therapist_name", header: "Therapist" },
-    { accessorKey: "bed_name", header: "Bed" },
+    { accessorKey: "order_time", header: tTable("order") },
+    { accessorKey: "customer_name", header: tTable("customer") },
+    { accessorKey: "treatment_name", header: tTable("treatment") },
+    { accessorKey: "therapist_name", header: tTable("therapist") },
+    { accessorKey: "bed_name", header: tTable("bed") },
     {
       accessorKey: "session.start",
-      header: "Duration",
+      header: tTable("duration"),
       cell: ({ row }: { row: { original: z.infer<typeof SessionSchema> } }) => {
         if (
           row.original.status === "ongoing" ||
@@ -119,11 +124,11 @@ export default function SessionPage() {
         }
       },
     },
-    { accessorKey: "status", header: "Status" },
-    { accessorKey: "payment", header: "Payment" },
+    { accessorKey: "status", header: tTable("status") },
+    { accessorKey: "payment", header: tTable("payment") },
     {
       accessorKey: "session.status",
-      header: "Actions",
+      header: tCommon("actions"),
       cell: ({ row }: { row: { original: z.infer<typeof SessionSchema> } }) => {
         if (row.original.status === "waiting") {
           return (
@@ -187,20 +192,20 @@ export default function SessionPage() {
   if (user?.type == "THERAPIST") {
     return (
       <DataTable
-        title="Session"
+        title={t("title")}
         columns={columns}
         data={sessionData}
         customFilter={
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Status</span>
+            <span className="text-sm font-medium">{tCommon("status")}</span>
             <div className="w-[200px]">
               <AppSelect
                 multiple={true}
                 options={[
-                  { value: "ongoing", label: "Ongoing" },
-                  { value: "completed", label: "Completed" },
-                  { value: "waiting", label: "Waiting" },
-                  { value: "canceled", label: "Cancelled" },
+                  { value: "ongoing", label: tStatus("ongoing") },
+                  { value: "completed", label: tStatus("completed") },
+                  { value: "waiting", label: tStatus("waiting") },
+                  { value: "canceled", label: tStatus("canceled") },
                 ]}
                 value={JSON.stringify(selectedStatus)}
                 onValueChange={(val) => setSelectedStatus(JSON.parse(val))}
@@ -213,20 +218,20 @@ export default function SessionPage() {
   } else {
     return (
       <DataTable
-        title="Session"
+        title={t("title")}
         columns={columns}
         data={sessionData}
         customFilter={
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Status</span>
+            <span className="text-sm font-medium">{tCommon("status")}</span>
             <div className="w-[200px]">
               <AppSelect
                 multiple={true}
                 options={[
-                  { value: "ongoing", label: "Ongoing" },
-                  { value: "completed", label: "Completed" },
-                  { value: "waiting", label: "Waiting" },
-                  { value: "canceled", label: "Cancelled" },
+                  { value: "ongoing", label: tStatus("ongoing") },
+                  { value: "completed", label: tStatus("completed") },
+                  { value: "waiting", label: tStatus("waiting") },
+                  { value: "canceled", label: tStatus("canceled") },
                 ]}
                 value={JSON.stringify(selectedStatus)}
                 onValueChange={(val) => setSelectedStatus(JSON.parse(val))}

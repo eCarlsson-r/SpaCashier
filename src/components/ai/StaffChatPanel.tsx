@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, FormEvent } from "react";
+import { useState, useRef, FormEvent } from "react";
 import { MessageCircle, Send, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import api from "@/lib/api";
-import { ChatMessage } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 type StaffChatResponse =
   | { type: "data_response"; value: unknown; period: string; branch: string; formattedAnswer: string }
@@ -103,6 +103,7 @@ function MessageBubble({ message }: { message: DisplayMessage }) {
  */
 export function StaffChatPanel() {
   const { user } = useAuth();
+  const t = useTranslations("ai");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
@@ -151,14 +152,14 @@ export function StaffChatPanel() {
       } else if (data.type === "authorization_error") {
         assistantMessage = {
           role: "assistant",
-          content: "Data not accessible for your role.",
+          content: t("dataNotAccessible"),
           timestamp: new Date().toISOString(),
         };
       } else {
         // error type
         assistantMessage = {
           role: "assistant",
-          content: "Assistant temporarily unavailable.",
+          content: t("assistantUnavailable"),
           timestamp: new Date().toISOString(),
           isError: true,
         };
@@ -170,7 +171,7 @@ export function StaffChatPanel() {
         ...prev,
         {
           role: "assistant",
-          content: "Assistant temporarily unavailable.",
+          content: t("assistantUnavailable"),
           timestamp: new Date().toISOString(),
           isError: true,
         },
@@ -181,21 +182,21 @@ export function StaffChatPanel() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto z-50 flex flex-col items-end gap-2">
       {isOpen && (
-        <Card className="w-80 shadow-xl border-sky-200 flex flex-col" style={{ height: "420px" }}>
+        <Card className="w-full sm:w-80 shadow-xl border-sky-200 flex flex-col" style={{ height: "420px", maxHeight: "calc(100vh - 6rem)" }}>
           <CardHeader className="pb-2 shrink-0">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-sm text-sky-700">
                 <MessageCircle size={16} />
-                Staff Assistant
+                {t("staffAssistant")}
               </CardTitle>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6"
                 onClick={() => setIsOpen(false)}
-                aria-label="Close chat"
+                aria-label={t("closeChat")}
               >
                 <X size={14} />
               </Button>
@@ -207,7 +208,7 @@ export function StaffChatPanel() {
             <div className="flex-1 overflow-y-auto flex flex-col gap-2 pr-1 min-h-0">
               {messages.length === 0 && (
                 <p className="text-xs text-slate-400 text-center mt-4">
-                  Ask about revenue, bookings, staff, or sessions.
+                  {t("askAbout")}
                 </p>
               )}
               {messages.map((msg, i) => (
@@ -226,7 +227,7 @@ export function StaffChatPanel() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question..."
+                placeholder={t("askQuestion")}
                 className="text-sm h-8"
                 disabled={isTyping}
               />
@@ -248,7 +249,7 @@ export function StaffChatPanel() {
       <Button
         onClick={() => setIsOpen((prev) => !prev)}
         className="rounded-full h-12 w-12 bg-sky-600 hover:bg-sky-700 shadow-lg"
-        aria-label={isOpen ? "Close staff assistant" : "Open staff assistant"}
+        aria-label={isOpen ? t("closeAssistant") : t("openAssistant")}
       >
         {isOpen ? <ChevronDown size={20} /> : <MessageCircle size={20} />}
       </Button>

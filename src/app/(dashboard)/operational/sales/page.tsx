@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/ui/button";
 import { FilePlus, Banknote } from "lucide-react";
 import { AppSelect } from "@/components/shared/AppSelect";
@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { NewCustomerModal } from "@/components/operational/new-customer-modal";
 import { Customer } from "@/lib/types";
 import { RecommendationPanel } from "@/components/ai/RecommendationPanel";
+import { useTranslations } from "next-intl";
 
 interface SalesItem {
   treatment_id: number | string;
@@ -59,6 +60,8 @@ const TotalRow = ({
 );
 
 export default function SalesForm() {
+  const t = useTranslations("sales");
+  const tCommon = useTranslations("common");
   const form = useForm();
   const activeUser = useAuth().user;
   const [items, setItems] = useState<SalesItem[]>([]); // The treatment list table
@@ -69,8 +72,7 @@ export default function SalesForm() {
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (items.length > 0) {
-        const message =
-          "You have items in the cart. Are you sure you want to leave?";
+        const message = t("cartWarning");
         e.preventDefault();
         e.returnValue = message; // Standard for most browsers
         return message;
@@ -81,7 +83,7 @@ export default function SalesForm() {
 
     // Cleanup the event listener when the component unmounts
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [items]);
+  }, [items, t]);
 
   const banks = useModel("bank", { mode: "select" }).options;
   const branches = useModel("branch", { mode: "select" }).options;
@@ -116,12 +118,12 @@ export default function SalesForm() {
   const grandTotal = Math.ceil(netTotal / 100) * 100;
   const rounding = grandTotal - netTotal;
 
-  const handleApplyDiscount = async () => {
+  const handleApplyDiscount = useCallback(async () => {
     const code = form.getValues("discount_code");
     const currentBranchId = form.getValues("branch");
 
-    if (!code) return toast.error("Please enter a discount code");
-    if (!currentBranchId) return toast.error("Please select a branch first");
+    if (!code) return toast.error(t("enterDiscountCode"));
+    if (!currentBranchId) return toast.error(t("selectBranchFirst"));
 
     try {
       // Replace with your actual Laravel API route
@@ -131,7 +133,7 @@ export default function SalesForm() {
       // type: 'percentage' or 'fixed'
 
       if (expiry_date && new Date() > new Date(expiry_date)) {
-        return toast.error("Discount code expired");
+        return toast.error(t("discountExpired"));
       }
       let calculatedDeduction = 0;
       if (percent > 0 && amount > 0) {
@@ -143,13 +145,13 @@ export default function SalesForm() {
       }
 
       form.setValue("deduction_amount", calculatedDeduction);
-      toast.success(`Discount "${name}" applied!`);
+      toast.success(t("discountApplied", { name }));
     } catch (error) {
       console.error(error);
-      toast.error("Invalid discount code");
+      toast.error(t("invalidDiscount"));
       form.setValue("deduction_amount", 0);
     }
-  };
+  }, [subtotal, form, t]);
 
   // Using a useEffect to watch subtotal changes
   useEffect(() => {
@@ -180,7 +182,7 @@ export default function SalesForm() {
     // 2. Clear the table items
     setItems([]);
 
-    toast.info("Form cleared for new transaction");
+    toast.info(t("formCleared"));
   };
 
   const [currentSaleId, setCurrentSaleId] = useState<number | null>(null);
@@ -208,7 +210,7 @@ export default function SalesForm() {
       setIsPayModalOpen(true);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to create sales record");
+      toast.error(t("failedToCreate"));
     }
   };
 
@@ -285,36 +287,36 @@ export default function SalesForm() {
         setIsReadyToPrint(true); // This triggers the useEffect above
       }
     } catch (error) {
-      toast.error("Finalization failed: " + error);
+      toast.error(t("finalizeFailed", { error: String(error) }));
     }
   };
 
   return (
     <Form {...form}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-700">Sales</h1>
+        <h1 className="text-2xl font-semibold text-gray-700">{t("title")}</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleNewSale}>
-            <FilePlus size={16} /> New
+            <FilePlus size={16} /> {tCommon("new")}
           </Button>
           <Button
             className="bg-green-600 text-white"
             onClick={() => handleProcessSale(form.getValues())}
           >
-            <Banknote size={16} /> Pay
+            <Banknote size={16} /> {tCommon("pay")}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Left Column: Core Details */}
-        <div className="col-span-4 space-y-4">
+        <div className="col-span-1 md:col-span-4 space-y-4">
           <FormField
             control={form.control}
             name="branch"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Branch</FormLabel>
+                <FormLabel>{t("branch")}</FormLabel>
                 <FormControl>
                   <AppSelect
                     options={branches}
@@ -332,7 +334,7 @@ export default function SalesForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex gap-2">
-                  <FormLabel>Customer</FormLabel>
+                  <FormLabel>{t("customer")}</FormLabel>
                   <Button
                     onClick={() => setIsNewCustomerOpen(true)}
                     size="icon"
@@ -355,18 +357,17 @@ export default function SalesForm() {
         </div>
 
         {/* Middle Column: Employee & Discounts */}
-        <div className="col-span-4 space-y-4">
+        <div className="col-span-1 md:col-span-4 space-y-4">
           <FormField
             control={form.control}
             name="employee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Employee</FormLabel>
+                <FormLabel>{t("employee")}</FormLabel>
                 <FormControl>
                   <AppSelect
                     options={employees}
                     {...field}
-                    value={activeUser?.employee?.id.toString() || ""}
                     onValueChange={field.onChange}
                   />
                 </FormControl>
@@ -379,19 +380,19 @@ export default function SalesForm() {
             name="discount_code"
             render={() => (
               <FormItem>
-                <FormLabel>Discount Code</FormLabel>
+                <FormLabel>{t("discountCode")}</FormLabel>
                 <FormControl>
                   <div className="flex gap-2">
                     <Input
                       {...form.register("discount_code")}
-                      placeholder="Enter code"
+                      placeholder={t("enterCode")}
                     />
                     <Button
                       type="button"
                       variant="outline"
                       onClick={handleApplyDiscount}
                     >
-                      Apply
+                      {tCommon("apply")}
                     </Button>
                   </div>
                 </FormControl>
@@ -402,11 +403,11 @@ export default function SalesForm() {
         </div>
 
         {/* Right Column: Totals (Read Only) */}
-        <div className="col-span-4 space-y-2 bg-gray-50 p-4 rounded border">
-          <TotalRow label="Subtotal" value={subtotal} />
-          <TotalRow label="Deduction" value={deduction} />
-          <TotalRow label="Rounding" value={rounding} />
-          <TotalRow label="Grand Total" value={grandTotal} highlight />
+        <div className="col-span-1 md:col-span-4 space-y-2 bg-gray-50 p-4 rounded border">
+          <TotalRow label={t("subtotal")} value={subtotal} />
+          <TotalRow label={t("deduction")} value={deduction} />
+          <TotalRow label={t("rounding")} value={rounding} />
+          <TotalRow label={t("grandTotal")} value={grandTotal} highlight />
         </div>
       </div>
 

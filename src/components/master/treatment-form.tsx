@@ -11,15 +11,15 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { AccountSelect } from "../shared/AccountSelect";
-import { DatePicker } from "../shared/DatePicker";
 import { AppSelect } from "../shared/AppSelect";
 import { useModel } from "@/hooks/useModel";
 import { ImagePreview } from "../shared/ImagePreview";
+import { MagicAI } from "../shared/MagicAI";
 
 import z from "zod";
 
 export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
+  const categories = useModel("category", { mode: "select" }).options ?? [];
   return (
     <EntityForm<z.infer<typeof TreatmentSchema>>
       title={treatmentId ? "Edit Treatment" : "Add New Treatment"}
@@ -84,7 +84,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
                   <FormControl>
                     <AppSelect
                       options={
-                        useModel("category", { mode: "select" }).options ?? []
+                        categories
                       }
                       value={field.value}
                       onValueChange={field.onChange}
@@ -95,7 +95,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
               )}
             />
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="price"
@@ -196,7 +196,7 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="applicable_time_start"
@@ -245,7 +245,16 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Description</FormLabel>
+                    <MagicAI
+                      type="Spa Treatment"
+                      mode="description"
+                      form={form}
+                      fieldName="description"
+                      sourceFields={["name", "price", "duration"]}
+                    />
+                  </div>
                   <FormControl>
                     <Textarea {...field} value={field.value || ""} />
                   </FormControl>
@@ -254,8 +263,19 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
-              <ImagePreview form={form} name="body_img" label="Image" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Image</span>
+                  <MagicAI
+                    type="Spa Treatment"
+                    mode="image"
+                    form={form}
+                    fieldName="body_img"
+                  />
+                </div>
+                <ImagePreview form={form} name="body_img" label="" />
+              </div>
 
               <ImagePreview form={form} name="icon_img" label="Icon Image" />
             </div>

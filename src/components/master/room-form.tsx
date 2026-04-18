@@ -18,6 +18,8 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Textarea } from "../ui/textarea";
+import { MagicAI } from "../shared/MagicAI";
+import { ImagePreview } from "../shared/ImagePreview";
 
 type RoomFormValues = z.infer<typeof RoomSchema>;
 
@@ -76,7 +78,16 @@ function RoomFormContent({ form }: { form: UseFormReturn<RoomFormValues> }) {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Room Description</FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel>Room Description</FormLabel>
+              <MagicAI
+                type="Spa Room"
+                mode="description"
+                form={form}
+                fieldName="description"
+                sourceFields={["name"]}
+              />
+            </div>
             <FormControl>
               <Textarea {...field} />
             </FormControl>
@@ -84,6 +95,24 @@ function RoomFormContent({ form }: { form: UseFormReturn<RoomFormValues> }) {
           </FormItem>
         )}
       />
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Room Image</span>
+          <MagicAI
+            type="Spa Room"
+            mode="image"
+            form={form}
+            fieldName="image"
+          />
+        </div>
+        <ImagePreview
+          label=""
+          name="image"
+          form={form}
+          currentImageUrl={form.getValues("image")}
+        />
+      </div>
 
       <h3 className="font-medium">Room Beds</h3>
       <div className="border rounded-lg overflow-hidden">
