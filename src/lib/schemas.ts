@@ -147,8 +147,7 @@ export const CustomerSchema = z.object({
   place_of_birth: z.string().optional(),
   date_of_birth: z.string().optional(),
   mobile: z.string().optional(),
-  email: z.string().optional(),
-  liability_account: z.coerce.number().nullable().optional(),
+  email: z.string().optional()
 });
 
 export const DiscountSchema = z.object({

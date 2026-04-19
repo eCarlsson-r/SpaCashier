@@ -11,15 +11,14 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { AccountSelect } from "../shared/AccountSelect";
 import { DatePicker } from "../shared/DatePicker";
 import { AppSelect } from "../shared/AppSelect";
 
-import z from "zod";
+import type { Customer } from "@/lib/types";
 
 export function CustomerForm({ customerId }: { customerId?: string }) {
   return (
-    <EntityForm<z.infer<typeof CustomerSchema>>
+    <EntityForm<Customer>
       title={customerId ? "Edit Customer" : "Add New Customer"}
       schema={CustomerSchema}
       id={customerId}
@@ -33,8 +32,7 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
         place_of_birth: "",
         date_of_birth: "",
         mobile: "",
-        email: "",
-        liability_account: null,
+        email: ""
       }}
     >
       {(form) => (
@@ -136,13 +134,6 @@ export function CustomerForm({ customerId }: { customerId?: string }) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            <AccountSelect
-              form={form}
-              name="liability_account"
-              label="Liability Account"
-              typeFilter="account-receivable"
             />
 
             <FormField
