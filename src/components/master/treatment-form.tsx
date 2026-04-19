@@ -27,7 +27,6 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
       id={treatmentId}
       endpoint="/treatment"
       defaultValues={{
-        id: "",
         name: "",
         category_id: "",
         price: 0,
@@ -39,8 +38,6 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
         minimum_quantity: 1,
         voucher_normal_quantity: 0,
         voucher_purchase_quantity: 0,
-        body_img: undefined,
-        icon_img: undefined,
         room: '["VIPSG","VIPCP","STDRM"]',
       }}
     >
