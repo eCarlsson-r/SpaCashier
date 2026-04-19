@@ -66,7 +66,7 @@ export function RecommendationPanel({ customerId, branchId }: RecommendationPane
           AI Recommendations
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {isLoading ? (
           <>
             <RecommendationSkeleton />

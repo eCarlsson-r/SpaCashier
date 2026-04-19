@@ -310,7 +310,8 @@ export const RoomSchema = z.object({
 export const SalesRecordSchema = z.object({
   id: z.number().nullable(),
   sales_id: z.number(),
-  treatment_id: z.string(),
+  treatment_id: z.number(),
+  treatment_name: z.string().optional(),
   quantity: z.number(),
   price: z.number(),
   discount: z.number(),
@@ -364,7 +365,7 @@ export const TransferSchema = z.object({
 });
 
 export const TreatmentSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   name: z.string(),
   description: z.string().default(''),
   price: z.coerce.number(),

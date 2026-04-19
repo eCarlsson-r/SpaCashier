@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { Customer } from "@/lib/types";
 import { format } from "date-fns";
@@ -35,8 +34,9 @@ export function NewCustomerModal({
   const [name, setCustomerName] = useState("");
   const [gender, setGender] = useState("");
   const [place_of_birth, setPlaceOfBirth] = useState("");
-  const [date_of_birth, setDateOfBirth] = useState(new Date());
+  const [date_of_birth, setDateOfBirth] = useState("");
   const [mobile, setMobileNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -51,7 +51,6 @@ export function NewCustomerModal({
             <Label>Customer Name</Label>
             <Input
               type="text"
-              className="pl-9"
               value={name}
               onChange={(e) => setCustomerName(e.target.value)}
             />
@@ -61,7 +60,7 @@ export function NewCustomerModal({
           <div className="space-y-2">
             <Label>Gender</Label>
             <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select type..." />
               </SelectTrigger>
               <SelectContent>
@@ -75,24 +74,32 @@ export function NewCustomerModal({
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label>Place of Birth</Label>
-            <Input
-              type="text"
-              className="pl-9"
-              value={place_of_birth}
-              onChange={(e) => setPlaceOfBirth(e.target.value)}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Place of Birth</Label>
+              <Input
+                type="text"
+                value={place_of_birth}
+                onChange={(e) => setPlaceOfBirth(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Date of Birth</Label>
+              <Input
+                type="date"
+                value={date_of_birth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Date of Birth</Label>
-            <Calendar
-              required
-              mode="single"
-              selected={date_of_birth}
-              onSelect={setDateOfBirth}
-              className="rounded-md border shadow-sm"
+            <Label>E-mail address</Label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -100,7 +107,6 @@ export function NewCustomerModal({
             <Label>Mobile Number</Label>
             <Input
               type="text"
-              className="pl-9"
               value={mobile}
               onChange={(e) => setMobileNumber(e.target.value)}
             />
@@ -117,8 +123,9 @@ export function NewCustomerModal({
                 name,
                 gender,
                 place_of_birth,
+                date_of_birth,
                 mobile,
-                date_of_birth: format(date_of_birth, "yyyy-MM-dd"),
+                email,
               })
             }
             className="bg-sky-600 hover:bg-sky-700"

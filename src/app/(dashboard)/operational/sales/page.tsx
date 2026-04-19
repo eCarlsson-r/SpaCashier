@@ -28,7 +28,7 @@ import { RecommendationPanel } from "@/components/ai/RecommendationPanel";
 import { useTranslations } from "next-intl";
 
 interface SalesItem {
-  treatment_id: number | string;
+  treatment_id: number;
   treatment_name: string;
   description: string;
   quantity: number;

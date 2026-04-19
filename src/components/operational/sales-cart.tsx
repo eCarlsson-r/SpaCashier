@@ -8,14 +8,28 @@ import { useModel } from "@/hooks/useModel";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { Voucher } from "@/lib/types";
 
-export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
-    const form = useFormContext(); // Access the parent's form state
+interface SalesItem {
+  treatment_id: number;
+  treatment_name: string;
+  description: string;
+  quantity: number;
+  price: number;
+  discount: number;
+}
+
+export const SalesCart = ({ items, setItems, treatmentOptions }: {
+    items: SalesItem[];
+    setItems: React.Dispatch<React.SetStateAction<SalesItem[]>>;
+    treatmentOptions: { label: string, value: string }[];
+}) => {
+    const form = useFormContext();
     const treatments = useModel("treatment", { mode: "table" }).data;
 
     const handleAddToList = async () => {
         const values = form.getValues();
-        const treatment = treatments.find(t => t.id === values.treatment_id);
+        const treatment = treatments.find(t => t.id === Number(values.treatment_id));
 
         if (!treatment) return toast.error("Please select a treatment first");
 
@@ -31,7 +45,7 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
                 { params: { quantity: values.quantity } }
             );
 
-            if (voucherDetails.data.filter((v: any) => v.sales_id > 0).length > 0) {
+            if (voucherDetails.data.filter((v: Voucher) => v.sales_id && v.sales_id > 0).length > 0) {
                 return toast.error("Voucher already sold.");
             }
             // Calculate the range of voucher numbers
@@ -49,7 +63,7 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
             dynamicDescription = `Walk In ${treatment.name}`;
         }
 
-        setItems((prev: any) => [...prev, {
+        setItems((prev: SalesItem[]) => [...prev, {
             treatment_id: treatment.id,
             treatment_name: treatment.name,
             description: dynamicDescription,
@@ -72,8 +86,8 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
     return (
         <div className="space-y-6">
             {/* Item Adder Row */}
-            <div className="grid grid-cols-12 gap-4 items-end bg-blue-50/50 p-4 rounded border-blue-100">
-                <div className="col-span-4">
+            <div className="grid md:grid-cols-12 gap-4 items-end bg-blue-50/50 p-4 rounded border-blue-100">
+                <div className="col-span-2 md:col-span-4">
                     <FormField
                         control={form.control}
                         name="treatment_id"
@@ -89,12 +103,12 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
                     />
                 </div>
 
-                <div className="col-span-1">
+                <div className="md:col-span-1">
                     <label className="text-sm font-bold">Quantity</label>
                     <Input type="number" {...form.register("quantity")} defaultValue={1} />
                 </div>
 
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                     <FormField
                         control={form.control}
                         name="redeem_type"
@@ -119,7 +133,7 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
 
                 {/* Conditional Field: Only shows if Redeemer is 'voucher' */}
                 {form.watch("redeem_type") === "voucher" && (
-                    <div className="col-span-3">
+                    <div className="col-span-2 md:col-span-3">
                         <FormField
                             control={form.control}
                             name="voucher_start_code"
@@ -151,15 +165,15 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
                         <TableHead className="p-2 text-left">Discount</TableHead>
                         <TableHead className="p-2 text-left">Total</TableHead>
                         <TableHead className="p-2 text-left">Description</TableHead>
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-gray-200 bg-white">
-                    {items.map((item: any, index: number) => (
+                    {items.map((item: SalesItem, index: number) => (
                         <TableRow key={index} className="text-[13px]">
                             {/* Treatment Code & Name Column */}
                             <TableCell className="p-2 border border-gray-300 w-1/4">
-                                <div className="font-semibold uppercase">{item.treatment_id}</div>
-                                <div>{item.treatment_name}</div>
+                                <div className="font-semibold">{item.treatment_name}</div>
                             </TableCell>
 
                             <TableCell className="p-2 border border-gray-300 text-center w-20">
@@ -188,7 +202,7 @@ export const SalesCart = ({ items, setItems, treatmentOptions }: any) => {
                             <TableCell className="p-2 border border-gray-300 text-center w-12">
                                 <button
                                     type="button"
-                                    onClick={() => setItems(items.filter((_: any, i: number) => i !== index))}
+                                    onClick={() => setItems(items.filter((_: SalesItem, i: number) => i !== index))}
                                     className="text-red-600 hover:text-red-700 transition-colors"
                                 >
                                     <Trash2 size={18} strokeWidth={3} /> {/* Blue X-style icon */}
