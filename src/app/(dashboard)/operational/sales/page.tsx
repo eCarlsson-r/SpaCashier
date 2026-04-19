@@ -97,8 +97,13 @@ export default function SalesForm() {
   const handleNewCustomer = (customer: Customer) => {
     api
       .post("/customer", customer)
-      .then(() => {
+      .then((res) => {
         setIsNewCustomerOpen(false);
+        customers.add({
+          label: res.data.name,
+          value: res.data.id,
+        });
+        form.setValue("customer", res.data.id);
       })
       .catch((e) => {
         console.log(e);

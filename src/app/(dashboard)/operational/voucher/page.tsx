@@ -44,12 +44,21 @@ export default function SessionForm() {
       if (voucher) {
         // 1. Auto-fill the linked data
         setValue("id", voucher.id);
-        setValue("customer_id", voucher.customer_id.toString());
-        setValue("treatment_id", voucher.treatment_id.toString());
-        setValue("amount", voucher.amount);
-        setValue("register_date", voucher.register_date);
-        setValue("sales_info", voucher.sales_info);
-        setValue("usage_info", voucher.usage_info);
+        setValue(
+          "customer_id",
+          voucher.customer_id ? voucher.customer_id.toString() : ""
+        );
+        setValue(
+          "treatment_id",
+          voucher.treatment_id ? voucher.treatment_id.toString() : ""
+        );
+        setValue("amount", voucher.amount ? voucher.amount.toString() : "");
+        setValue(
+          "register_date",
+          voucher.register_date ? voucher.register_date : ""
+        );
+        setValue("sales_info", voucher.sales_info ?? "");
+        setValue("usage_info", voucher.usage_info ?? "");
 
         toast.success(`Voucher verified for ${voucher.customer_name}`);
       }

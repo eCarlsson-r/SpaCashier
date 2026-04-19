@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { Customer } from "@/lib/types";
-import { format } from "date-fns";
 
 interface NewCustomerModalProps {
   isOpen: boolean;
