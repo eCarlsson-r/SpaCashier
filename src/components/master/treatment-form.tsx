@@ -46,20 +46,6 @@ export function TreatmentForm({ treatmentId }: { treatmentId?: string }) {
           <div className="space-y-6">
             <FormField
               control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ID</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>

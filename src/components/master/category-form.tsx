@@ -38,19 +38,6 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
         <div className="space-y-6">
           <FormField
             control={form.control}
-            name="id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ID</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
@@ -86,23 +73,12 @@ export function CategoryForm({ categoryId }: { categoryId?: string }) {
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Header Image</span>
-                <MagicAI
-                  type="Treatment Category"
-                  mode="image"
-                  form={form}
-                  fieldName="header_img"
-                />
-              </div>
-              <ImagePreview
-                label=""
-                name="header_img"
-                form={form}
-                currentImageUrl={form.getValues("header_img")}
-              />
-            </div>
+            <ImagePreview
+              label="Header Image"
+              name="header_img"
+              form={form}
+              currentImageUrl={form.getValues("header_img")}
+            />
             <ImagePreview
               label="Body Image 1"
               name="body_img1"

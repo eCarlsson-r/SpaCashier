@@ -109,7 +109,7 @@ export function DataTable<TData, TValue>({
                                             : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
-                                {actions && <th className="py-2 px-3 font-medium text-black dark:text-white">Actions</th>}
+                                {actions && <TableHead key="actions">Actions</TableHead>}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -123,9 +123,9 @@ export function DataTable<TData, TValue>({
                                         </TableCell>
                                     ))}
                                     {actions && (
-                                        <td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark">
+                                        <TableCell className="border-b border-[#eee] py-2 px-4 dark:border-strokedark">
                                             {actions(row.original)}
-                                        </td>
+                                        </TableCell>
                                     )}
                                 </TableRow>
                             ))
