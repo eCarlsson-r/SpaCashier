@@ -1,0 +1,142 @@
+[
+  {
+    "module_slug": "offline-first-operation-queue",
+    "module_name": "Offline-First Operation Queue",
+    "category": "other",
+    "description": "Intercepts client write operations in a custom Service Worker, persists queued mutations in IndexedDB when offline, and automatically flushes them on network reconnection.",
+    "implementation_notes": "Implemented in src/lib/offlineQueue.ts, src/sw-custom.ts, src/hooks/useOfflineQueue.ts, and src/components/pwa/PWAManager.tsx.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "field_service",
+      "logistics_delivery",
+      "remote_health",
+      "mobile_retail"
+    ]
+  },
+  {
+    "module_slug": "interactive-bed-occupancy-map",
+    "module_name": "Interactive Facility & Bed Occupancy Map",
+    "category": "scheduling",
+    "description": "Visualizes real-time treatment room and bed status grids, enabling operational staff to initiate sessions, monitor live timers, and complete client services.",
+    "implementation_notes": "Implemented in src/app/(dashboard)/operational/beds/page.tsx, src/components/operational/session-form.tsx, and src/components/ui/bed-grid.tsx.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "hospitals_and_clinics",
+      "hotels_and_hostels",
+      "pet_boarding",
+      "co-working_spaces"
+    ]
+  },
+  {
+    "module_slug": "pos-split-payment-checkout-ui",
+    "module_name": "POS Split-Payment Checkout Interface",
+    "category": "payments",
+    "description": "Provides a cashier checkout interface supporting cart item management, walk-in vs voucher classification, and multi-tender split payments (Cash, Card, QR, E-wallet).",
+    "implementation_notes": "Implemented in src/app/(dashboard)/operational/sales/page.tsx, src/components/operational/payment-modal.tsx, and src/components/operational/sales-cart.tsx.",
+    "portability": "medium",
+    "reusable_for_industries": [
+      "retail_stores",
+      "cafes_and_restaurants",
+      "salons",
+      "automotive_repair"
+    ]
+  },
+  {
+    "module_slug": "realtime-conflict-alert-banner",
+    "module_name": "Realtime Booking Conflict Alert Banner",
+    "category": "communication",
+    "description": "Subscribes to WebSocket channels to surface instant notifications and banners when booking collisions or schedule double-bookings occur.",
+    "implementation_notes": "Implemented in src/components/ai/ConflictAlertBanner.tsx, src/hooks/useConflictAlerts.ts, and src/lib/echo.ts.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "medical_scheduling",
+      "conference_room_booking",
+      "fleet_dispatch",
+      "event_venues"
+    ]
+  },
+  {
+    "module_slug": "ai-pos-upsell-recommendation-panel",
+    "module_name": "AI POS Upsell Recommendation Panel",
+    "category": "ai",
+    "description": "Renders targeted add-on treatment recommendations directly within the cashier POS flow based on customer history and branch popularity.",
+    "implementation_notes": "Implemented in src/components/ai/RecommendationPanel.tsx and src/hooks/useRecommendations.ts.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "e_commerce_checkout",
+      "fast_casual_dining",
+      "salon_up-selling",
+      "hospitality"
+    ]
+  },
+  {
+    "module_slug": "staff-copilot-chat-drawer",
+    "module_name": "Staff AI Copilot Chat Drawer",
+    "category": "ai",
+    "description": "Slide-over AI assistant interface allowing cashier and administrative staff to query operational stats, sales performance, and system data in natural language.",
+    "implementation_notes": "Implemented in src/components/ai/StaffChatPanel.tsx and src/app/(dashboard)/layout.tsx.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "business_intelligence",
+      "warehouse_management",
+      "retail_management",
+      "customer_support"
+    ]
+  },
+  {
+    "module_slug": "serialized-voucher-batch-inventory-manager",
+    "module_name": "Serialized Voucher Batch Inventory Manager",
+    "category": "inventory",
+    "description": "Interfaces for batch registering serialized voucher ranges, inspecting stock vs sold status, and viewing customer redemption histories.",
+    "implementation_notes": "Implemented in src/app/(dashboard)/operational/voucher/page.tsx and src/app/(dashboard)/master/voucher/page.tsx.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "event_ticketing",
+      "gift_card_issuance",
+      "membership_clubs",
+      "amusement_parks"
+    ]
+  },
+  {
+    "module_slug": "employee-commission-payroll-statement",
+    "module_name": "Employee Commission & Payroll Statement Viewer",
+    "category": "hr",
+    "description": "Summarizes therapist and cashier monthly compensation breakdown, displaying base salary, treatment commissions, attendance penalties, and net payouts.",
+    "implementation_notes": "Implemented in src/app/(dashboard)/hrd/compensation/page.tsx and src/app/(dashboard)/report/bonus/page.tsx.",
+    "portability": "medium",
+    "reusable_for_industries": [
+      "real_estate_brokerages",
+      "salon_chains",
+      "automotive_dealerships",
+      "commission_sales"
+    ]
+  },
+  {
+    "module_slug": "financial-ledger-journal-viewer",
+    "module_name": "Financial Ledger & Journal Explorer",
+    "category": "reporting",
+    "description": "Displays general ledger accounts, debit/credit journal entries, and income/expense breakdown reports grouped by reference number and date.",
+    "implementation_notes": "Implemented in src/app/(dashboard)/accounting/journal/page.tsx, src/app/(dashboard)/report/ledger/page.tsx, and src/app/(dashboard)/report/profitloss/page.tsx.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "accounting_firm",
+      "small_business_erp",
+      "property_management",
+      "franchise_management"
+    ]
+  },
+  {
+    "module_slug": "realtime-sentiment-analytics-dashboard",
+    "module_name": "Real-time Sentiment Analytics Dashboard",
+    "category": "analytics",
+    "description": "Interactive analytics dashboard displaying sentiment distribution charts, score time-series graphs, and AI-synthesized customer feedback reports.",
+    "implementation_notes": "Implemented in src/app/(dashboard)/dashboard/page.tsx and src/hooks/useSentimentRealtime.ts.",
+    "portability": "high",
+    "reusable_for_industries": [
+      "hospitality",
+      "brand_monitoring",
+      "app_review_analytics",
+      "healthcare_patient_feedback"
+    ]
+  }
+]

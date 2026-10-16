@@ -6,6 +6,18 @@ import api from "@/lib/api";
 
 vi.mock("@/lib/api");
 vi.mock("@/hooks/useAuth");
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => ({
+    staffAssistant: "Staff Assistant",
+    closeChat: "Close chat",
+    askAbout: "Ask about your spa operations",
+    askQuestion: "Ask a question...",
+    closeAssistant: "Close staff assistant",
+    openAssistant: "Open staff assistant",
+    dataNotAccessible: "Data not accessible for your role.",
+    assistantUnavailable: "Assistant temporarily unavailable.",
+  }[key] || key),
+}));
 
 const mockUser = {
   id: 1,
