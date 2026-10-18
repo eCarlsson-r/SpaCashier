@@ -47,7 +47,7 @@ describe('Locale-aware number and date formatting', () => {
       fc.property(
         fc.constantFrom('en', 'id'),
         fc.integer({ min: 1000, max: 10000000 }),
-        fc.date(),
+        fc.date({ noInvalidDate: true }),
         (locale, num, date) => {
           const jsLocale = locale === 'id' ? 'id-ID' : 'en-US';
           

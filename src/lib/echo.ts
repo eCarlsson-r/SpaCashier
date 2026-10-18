@@ -12,10 +12,13 @@ if (typeof window !== 'undefined') {
     window.Pusher = Pusher;
 }
 
-export const echo = typeof window !== 'undefined' ? new Echo({
+const reverbAppKey = process.env.NEXT_PUBLIC_REVERB_APP_KEY;
+const reverbHost = process.env.NEXT_PUBLIC_REVERB_HOST;
+
+export const echo = typeof window !== 'undefined' && reverbAppKey && reverbHost ? new Echo({
     broadcaster: 'reverb',
-    key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
-    wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
+    key: reverbAppKey,
+    wsHost: reverbHost,
     wsPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT ?? 80),
     wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT ?? 443),
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME ?? 'https') === 'https',
