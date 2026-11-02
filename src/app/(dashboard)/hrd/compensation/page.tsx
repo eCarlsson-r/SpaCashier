@@ -38,7 +38,7 @@ interface CompensationRecord {
     grand_total: number;
 }
 
-export function usePayrollPeriods() {
+function usePayrollPeriods() {
     const [periods, setPeriods] = useState<Period[]>([]);
     const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
